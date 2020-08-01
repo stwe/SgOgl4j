@@ -1,17 +1,21 @@
 package de.sg.ogl;
 
+import de.sg.ogl.resource.ResourceManager;
+
 import static de.sg.ogl.Log.LOGGER;
 
 public class SgOglEngine implements Runnable {
 
     private final Window window;
     private final Application application;
+    private final ResourceManager resourceManager;
 
     public SgOglEngine(String title, int width, int height, boolean vSync, Application application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
         this.window = new Window(title, width, height, vSync);
         this.application = application;
+        this.resourceManager = new ResourceManager();
     }
 
     public void run() {
@@ -34,6 +38,10 @@ public class SgOglEngine implements Runnable {
         window.init();
         OpenGL.init();
         application.init();
+
+
+        // todo tempcode
+        resourceManager.testMaps();
     }
 
     private void input() {
