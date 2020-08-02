@@ -11,9 +11,17 @@ import static org.lwjgl.opengl.GL32.glProvokingVertex;
 
 public final class OpenGL {
 
+    //-------------------------------------------------
+    // Ctors. / Dtor.
+    //-------------------------------------------------
+
     private OpenGL() {}
 
-    public static void init() {
+    //-------------------------------------------------
+    // Init
+    //-------------------------------------------------
+
+    static public void init() {
         LOGGER.debug("Initializing OpenGL.");
 
         GL.createCapabilities();
@@ -21,21 +29,29 @@ public final class OpenGL {
         enableDepthAndStencilTesting();
     }
 
-    public static void setClearColor(float r, float g, float b, float a) {
+    //-------------------------------------------------
+    // OpenGL states
+    //-------------------------------------------------
+
+    static public void setClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
 
-    public static void clear() {
+    static public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    public static void enableDepthAndStencilTesting() {
+    static public void enableDepthAndStencilTesting() {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
     }
 
-    private static void printContextInitInfo() {
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    static private void printContextInitInfo() {
         LOGGER.info("OpenGL version: {}", GL11.glGetString(GL11.GL_VERSION));
         LOGGER.info("GLSL version: {}", GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
         LOGGER.info("Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));

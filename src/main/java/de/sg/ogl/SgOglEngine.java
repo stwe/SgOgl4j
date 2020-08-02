@@ -10,6 +10,10 @@ public class SgOglEngine implements Runnable {
     private final Application application;
     private final ResourceManager resourceManager;
 
+    //-------------------------------------------------
+    // Ctors. / Dtor.
+    //-------------------------------------------------
+
     public SgOglEngine(String title, int width, int height, boolean vSync, Application application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
@@ -18,6 +22,17 @@ public class SgOglEngine implements Runnable {
         this.resourceManager = new ResourceManager();
     }
 
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+
+
+    //-------------------------------------------------
+    // Implement Runnable
+    //-------------------------------------------------
+
+    @Override
     public void run() {
         LOGGER.debug("Running SgOglEngine.");
 
@@ -29,8 +44,12 @@ public class SgOglEngine implements Runnable {
         }
 
         cleanUp();
-        LOGGER.debug("Finishing the SgOglEngine.");
+        LOGGER.debug("Goodbye ...");
     }
+
+    //-------------------------------------------------
+    // Init
+    //-------------------------------------------------
 
     private void init() throws Exception {
         LOGGER.debug("Initializing SgOglEngine.");
@@ -39,6 +58,10 @@ public class SgOglEngine implements Runnable {
         OpenGL.init();
         application.init();
     }
+
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
 
     private void input() {
         application.input();
@@ -53,6 +76,10 @@ public class SgOglEngine implements Runnable {
         application.render();
         window.update();
     }
+
+    //-------------------------------------------------
+    // Loop
+    //-------------------------------------------------
 
     private void loop() {
         LOGGER.debug("Starting the main loop.");
@@ -96,8 +123,14 @@ public class SgOglEngine implements Runnable {
         }
     }
 
+    //-------------------------------------------------
+    // Clean up
+    //-------------------------------------------------
+
     private void cleanUp() {
-        application.cleanUp();
+        LOGGER.debug("Clean up SgOglEngine object.");
+        resourceManager.cleanUp();
         window.cleanUp();
+        application.cleanUp();
     }
 }

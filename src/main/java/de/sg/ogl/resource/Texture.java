@@ -1,22 +1,227 @@
 package de.sg.ogl.resource;
 
-public class Texture {
+import org.lwjgl.system.MemoryStack;
 
-    String path;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
-    int width;
-    int height;
-    int nrChannels;
+import static de.sg.ogl.Log.LOGGER;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.stb.STBImage.*;
 
-    int resourceId;
+public class Texture implements Resource {
 
-    boolean loadVerticalFlipped;
+    private final String path;
+    private final boolean loadVerticalFlipped;
 
-    private int LoadTexture() {
-        return 0;
+    private int id;
+    private int width;
+    private int height;
+    private int nrChannels;
+    private int format;
+
+    //-------------------------------------------------
+    // Ctors. / Dtor.
+    //-------------------------------------------------
+
+    public Texture(String path, boolean loadVerticalFlipped) {
+        LOGGER.debug("Creates Texture object.");
+
+        this.path = path;
+        this.loadVerticalFlipped = loadVerticalFlipped;
+        this.id = 0;
+        this.format = 0;
     }
 
-    public int getResourceId() {
-        return resourceId;
+    public Texture(String path) {
+        this(path, false);
+    }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public String getPath() {
+        return path;
+    }
+
+    public boolean isLoadVerticalFlipped() {
+        return loadVerticalFlipped;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getNrChannels() {
+        return nrChannels;
+    }
+
+    public int getFormat() {
+        return format;
+    }
+
+    //-------------------------------------------------
+    // Implement Resource
+    //-------------------------------------------------
+
+    @Override
+    public void cleanUp() {
+        glDeleteTextures(id);
+
+        LOGGER.debug("Texture Id {} was deleted.", id);
+    }
+
+    //-------------------------------------------------
+    // Load
+    //-------------------------------------------------
+
+    public void loadTexture() throws Exception {
+        ByteBuffer buf;
+
+        if (loadVerticalFlipped) {
+            stbi_set_flip_vertically_on_load(true);
+        }
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer c = stack.mallocInt(1);
+
+            buf = stbi_load(path, w, h, c, 0);
+            if (buf == null) {
+                throw new Exception("Image file [" + path  + "] not loaded: " + stbi_failure_reason());
+            }
+
+            width = w.get();
+            height = h.get();
+            nrChannels = c.get();
+        }
+
+        if (nrChannels == STBI_grey)
+            format = GL_RED;
+        else if (nrChannels == STBI_rgb)
+            format = GL_RGB;
+        else if (nrChannels == STBI_rgb_alpha)
+            format = GL_RGBA;
+
+        assert format > 0;
+
+        id = generateNewTextureHandle();
+
+        assert id > 0;
+
+        bind(id);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buf);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        stbi_image_free(buf);
+
+        LOGGER.debug("Texture file {} was successfully loaded. The Id is: {}.", path, id);
+    }
+
+    //-------------------------------------------------
+    // Bind / Unbind
+    //-------------------------------------------------
+
+    static public void bind(int id, int target) {
+        assert id > 0;
+        glBindTexture(target, id);
+    }
+
+    static public void bind(int id) {
+        bind(id, GL_TEXTURE_2D);
+    }
+
+    static public void unbind(int target) {
+        glBindTexture(target, 0);
+    }
+
+    static public void unbind() {
+        unbind(GL_TEXTURE_2D);
+    }
+
+    static public void bindForReading(int id, int textureUnit, int target) {
+        glActiveTexture(id);
+        bind(id, target);
+    }
+
+    static public void bindForReading(int id, int textureUnit) {
+        bindForReading(id, textureUnit, GL_TEXTURE_2D);
+    }
+
+    //-------------------------------------------------
+    // Filter
+    //-------------------------------------------------
+
+    static public void useNoFilter(int target) {
+        glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
+
+    static public void useNoFilter() {
+        useNoFilter(GL_TEXTURE_2D);
+    }
+
+    static public void useBilinearFilter(int target) {
+        glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+
+    static public void useBilinearFilter() {
+        useBilinearFilter(GL_TEXTURE_2D);
+    }
+
+    static public void useBilinearMipmapFilter(int target) {
+        glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    }
+
+    static public void useBilinearMipmapFilter() {
+        useBilinearMipmapFilter(GL_TEXTURE_2D);
+    }
+
+    //-------------------------------------------------
+    // Wrapping
+    //-------------------------------------------------
+
+    static public void useRepeatWrapping(int target) {
+        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+
+    static public void useRepeatWrapping() {
+        useRepeatWrapping(GL_TEXTURE_2D);
+    }
+
+    static public void useClampToEdgeWrapping(int target) {
+        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    }
+
+    static public void useClampToEdgeWrapping() {
+        useClampToEdgeWrapping(GL_TEXTURE_2D);
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    static private int generateNewTextureHandle() {
+        return glGenTextures();
     }
 }

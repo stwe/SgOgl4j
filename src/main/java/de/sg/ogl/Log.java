@@ -5,7 +5,15 @@ import org.apache.logging.log4j.LogManager;
 
 public final class Log {
 
-    private Log() {}
+    //-------------------------------------------------
+    // Public member
+    //-------------------------------------------------
 
-    public static final Logger LOGGER = LogManager.getRootLogger();
+    static public final Logger LOGGER = LogManager.getRootLogger();
+
+    //-------------------------------------------------
+    // Ctors. / Dtor.
+    //-------------------------------------------------
+
+    private Log() {}
 }
