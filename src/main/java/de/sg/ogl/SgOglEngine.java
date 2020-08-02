@@ -38,10 +38,6 @@ public class SgOglEngine implements Runnable {
         window.init();
         OpenGL.init();
         application.init();
-
-
-        // todo tempcode
-        resourceManager.testMaps();
     }
 
     private void input() {
