@@ -6,7 +6,7 @@ import static de.sg.ogl.Log.LOGGER;
 
 public class ResourceManager {
 
-    private HashMap<String, Resource> resources;
+    private final HashMap<String, Resource> resources;
 
     //-------------------------------------------------
     // Ctors. / Dtor.
@@ -30,19 +30,17 @@ public class ResourceManager {
     // Load texture resources
     //-------------------------------------------------
 
-    public Resource LoadTextureResource(String path, boolean loadVerticalFlipped) {
+    public Texture LoadTextureResource(String path, boolean loadVerticalFlipped) {
         // try to get an existing texture
-        Texture existingTexture = (Texture) resources.get(path);
-
+        var existingTexture = (Texture) resources.get(path);
         if (existingTexture != null) {
             return existingTexture;
         }
 
         // load texture
         var texture = new Texture(path, loadVerticalFlipped);
-
         try {
-            texture.loadTexture();
+            texture.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,8 +51,33 @@ public class ResourceManager {
         return texture;
     }
 
-    public Resource LoadTextureResource(String path) {
+    public Texture LoadTextureResource(String path) {
         return LoadTextureResource(path, false);
+    }
+
+    //-------------------------------------------------
+    // Load shader resources
+    //-------------------------------------------------
+
+    public Shader LoadShaderResource(String path) {
+        // try to get an existing texture
+        var existingShader = (Shader) resources.get(path);
+        if (existingShader != null) {
+            return existingShader;
+        }
+
+        // load shader
+        var shader = new Shader(path);
+        try {
+            shader.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // store shader as resource
+        resources.put(path, shader);
+
+        return shader;
     }
 
     //-------------------------------------------------

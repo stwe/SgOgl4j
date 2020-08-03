@@ -2,6 +2,9 @@ package de.sg.ogl;
 
 import de.sg.ogl.resource.ResourceManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import static de.sg.ogl.Log.LOGGER;
 
 public class SgOglEngine implements Runnable {
@@ -57,6 +60,15 @@ public class SgOglEngine implements Runnable {
         window.init();
         OpenGL.init();
         application.init();
+
+        // todo temp code
+        var test = getClass().getResource("/texture/Grass.jpg");
+
+        if (test == null) {
+            throw new FileNotFoundException("File not found");
+        }
+
+        resourceManager.LoadTextureResource(new File(test.getFile()).getPath());
     }
 
     //-------------------------------------------------
@@ -129,6 +141,7 @@ public class SgOglEngine implements Runnable {
 
     private void cleanUp() {
         LOGGER.debug("Clean up SgOglEngine object.");
+
         resourceManager.cleanUp();
         window.cleanUp();
         application.cleanUp();

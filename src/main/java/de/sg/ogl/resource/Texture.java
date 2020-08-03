@@ -78,17 +78,7 @@ public class Texture implements Resource {
     //-------------------------------------------------
 
     @Override
-    public void cleanUp() {
-        glDeleteTextures(id);
-
-        LOGGER.debug("Texture Id {} was deleted.", id);
-    }
-
-    //-------------------------------------------------
-    // Load
-    //-------------------------------------------------
-
-    public void loadTexture() throws Exception {
+    public void load() throws Exception {
         ByteBuffer buf;
 
         if (loadVerticalFlipped) {
@@ -131,6 +121,13 @@ public class Texture implements Resource {
         stbi_image_free(buf);
 
         LOGGER.debug("Texture file {} was successfully loaded. The Id is: {}.", path, id);
+    }
+
+    @Override
+    public void cleanUp() {
+        glDeleteTextures(id);
+
+        LOGGER.debug("Texture Id {} was deleted.", id);
     }
 
     //-------------------------------------------------
