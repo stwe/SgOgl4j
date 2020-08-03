@@ -2,34 +2,39 @@ package de.sg.ogl;
 
 import de.sg.ogl.resource.ResourceManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import static de.sg.ogl.Log.LOGGER;
 
 public class SgOglEngine implements Runnable {
 
     private final Window window;
-    private final Application application;
+    private final BaseApplication application;
     private final ResourceManager resourceManager;
 
     //-------------------------------------------------
     // Ctors. / Dtor.
     //-------------------------------------------------
 
-    public SgOglEngine(String title, int width, int height, boolean vSync, Application application) {
+    public SgOglEngine(String title, int width, int height, boolean vSync, BaseApplication application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
         this.window = new Window(title, width, height, vSync);
         this.application = application;
         this.resourceManager = new ResourceManager();
+
+        this.application.setEngine(this);
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
+    public Window getWindow() {
+        return window;
+    }
 
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+    }
 
     //-------------------------------------------------
     // Implement Runnable
@@ -44,9 +49,10 @@ public class SgOglEngine implements Runnable {
             this.loop();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            cleanUp();
         }
 
-        cleanUp();
         LOGGER.debug("Goodbye ...");
     }
 
@@ -60,15 +66,6 @@ public class SgOglEngine implements Runnable {
         window.init();
         OpenGL.init();
         application.init();
-
-        // todo temp code
-        var test = getClass().getResource("/texture/Grass.jpg");
-
-        if (test == null) {
-            throw new FileNotFoundException("File not found");
-        }
-
-        resourceManager.LoadTextureResource(new File(test.getFile()).getPath());
     }
 
     //-------------------------------------------------

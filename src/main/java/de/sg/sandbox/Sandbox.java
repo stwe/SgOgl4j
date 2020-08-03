@@ -1,12 +1,22 @@
 package de.sg.sandbox;
 
-import de.sg.ogl.Application;
+import de.sg.ogl.BaseApplication;
 
-public class Sandbox implements Application {
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class Sandbox extends BaseApplication {
 
     @Override
     public void init() throws Exception {
+        var textureFile = getClass().getResource("/texture/Grass.jpg");
+        if (textureFile == null) {
+            throw new FileNotFoundException("File not found");
+        }
 
+        getEngine().getResourceManager().LoadTextureResource(new File(textureFile.getFile()).getPath());
+
+        getEngine().getResourceManager().LoadShaderResource("");
     }
 
     @Override
