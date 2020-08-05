@@ -16,7 +16,7 @@ public class Sandbox extends BaseApplication {
 
         getEngine().getResourceManager().LoadTextureResource(new File(textureFile.getFile()).getPath());
 
-        getEngine().getResourceManager().LoadShaderResource("");
+        getEngine().getResourceManager().LoadShaderResource("/simple");
     }
 
     @Override
