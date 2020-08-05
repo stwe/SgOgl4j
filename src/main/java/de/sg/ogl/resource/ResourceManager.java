@@ -30,7 +30,7 @@ public class ResourceManager {
     // Load texture resources
     //-------------------------------------------------
 
-    public Texture LoadTextureResource(String path, boolean loadVerticalFlipped) {
+    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) {
         // try to get an existing texture
         var existingTexture = (Texture) resources.get(path);
         if (existingTexture != null) {
@@ -51,15 +51,15 @@ public class ResourceManager {
         return texture;
     }
 
-    public Texture LoadTextureResource(String path) {
-        return LoadTextureResource(path, false);
+    public Texture loadTextureResource(String path) {
+        return loadTextureResource(path, false);
     }
 
     //-------------------------------------------------
     // Load shader resources
     //-------------------------------------------------
 
-    public Shader LoadShaderResource(String path) {
+    public Shader loadShaderResource(String path) {
         // try to get an existing texture
         var existingShader = (Shader) resources.get(path);
         if (existingShader != null) {

@@ -1,7 +1,12 @@
 package de.sg.ogl.resource;
 
+import de.sg.ogl.SgOglException;
+
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 import java.io.InputStream;
 import java.util.EnumSet;
@@ -21,13 +26,13 @@ public class Shader implements Resource {
     private String path;
     private EnumSet<Options> options;
 
-    private int id;
+    private int id = 0;
 
-    private int vertexShaderId;
-    private int tessellationControlShaderId;
-    private int tessellationEvaluationShaderId;
-    private int geometryShaderId;
-    private int fragmentShaderId;
+    private int vertexShaderId = 0;
+    private int tessellationControlShaderId = 0;
+    private int tessellationEvaluationShaderId = 0;
+    private int geometryShaderId = 0;
+    private int fragmentShaderId = 0;
 
     //-------------------------------------------------
     // Ctors. / Dtor.
@@ -38,14 +43,6 @@ public class Shader implements Resource {
 
         this.path = path;
         this.options = options;
-
-        this.id = 0;
-
-        this.vertexShaderId = 0;
-        this.tessellationControlShaderId = 0;
-        this.tessellationEvaluationShaderId = 0;
-        this.geometryShaderId = 0;
-        this.fragmentShaderId = 0;
     }
 
     public Shader(String path) {
@@ -66,14 +63,34 @@ public class Shader implements Resource {
 
     @Override
     public void load() throws Exception {
+        // creates an empty program
         id = createProgram();
 
+        var shaderPath = "/shader/" + path;
+
+        // add VERTEX_SHADER
         if (options.contains(Options.VERTEX_SHADER)) {
-            addVertexShader(loadResource(path + "/shader/vertex.vs"));
+            addVertexShader(loadResource(shaderPath + "/Vertex.vert"));
         }
 
+        // add TESSELLATION_CONTROL_SHADER
+        if (options.contains(Options.TESSELLATION_CONTROL_SHADER)) {
+            addTessellationControlShader(loadResource(shaderPath + "/TessControl.tesc"));
+        }
+
+        // add TESSELLATION_EVALUATION_SHADER
+        if (options.contains(Options.TESSELLATION_EVALUATION_SHADER)) {
+            addTessellationEvaluationShader(loadResource(shaderPath + "/TessEval.tese"));
+        }
+
+        // add GEOMETRY_SHADER
+        if (options.contains(Options.GEOMETRY_SHADER)) {
+            addGeometryShader(loadResource(shaderPath + "/Geometry.geom"));
+        }
+
+        // add FRAGMENT_SHADER
         if (options.contains(Options.FRAGMENT_SHADER)) {
-            addFragmentShader(loadResource(path + "/shader/fragment.fs"));
+            addFragmentShader(loadResource(shaderPath + "/Fragment.frag"));
         }
 
         linkAndValidateProgram();
@@ -102,24 +119,59 @@ public class Shader implements Resource {
 
     static private int createProgram() {
         var programId = glCreateProgram();
-        assert programId > 0;
+        if (programId == 0) {
+            throw new SgOglException("Shader program creation has failed.");
+        }
+
         LOGGER.debug("A new Shader program was created. The Id is {}.", programId);
 
         return programId;
     }
 
+    static private int createShaderObject(int shaderType) {
+        var shaderId = glCreateShader(shaderType);
+        if (shaderId == 0) {
+            throw new SgOglException("Shader object creation has failed. The type is " + shaderType + ".");
+        }
+
+        return shaderId;
+    }
+
     private void addVertexShader(String shaderCode) {
         vertexShaderId = addShader(shaderCode, GL_VERTEX_SHADER);
-        LOGGER.debug("A new Vertex Shader was added. The Id is {}.", vertexShaderId);
+        LOGGER.debug("A new Vertex Shader was added to program {}. The Id is {}.", id, vertexShaderId);
+    }
+
+    private void addTessellationControlShader(String shaderCode) {
+        tessellationControlShaderId = addShader(shaderCode, GL_TESS_CONTROL_SHADER);
+        LOGGER.debug("A new Tessellation Control Shader was added to program {}. The Id is {}.", id, tessellationControlShaderId);
+    }
+
+    private void addTessellationEvaluationShader(String shaderCode) {
+        tessellationEvaluationShaderId = addShader(shaderCode, GL_TESS_EVALUATION_SHADER);
+        LOGGER.debug("A new Tessellation Evaluation Shader was added to program {}. The Id is {}.", id, tessellationEvaluationShaderId);
+    }
+
+    private void addGeometryShader(String shaderCode) {
+        geometryShaderId = addShader(shaderCode, GL_GEOMETRY_SHADER);
+        LOGGER.debug("A new Geometry Shader was added to program {}. The Id is {}.", id, geometryShaderId);
     }
 
     private void addFragmentShader(String shaderCode) {
         fragmentShaderId = addShader(shaderCode, GL_FRAGMENT_SHADER);
-        LOGGER.debug("A new Fragment Shader was added. The Id is {}.", fragmentShaderId);
+        LOGGER.debug("A new Fragment Shader was added to program {}. The Id is {}.", id, fragmentShaderId);
     }
 
-    static private int generateShader(int shaderType) {
-        return glCreateShader(shaderType);
+    private int addShader(String shaderCode, int shaderType) {
+        var shaderId = createShaderObject(shaderType);
+
+        compileShader(shaderId, shaderCode);
+        checkCompileStatus(shaderId);
+        glAttachShader(id, shaderId);
+
+        // todo find structs && uniforms
+
+        return shaderId;
     }
 
     static private void compileShader(int shaderId, String shaderCode) {
@@ -128,24 +180,53 @@ public class Shader implements Resource {
     }
 
     static private void checkCompileStatus(int shaderId) {
-        // todo
-    }
-
-    private int addShader(String shaderCode, int shaderType) {
-        var shaderId = generateShader(shaderType);
-        assert shaderId > 0;
-
-        compileShader(shaderId, shaderCode);
-        checkCompileStatus(shaderId);
-
-        glAttachShader(id, shaderId);
-
-        return shaderId;
+        var status = glGetShaderi(shaderId, GL_COMPILE_STATUS);
+        if (status == 0) {
+            // todo ensure cleanUp call
+            throw new SgOglException("Error while compiling Shader code. Log: " + glGetShaderInfoLog(shaderId, 1024));
+        }
     }
 
     private void linkAndValidateProgram() {
+        // link
         glLinkProgram(id);
+        var status = glGetProgrami(id, GL_LINK_STATUS);
+        if (status == 0) {
+            throw new SgOglException("Error while linking Shader program. Log: " + glGetProgramInfoLog(id, 1024));
+        }
+
+        // always detach shaders after a successful link
+        if (vertexShaderId != 0)
+        {
+            glDetachShader(id, vertexShaderId);
+        }
+
+        if (tessellationControlShaderId != 0)
+        {
+            glDetachShader(id, tessellationControlShaderId);
+        }
+
+        if (tessellationEvaluationShaderId != 0)
+        {
+            glDetachShader(id, tessellationEvaluationShaderId);
+        }
+
+        if (geometryShaderId != 0)
+        {
+            glDetachShader(id, geometryShaderId);
+        }
+
+        if (fragmentShaderId != 0)
+        {
+            glDetachShader(id, fragmentShaderId);
+        }
+
+        // validate
         glValidateProgram(id);
+        status = glGetProgrami(id, GL_VALIDATE_STATUS);
+        if (status == 0) {
+            LOGGER.warn("Warning validating Shader code. Log: " + glGetProgramInfoLog(id, 1024));
+        }
     }
 
     static public String loadResource(String path) throws Exception {
