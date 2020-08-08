@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL32.glProvokingVertex;
 public final class OpenGL {
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     private OpenGL() {}

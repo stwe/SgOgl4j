@@ -3,6 +3,8 @@ package de.sg.ogl;
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
 
@@ -11,22 +13,70 @@ import java.util.Objects;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
+class Window {
+
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 5000.f;
 
     private final String title;
     private int width;
     private int height;
     private long windowHandle;
-    private boolean vSync;
+    private final boolean vSync;
+
+    private Matrix4f projectionMatrix;
+    private Matrix4f orthographicProjectionMatrix;
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
 
     public Window(String title, int width, int height, boolean vSync) {
         LOGGER.debug("Creates Window object.");
 
-        this.title = title;
+        this.title = Objects.requireNonNull(title, "Title cannot be null.");
+
         this.width = width;
         this.height = height;
+
+        if (width <= 0 || height <= 0) {
+            throw new SgOglException("Invalid width or height of the window.");
+        }
+
         this.vSync = vSync;
+
+        projectionMatrix = new Matrix4f();
+        orthographicProjectionMatrix = new Matrix4f();
     }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
+    public Matrix4f getOrthographicProjectionMatrix() {
+        return orthographicProjectionMatrix;
+    }
+
+    //-------------------------------------------------
+    // Setter
+    //-------------------------------------------------
+
+    public void setTitle(String title) {
+        glfwSetWindowTitle(windowHandle, title);
+    }
+
+    //-------------------------------------------------
+    // Init
+    //-------------------------------------------------
 
     public void init() {
         LOGGER.debug("Initializing window.");
@@ -37,7 +87,7 @@ public class Window {
         // Initialize GLFW.
         LOGGER.debug("Configuring GLFW.");
         if (!glfwInit()) {
-            throw new IllegalStateException("[...Window] Unable to initialize GLFW.");
+            throw new SgOglException("Unable to initialize GLFW.");
         }
 
         // Configure GLFW.
@@ -49,15 +99,11 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
-        assert !title.isEmpty();
-        assert width > 0;
-        assert height > 0;
-
         // Create the window.
         LOGGER.debug("Initializing a {}x{} window.", width, height);
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (windowHandle == NULL) {
-            throw new RuntimeException("[...Window] Failed to create the GLFW window.");
+            throw new SgOglException("Failed to create the GLFW window.");
         }
 
         // Setup resize callback.
@@ -104,24 +150,36 @@ public class Window {
 
         // Make the window visible.
         glfwShowWindow(windowHandle);
+
+        // Set/Update the projection matrix.
+        updateProjectionMatrix();
+        updateOrthographicProjectionMatrix();
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     public boolean windowShouldClose() {
         return glfwWindowShouldClose(windowHandle);
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        glfwSetWindowTitle(windowHandle, title);
     }
 
     public void update() {
         glfwSwapBuffers(windowHandle);
         glfwPollEvents();
     }
+
+    public void updateProjectionMatrix() {
+        projectionMatrix.setPerspective(FOV, (float) width / height, Z_NEAR, Z_FAR);
+    }
+
+    public void updateOrthographicProjectionMatrix() {
+        orthographicProjectionMatrix.setOrtho(0.0f, width, 0.0f, height, Z_NEAR, Z_FAR);
+    }
+
+    //-------------------------------------------------
+    // Clean up
+    //-------------------------------------------------
 
     public void cleanUp() {
         LOGGER.debug("Clean up Window.");

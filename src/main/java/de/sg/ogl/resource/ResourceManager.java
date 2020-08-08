@@ -15,7 +15,7 @@ public class ResourceManager {
     private final HashMap<String, Resource> resources;
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     public ResourceManager() {

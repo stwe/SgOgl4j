@@ -11,7 +11,7 @@ public class SgOglEngine implements Runnable {
     private final ResourceManager resourceManager;
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     public SgOglEngine(String title, int width, int height, boolean vSync, BaseApplication application) {

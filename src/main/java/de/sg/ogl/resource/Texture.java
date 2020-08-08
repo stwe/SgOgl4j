@@ -26,7 +26,7 @@ public class Texture implements Resource {
     private int format = 0;
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     public Texture(String url, boolean loadVerticalFlipped) {

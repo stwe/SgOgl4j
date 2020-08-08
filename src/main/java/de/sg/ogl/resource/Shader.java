@@ -34,7 +34,7 @@ public class Shader implements Resource {
     private int fragmentShaderId = 0;
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     public Shader(String path, EnumSet<Options> options) {

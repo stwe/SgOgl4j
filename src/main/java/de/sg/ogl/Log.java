@@ -12,7 +12,7 @@ public final class Log {
     static public final Logger LOGGER = LogManager.getRootLogger();
 
     //-------------------------------------------------
-    // Ctors. / Dtor.
+    // Ctors.
     //-------------------------------------------------
 
     private Log() {}
