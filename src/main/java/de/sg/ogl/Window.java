@@ -124,7 +124,7 @@ public class Window {
     }
 
     public void cleanUp() {
-        LOGGER.debug("Clean up Window object.");
+        LOGGER.debug("Clean up Window.");
 
         // Free the window callbacks and destroy the window.
         glfwFreeCallbacks(windowHandle);

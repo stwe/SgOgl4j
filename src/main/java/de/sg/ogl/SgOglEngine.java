@@ -137,7 +137,7 @@ public class SgOglEngine implements Runnable {
     //-------------------------------------------------
 
     private void cleanUp() {
-        LOGGER.debug("Clean up SgOglEngine object.");
+        LOGGER.debug("Clean up SgOglEngine.");
 
         resourceManager.cleanUp();
         window.cleanUp();

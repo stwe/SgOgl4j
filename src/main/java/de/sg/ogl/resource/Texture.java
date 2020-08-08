@@ -1,5 +1,6 @@
 package de.sg.ogl.resource;
 
+import de.sg.ogl.SgOglException;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -15,26 +16,24 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements Resource {
 
-    private final String path;
+    private final String url;
     private final boolean loadVerticalFlipped;
 
-    private int id;
+    private int id = 0;
     private int width;
     private int height;
     private int nrChannels;
-    private int format;
+    private int format = 0;
 
     //-------------------------------------------------
     // Ctors. / Dtor.
     //-------------------------------------------------
 
-    public Texture(String path, boolean loadVerticalFlipped) {
+    public Texture(String url, boolean loadVerticalFlipped) {
         LOGGER.debug("Creates Texture object.");
 
-        this.path = path;
+        this.url = url;
         this.loadVerticalFlipped = loadVerticalFlipped;
-        this.id = 0;
-        this.format = 0;
     }
 
     public Texture(String path) {
@@ -45,8 +44,8 @@ public class Texture implements Resource {
     // Getter
     //-------------------------------------------------
 
-    public String getPath() {
-        return path;
+    public String getUrl() {
+        return url;
     }
 
     public boolean isLoadVerticalFlipped() {
@@ -54,6 +53,7 @@ public class Texture implements Resource {
     }
 
     public int getId() {
+        assert id > 0 : "The \"load\" function must be called.";
         return id;
     }
 
@@ -66,10 +66,12 @@ public class Texture implements Resource {
     }
 
     public int getNrChannels() {
+        assert id > 0 : "The \"load\" function must be called.";
         return nrChannels;
     }
 
     public int getFormat() {
+        assert id > 0 : "The \"load\" function must be called.";
         return format;
     }
 
@@ -86,18 +88,22 @@ public class Texture implements Resource {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer c = stack.mallocInt(1);
+            IntBuffer x = stack.mallocInt(1);
+            IntBuffer y = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
 
-            buf = stbi_load(path, w, h, c, 0);
+            buf = stbi_load(url, x, y, channels, 0);
             if (buf == null) {
-                throw new Exception("Image file [" + path  + "] not loaded: " + stbi_failure_reason());
+                throw new SgOglException("Image file [" + url  + "] not loaded: " + stbi_failure_reason());
             }
 
-            width = w.get();
-            height = h.get();
-            nrChannels = c.get();
+            width = x.get();
+            height = y.get();
+            nrChannels = channels.get();
+
+            assert width > 0;
+            assert height > 0;
+            assert nrChannels > 0;
         }
 
         if (nrChannels == STBI_grey)
@@ -120,14 +126,16 @@ public class Texture implements Resource {
 
         stbi_image_free(buf);
 
-        LOGGER.debug("Texture file {} was successfully loaded. The Id is: {}.", path, id);
+        LOGGER.debug("Texture file {} was successfully loaded. The Id is {}.", url, id);
     }
 
     @Override
     public void cleanUp() {
-        glDeleteTextures(id);
+        if (id > 0) {
+            glDeleteTextures(id);
 
-        LOGGER.debug("Texture Id {} was deleted.", id);
+            LOGGER.debug("Texture Id {} was deleted.", id);
+        }
     }
 
     //-------------------------------------------------
@@ -219,6 +227,11 @@ public class Texture implements Resource {
     //-------------------------------------------------
 
     static private int generateNewTextureHandle() {
-        return glGenTextures();
+        var textureId = glGenTextures();
+        if (textureId == 0) {
+            throw new SgOglException("Texture name creation has failed.");
+        }
+
+        return textureId;
     }
 }
