@@ -53,7 +53,6 @@ public class Texture implements Resource {
     }
 
     public int getId() {
-        assert id > 0 : "The \"load\" function must be called.";
         return id;
     }
 
@@ -66,12 +65,10 @@ public class Texture implements Resource {
     }
 
     public int getNrChannels() {
-        assert id > 0 : "The \"load\" function must be called.";
         return nrChannels;
     }
 
     public int getFormat() {
-        assert id > 0 : "The \"load\" function must be called.";
         return format;
     }
 
@@ -100,10 +97,6 @@ public class Texture implements Resource {
             width = x.get();
             height = y.get();
             nrChannels = channels.get();
-
-            assert width > 0;
-            assert height > 0;
-            assert nrChannels > 0;
         }
 
         if (nrChannels == STBI_grey)
@@ -113,11 +106,7 @@ public class Texture implements Resource {
         else if (nrChannels == STBI_rgb_alpha)
             format = GL_RGBA;
 
-        assert format > 0;
-
         id = generateNewTextureHandle();
-
-        assert id > 0;
 
         bind(id);
 
@@ -143,7 +132,6 @@ public class Texture implements Resource {
     //-------------------------------------------------
 
     static public void bind(int id, int target) {
-        assert id > 0;
         glBindTexture(target, id);
     }
 

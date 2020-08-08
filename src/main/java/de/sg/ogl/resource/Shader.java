@@ -53,7 +53,6 @@ public class Shader implements Resource {
     //-------------------------------------------------
 
     public int getId() {
-        assert id > 0 : "The \"load\" function must be called.";
         return id;
     }
 
@@ -138,7 +137,6 @@ public class Shader implements Resource {
     //-------------------------------------------------
 
     public void bind() {
-        assert id > 0;
         glUseProgram(id);
     }
 
