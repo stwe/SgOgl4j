@@ -4,9 +4,11 @@ import de.sg.ogl.SgOglException;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static de.sg.ogl.Log.LOGGER;
+import static de.sg.ogl.buffer.Vbo.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -76,18 +78,18 @@ public final class Vao {
     // Add data
     //-------------------------------------------------
 
-    public void addVertexDataVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
+    public void addVerticesVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
         // bind this Vao
         bind();
 
         // create a new Vbo
-        var vboId = Vbo.createVbo();
+        var vboId = createVbo();
 
         // store Vbo Id
         vbos.add(vboId);
 
         // bind the new Vbo
-        Vbo.bindVbo(vboId);
+        bindVbo(vboId);
 
         // store vertices
         FloatBuffer verticesBuffer = null;
@@ -119,11 +121,45 @@ public final class Vao {
         }
 
         // unbind buffers
-        Vbo.unbindVbo();
+        unbindVbo();
         unbind();
 
         // set draw count
         setDrawCount(drawCount);
+    }
+
+    public void addIndicesEbo(int[] indices) {
+        if (vbos.isEmpty()) {
+            LOGGER.warn("The index buffer should be created last.");
+        }
+
+        // bind this Vao
+        bind();
+
+        // create a new Ebo
+        eboId = createEbo();
+
+        // bind the new Ebo
+        bindEbo(eboId);
+
+        // store indices
+        IntBuffer indicesBuffer = null;
+        try {
+            indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+            indicesBuffer.put(indices).flip();
+
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+        } finally {
+            if (indicesBuffer != null) {
+                MemoryUtil.memFree(indicesBuffer);
+            }
+        }
+
+        // unbind Vao
+        unbind();
+
+        // set draw count
+        setDrawCount(indices.length);
     }
 
     //-------------------------------------------------
@@ -170,14 +206,14 @@ public final class Vao {
         glDisableVertexAttribArray(0);
 
         // delete Vbos
-        Vbo.unbindVbo();
+        unbindVbo();
         for (var vboId : vbos) {
-            Vbo.deleteVbo(vboId);
+            deleteVbo(vboId);
         }
 
         // delete Vbo / IndexBuffer
         if (hasIndexBuffer()) {
-            Vbo.deleteEbo(eboId);
+            deleteEbo(eboId);
         }
 
         // delete Vao

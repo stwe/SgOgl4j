@@ -21,9 +21,14 @@ public class Sandbox extends BaseApplication {
         shader = getEngine().getResourceManager().loadShaderResource("simple");
 
         float[] vertices = new float[]{
-                0.0f, 0.5f, 0.0f,
+                -0.5f,  0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f
+                0.5f, -0.5f, 0.0f,
+                0.5f,  0.5f, 0.0f,
+        };
+
+        int[] indices = new int[]{
+                0, 1, 3, 3, 1, 2,
         };
 
         BufferLayout bufferLayout = new BufferLayout(
@@ -33,7 +38,8 @@ public class Sandbox extends BaseApplication {
         );
 
         vao = new Vao();
-        vao.addVertexDataVbo(vertices, 3, bufferLayout);
+        vao.addVerticesVbo(vertices, 3, bufferLayout);
+        vao.addIndicesEbo(indices);
     }
 
     @Override
