@@ -76,31 +76,53 @@ public final class Vao {
     // Add data
     //-------------------------------------------------
 
-    public void addVertexDataVbo(float[] vertices, int drawCount) {
+    public void addVertexDataVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
+        // bind this Vao
         bind();
 
+        // create a new Vbo
         var vboId = Vbo.createVbo();
+
+        // store Vbo Id
         vbos.add(vboId);
 
+        // bind the new Vbo
         Vbo.bindVbo(vboId);
 
+        // store vertices
         FloatBuffer verticesBuffer = null;
         try {
             verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
             verticesBuffer.put(vertices).flip();
 
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+            // specify how OpenGL should interpret the vertex data
+            var index = 0;
+            for (var attribute : bufferLayout.getVertexAttributes()) {
+                glEnableVertexAttribArray(index);
+                glVertexAttribPointer(
+                        index,
+                        attribute.getVertexAttributeType().getComponentCount(),
+                        attribute.getVertexAttributeType().getGlType(),
+                        attribute.normalize,
+                        bufferLayout.getStride(),
+                        attribute.offset
+                );
+
+                index++;
+            }
         } finally {
             if (verticesBuffer != null) {
                 MemoryUtil.memFree(verticesBuffer);
             }
         }
 
+        // unbind buffers
         Vbo.unbindVbo();
         unbind();
 
+        // set draw count
         setDrawCount(drawCount);
     }
 

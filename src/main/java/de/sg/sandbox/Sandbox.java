@@ -1,9 +1,14 @@
 package de.sg.sandbox;
 
 import de.sg.ogl.BaseApplication;
+import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.Vao;
+import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.resource.Shader;
 
+import java.util.ArrayList;
+
+import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION;
 import static org.lwjgl.opengl.GL15.*;
 
 public class Sandbox extends BaseApplication {
@@ -21,8 +26,14 @@ public class Sandbox extends BaseApplication {
                 0.5f, -0.5f, 0.0f
         };
 
+        BufferLayout bufferLayout = new BufferLayout(
+                new ArrayList<>(){{
+                    add(new VertexAttribute(POSITION, "aPosition"));
+                }}
+        );
+
         vao = new Vao();
-        vao.addVertexDataVbo(vertices, 3);
+        vao.addVertexDataVbo(vertices, 3, bufferLayout);
     }
 
     @Override
