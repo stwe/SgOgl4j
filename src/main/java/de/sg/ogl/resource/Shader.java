@@ -1,6 +1,8 @@
 package de.sg.ogl.resource;
 
 import de.sg.ogl.SgOglException;
+import org.joml.*;
+import org.lwjgl.system.MemoryStack;
 
 import static de.sg.ogl.Log.LOGGER;
 import static de.sg.ogl.resource.ResourceManager.readFileIntoString;
@@ -165,6 +167,28 @@ public class Shader implements Resource {
     public void setUniform(String uniformName, boolean value) {
         // if value == true load 1 else 0 as float
         glUniform1f(uniforms.get(uniformName), value ? 1.0f : 0.0f);
+    }
+
+    public void setUniform(String uniformName, Vector2f value) {
+        glUniform2f(uniforms.get(uniformName), value.x, value.y);
+    }
+
+    public void setUniform(String uniformName, Vector3f value) {
+        glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniformName, Matrix4f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            glUniformMatrix4fv(
+                    uniforms.get(uniformName),
+                    false,
+                    value.get(stack.mallocFloat(16))
+            );
+        }
     }
 
     //-------------------------------------------------
