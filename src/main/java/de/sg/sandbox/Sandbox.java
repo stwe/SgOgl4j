@@ -56,6 +56,8 @@ public class Sandbox extends BaseApplication {
     public void render() {
         shader.bind();
 
+        shader.setUniform("test", 1.0f);
+
         vao.bind();
         vao.drawPrimitives(GL_TRIANGLES);
         Vao.unbind();

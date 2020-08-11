@@ -9,7 +9,9 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 
 public class Shader implements Resource {
 
@@ -32,6 +34,9 @@ public class Shader implements Resource {
     private int tessellationEvaluationShaderId = 0;
     private int geometryShaderId = 0;
     private int fragmentShaderId = 0;
+
+    private final ArrayList<Uniform> foundUniforms = new ArrayList<>();
+    private final HashMap<String, Integer> uniforms = new HashMap<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -93,6 +98,7 @@ public class Shader implements Resource {
         }
 
         linkAndValidateProgram();
+        addFoundUniforms();
     }
 
     @Override
@@ -145,7 +151,24 @@ public class Shader implements Resource {
     }
 
     //-------------------------------------------------
-    // Helper
+    // Set uniforms
+    //-------------------------------------------------
+
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, float value) {
+        glUniform1f(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, boolean value) {
+        // if value == true load 1 else 0 as float
+        glUniform1f(uniforms.get(uniformName), value ? 1.0f : 0.0f);
+    }
+
+    //-------------------------------------------------
+    // Create Program && Shader
     //-------------------------------------------------
 
     static private int createProgram() {
@@ -168,27 +191,36 @@ public class Shader implements Resource {
         return shaderId;
     }
 
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
     private void addVertexShader(String shaderCode) {
+        LOGGER.debug("A Vertex Shader is added to program {}.", id);
         vertexShaderId = addShader(shaderCode, GL_VERTEX_SHADER);
         LOGGER.debug("A new Vertex Shader was added to program {}. The Id is {}.", id, vertexShaderId);
     }
 
     private void addTessellationControlShader(String shaderCode) {
+        LOGGER.debug("A Tessellation Control Shader is added to program {}.", id);
         tessellationControlShaderId = addShader(shaderCode, GL_TESS_CONTROL_SHADER);
         LOGGER.debug("A new Tessellation Control Shader was added to program {}. The Id is {}.", id, tessellationControlShaderId);
     }
 
     private void addTessellationEvaluationShader(String shaderCode) {
+        LOGGER.debug("A Tessellation Evaluation Shader is added to program {}.", id);
         tessellationEvaluationShaderId = addShader(shaderCode, GL_TESS_EVALUATION_SHADER);
         LOGGER.debug("A new Tessellation Evaluation Shader was added to program {}. The Id is {}.", id, tessellationEvaluationShaderId);
     }
 
     private void addGeometryShader(String shaderCode) {
+        LOGGER.debug("A Geometry Shader is added to program {}.", id);
         geometryShaderId = addShader(shaderCode, GL_GEOMETRY_SHADER);
         LOGGER.debug("A new Geometry Shader was added to program {}. The Id is {}.", id, geometryShaderId);
     }
 
     private void addFragmentShader(String shaderCode) {
+        LOGGER.debug("A Fragment Shader is added to program {}.", id);
         fragmentShaderId = addShader(shaderCode, GL_FRAGMENT_SHADER);
         LOGGER.debug("A new Fragment Shader was added to program {}. The Id is {}.", id, fragmentShaderId);
     }
@@ -199,8 +231,8 @@ public class Shader implements Resource {
         compileShader(shaderId, shaderCode);
         checkCompileStatus(shaderId);
         glAttachShader(id, shaderId);
-
-        // todo find structs && uniforms
+        findStructs(shaderCode);
+        findUniforms(shaderCode);
 
         return shaderId;
     }
@@ -256,6 +288,69 @@ public class Shader implements Resource {
         status = glGetProgrami(id, GL_VALIDATE_STATUS);
         if (status == GL_FALSE ) {
             LOGGER.warn("Warning validating Shader code. Log: " + glGetProgramInfoLog(id, 1024));
+        }
+    }
+
+    //-------------------------------------------------
+    // Uniforms
+    //-------------------------------------------------
+
+    private void findStructs(String shaderCode) {
+        // todo
+    }
+
+    private void findUniforms(String shaderCode) {
+        final String uniformKeyword = "uniform";
+
+        var positions = findAllOccurances(shaderCode, uniformKeyword);
+
+        if (!positions.isEmpty()) {
+            LOGGER.debug("{} uniforms were found in the Shader.", positions.size());
+
+            var i = 1;
+            for (var startPosition : positions) {
+                var end = shaderCode.indexOf(";", startPosition);
+
+                var typeStartPosition = startPosition + uniformKeyword.length() + 1;
+                var typeEndPosition = shaderCode.indexOf(" ", typeStartPosition);
+
+                var uniform = new Uniform();
+                uniform.name = shaderCode.substring(typeEndPosition + 1, end);
+                uniform.type = shaderCode.substring(typeStartPosition, typeEndPosition);
+                foundUniforms.add(uniform);
+
+                LOGGER.debug("Uniform #{} with type: {} and name: {}", i, uniform.type, uniform.name);
+                i++;
+            }
+        }
+    }
+
+    private ArrayList<Integer> findAllOccurances(String text, String str) {
+        int index = 0;
+
+        var positions = new ArrayList<Integer>();
+
+        while (true) {
+            index = text.indexOf(str, index);
+            if (index != -1) {
+                positions.add(index);
+                index += str.length();
+            } else {
+                break;
+            }
+        }
+
+        return positions;
+    }
+
+    private void addFoundUniforms() {
+        for (var uniform : foundUniforms) {
+            var uniformId = glGetUniformLocation(id, uniform.name);
+            if (uniformId < 0) {
+                throw new SgOglException("Invalid uniform name: " + uniform.name + ".");
+            }
+
+            uniforms.put(uniform.name, uniformId);
         }
     }
 }
