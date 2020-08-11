@@ -8,6 +8,7 @@ import de.sg.ogl.resource.Shader;
 
 import java.util.ArrayList;
 
+import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.COLOR;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION;
 import static org.lwjgl.opengl.GL15.*;
 
@@ -21,10 +22,10 @@ public class Sandbox extends BaseApplication {
         shader = getEngine().getResourceManager().loadShaderResource("simple");
 
         float[] vertices = new float[]{
-                -0.5f,  0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.5f,  0.5f, 0.0f,
+                -0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.0f,
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.5f,
+                0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.5f,
         };
 
         int[] indices = new int[]{
@@ -34,6 +35,7 @@ public class Sandbox extends BaseApplication {
         BufferLayout bufferLayout = new BufferLayout(
                 new ArrayList<>(){{
                     add(new VertexAttribute(POSITION, "aPosition"));
+                    add(new VertexAttribute(COLOR, "aColor"));
                 }}
         );
 
@@ -55,8 +57,6 @@ public class Sandbox extends BaseApplication {
     @Override
     public void render() {
         shader.bind();
-
-        shader.setUniform("test", 1.0f);
 
         vao.bind();
         vao.drawPrimitives(GL_TRIANGLES);
