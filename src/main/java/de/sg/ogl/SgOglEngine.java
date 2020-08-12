@@ -14,10 +14,10 @@ public class SgOglEngine implements Runnable {
     // Ctors.
     //-------------------------------------------------
 
-    public SgOglEngine(String title, int width, int height, boolean vSync, BaseApplication application) {
+    public SgOglEngine(BaseApplication application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
-        this.window = new Window(title, width, height, vSync);
+        this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
         this.application = application;
         this.resourceManager = new ResourceManager();
 
