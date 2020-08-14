@@ -7,6 +7,7 @@ import static de.sg.ogl.Log.LOGGER;
 public class SgOglEngine implements Runnable {
 
     private final Window window;
+    private final Input input;
     private final BaseApplication application;
     private final ResourceManager resourceManager;
 
@@ -18,6 +19,7 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Creates SgOglEngine object.");
 
         this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
+        this.input = new Input();
         this.application = application;
         this.resourceManager = new ResourceManager();
 
@@ -64,6 +66,7 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Initializing SgOglEngine.");
 
         window.init();
+        input.init(window.getWindowHandle());
         OpenGL.init();
         application.init();
     }
@@ -141,6 +144,7 @@ public class SgOglEngine implements Runnable {
 
         resourceManager.cleanUp();
         window.cleanUp();
+        input.cleanUp();
         application.cleanUp();
     }
 }

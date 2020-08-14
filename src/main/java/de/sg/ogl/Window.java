@@ -13,7 +13,7 @@ import java.util.Objects;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-final class Window {
+public final class Window {
 
     private static final float FOV = (float) Math.toRadians(60.0f);
     private static final float Z_NEAR = 0.01f;
@@ -56,6 +56,10 @@ final class Window {
 
     public String getTitle() {
         return title;
+    }
+
+    public long getWindowHandle() {
+        return windowHandle;
     }
 
     public Matrix4f getProjectionMatrix() {
@@ -110,14 +114,6 @@ final class Window {
         glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> {
             this.width = width;
             this.height = height;
-        });
-
-        // todo
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop.
-            }
         });
 
         // Get the thread stack and push a new frame.

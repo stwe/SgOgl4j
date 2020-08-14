@@ -1,15 +1,18 @@
 package de.sg.sandbox;
 
 import de.sg.ogl.BaseApplication;
+import de.sg.ogl.Input;
 import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.Vao;
 import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.resource.Shader;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.COLOR;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL15.*;
 
 public class Sandbox extends BaseApplication {
@@ -46,7 +49,9 @@ public class Sandbox extends BaseApplication {
 
     @Override
     public void input() {
-
+        if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+            glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
+        }
     }
 
     @Override
