@@ -1,6 +1,6 @@
 package de.sg.ogl.buffer;
 
-import de.sg.ogl.SgOglException;
+import de.sg.ogl.SgOglRuntimeException;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL15.*;
@@ -14,7 +14,7 @@ public final class Vbo {
     static public int createVbo() {
         var id = glGenBuffers();
         if (id == 0) {
-            throw new SgOglException("Vbo creation has failed.");
+            throw new SgOglRuntimeException("Vbo creation has failed.");
         }
 
         LOGGER.debug("A new Vbo was created. The Id is {}.", id);

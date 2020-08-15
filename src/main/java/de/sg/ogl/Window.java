@@ -35,13 +35,12 @@ public final class Window {
     public Window(String title, int width, int height, boolean vSync) {
         LOGGER.debug("Creates Window object.");
 
-        this.title = Objects.requireNonNull(title, "Title cannot be null.");
-
+        this.title = Objects.requireNonNull(title, "application must not be null");
         this.width = width;
         this.height = height;
 
         if (width <= 0 || height <= 0) {
-            throw new SgOglException("Invalid width or height of the window.");
+            throw new SgOglRuntimeException("Invalid width or height of the window.");
         }
 
         this.vSync = vSync;
@@ -91,7 +90,7 @@ public final class Window {
         // Initialize GLFW.
         LOGGER.debug("Configuring GLFW.");
         if (!glfwInit()) {
-            throw new SgOglException("Unable to initialize GLFW.");
+            throw new SgOglRuntimeException("Unable to initialize GLFW.");
         }
 
         // Configure GLFW.
@@ -107,7 +106,7 @@ public final class Window {
         LOGGER.debug("Initializing a {}x{} window.", width, height);
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (windowHandle == NULL) {
-            throw new SgOglException("Failed to create the GLFW window.");
+            throw new SgOglRuntimeException("Failed to create the GLFW window.");
         }
 
         // Setup resize callback.
@@ -180,11 +179,13 @@ public final class Window {
     public void cleanUp() {
         LOGGER.debug("Clean up Window.");
 
-        // Free the window callbacks and destroy the window.
+        // Frees callbacks associated with the window.
         glfwFreeCallbacks(windowHandle);
+
+        // Destroy the window.
         glfwDestroyWindow(windowHandle);
 
-        // Terminate GLFW and free the error callback.
+        // Terminate GLFW.
         glfwTerminate();
 
         // Non-window callbacks must be reset and freed separately.

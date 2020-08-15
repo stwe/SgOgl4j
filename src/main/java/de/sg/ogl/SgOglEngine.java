@@ -2,6 +2,8 @@ package de.sg.ogl;
 
 import de.sg.ogl.resource.ResourceManager;
 
+import java.util.Objects;
+
 import static de.sg.ogl.Log.LOGGER;
 
 public class SgOglEngine implements Runnable {
@@ -20,10 +22,10 @@ public class SgOglEngine implements Runnable {
 
         this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
         this.input = new Input();
-        this.application = application;
+        this.application = Objects.requireNonNull(application, "application must not be null");
         this.resourceManager = new ResourceManager();
 
-        this.application.setEngine(this);
+        this.application.setEngineUnlessAlreadySet(this);
     }
 
     //-------------------------------------------------
@@ -143,8 +145,8 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Clean up SgOglEngine.");
 
         resourceManager.cleanUp();
+        Input.cleanUp();
         window.cleanUp();
-        input.cleanUp();
         application.cleanUp();
     }
 }

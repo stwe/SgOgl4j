@@ -1,6 +1,6 @@
 package de.sg.ogl.resource;
 
-import de.sg.ogl.SgOglException;
+import de.sg.ogl.SgOglRuntimeException;
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class Shader implements Resource {
     //-------------------------------------------------
 
     @Override
-    public void load() throws Exception {
+    public void load() throws FileNotFoundException {
         // creates an empty program
         id = createProgram();
 
@@ -198,7 +199,7 @@ public class Shader implements Resource {
     static private int createProgram() {
         var programId = glCreateProgram();
         if (programId == 0) {
-            throw new SgOglException("Shader program creation has failed.");
+            throw new SgOglRuntimeException("Shader program creation has failed.");
         }
 
         LOGGER.debug("A new Shader program was created. The Id is {}.", programId);
@@ -209,7 +210,7 @@ public class Shader implements Resource {
     static private int createShaderObject(int shaderType) {
         var shaderId = glCreateShader(shaderType);
         if (shaderId == 0) {
-            throw new SgOglException("Shader object creation has failed. The type is " + shaderType + ".");
+            throw new SgOglRuntimeException("Shader object creation has failed. The type is " + shaderType + ".");
         }
 
         return shaderId;
@@ -269,7 +270,7 @@ public class Shader implements Resource {
     static private void checkCompileStatus(int shaderId) {
         var status = glGetShaderi(shaderId, GL_COMPILE_STATUS);
         if (status == GL_FALSE) {
-            throw new SgOglException("Error while compiling Shader code. Log: " + glGetShaderInfoLog(shaderId, 1024));
+            throw new SgOglRuntimeException("Error while compiling Shader code. Log: " + glGetShaderInfoLog(shaderId, 1024));
         }
     }
 
@@ -278,7 +279,7 @@ public class Shader implements Resource {
         glLinkProgram(id);
         var status = glGetProgrami(id, GL_LINK_STATUS);
         if (status == GL_FALSE) {
-            throw new SgOglException("Error while linking Shader program. Log: " + glGetProgramInfoLog(id, 1024));
+            throw new SgOglRuntimeException("Error while linking Shader program. Log: " + glGetProgramInfoLog(id, 1024));
         }
 
         // always detach shaders after a successful link
@@ -371,7 +372,7 @@ public class Shader implements Resource {
         for (var uniform : foundUniforms) {
             var uniformId = glGetUniformLocation(id, uniform.name);
             if (uniformId < 0) {
-                throw new SgOglException("Invalid uniform name: " + uniform.name + ".");
+                throw new SgOglRuntimeException("Invalid uniform name: " + uniform.name + ".");
             }
 
             uniforms.put(uniform.name, uniformId);

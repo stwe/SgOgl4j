@@ -1,6 +1,6 @@
 package de.sg.ogl.resource;
 
-import de.sg.ogl.SgOglException;
+import de.sg.ogl.SgOglRuntimeException;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -77,7 +77,7 @@ public class Texture implements Resource {
     //-------------------------------------------------
 
     @Override
-    public void load() throws Exception {
+    public void load() {
         ByteBuffer buf;
 
         if (loadVerticalFlipped) {
@@ -91,7 +91,8 @@ public class Texture implements Resource {
 
             buf = stbi_load(url, x, y, channels, 0);
             if (buf == null) {
-                throw new SgOglException("Image file [" + url  + "] not loaded: " + stbi_failure_reason());
+                throw new SgOglRuntimeException("Failed to load texture file " + url
+                        + System.lineSeparator() + stbi_failure_reason());
             }
 
             width = x.get();
@@ -217,7 +218,7 @@ public class Texture implements Resource {
     static private int generateNewTextureHandle() {
         var textureId = glGenTextures();
         if (textureId == 0) {
-            throw new SgOglException("Texture name creation has failed.");
+            throw new SgOglRuntimeException("Texture name creation has failed.");
         }
 
         return textureId;

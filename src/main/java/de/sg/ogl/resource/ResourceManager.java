@@ -1,7 +1,6 @@
 package de.sg.ogl.resource;
 
-import de.sg.ogl.SgOglException;
-
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
@@ -21,7 +20,7 @@ public class ResourceManager {
     public ResourceManager() {
         LOGGER.debug("Creates ResourceManager object.");
 
-        resources = new HashMap<String, Resource>();
+        resources = new HashMap<>();
     }
 
     //-------------------------------------------------
@@ -36,26 +35,28 @@ public class ResourceManager {
     // Texture resources
     //-------------------------------------------------
 
-    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) {
-        return getResourceByPath(Objects.requireNonNull(path, "Path cannot be null."), Texture.class)
-                .orElseGet(() -> addTextureResource(path, loadVerticalFlipped));
+    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) throws FileNotFoundException {
+        var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Texture.class);
+
+        if (result.isPresent()) {
+            LOGGER.debug("The texture {} was already loaded.", path);
+            return result.get();
+        }
+
+        LOGGER.debug("The texture {} must be loaded.", path);
+
+        return addTextureResource(path, loadVerticalFlipped);
     }
 
-    public Texture loadTextureResource(String path) {
+    public Texture loadTextureResource(String path) throws FileNotFoundException {
         return loadTextureResource(path, false);
     }
 
-    private Texture addTextureResource(String path, boolean loadVerticalFlipped) {
-        LOGGER.debug("The texture {} must be loaded.", path);
+    private Texture addTextureResource(String path, boolean loadVerticalFlipped) throws FileNotFoundException {
+        var texture = new Texture(loadResource(path), loadVerticalFlipped);
+        texture.load();
 
-        var url = loadResource(path);
-        var texture = new Texture(url, loadVerticalFlipped);
-        try {
-            texture.load();
-            resources.put(path, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        resources.put(path, texture);
 
         return texture;
     }
@@ -64,21 +65,24 @@ public class ResourceManager {
     // Shader resources
     //-------------------------------------------------
 
-    public Shader loadShaderResource(String path) {
-        return getResourceByPath(Objects.requireNonNull(path, "Path cannot be null."), Shader.class)
-                .orElseGet(() -> addShaderResource(path));
-    }
+    public Shader loadShaderResource(String path) throws Exception {
+        var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Shader.class);
 
-    private Shader addShaderResource(String path) {
+        if (result.isPresent()) {
+            LOGGER.debug("The shader {} was already loaded.", path);
+            return result.get();
+        }
+
         LOGGER.debug("The shader {} must be loaded.", path);
 
+        return addShaderResource(path);
+    }
+
+    private Shader addShaderResource(String path) throws Exception {
         var shader = new Shader(path);
-        try {
-            shader.load();
-            resources.put(path, shader);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        shader.load();
+
+        resources.put(path, shader);
 
         return shader;
     }
@@ -88,35 +92,33 @@ public class ResourceManager {
     //-------------------------------------------------
 
     private <T> Optional<T> getResourceByPath(String path, Class<T> type) {
-        var result = Optional.ofNullable(type.cast(resources.get(path)));
-
-        if (result.isPresent()) {
-            LOGGER.debug("The resource {} already exists.", path);
-        }
-
-        return result;
+        return Optional.ofNullable(type.cast(resources.get(path)));
     }
 
-    static public String readFileIntoString(String path) throws Exception {
+    static public String readFileIntoString(String path) throws FileNotFoundException {
         String result;
 
-        try (var in = ResourceManager.class.getResourceAsStream(path);
-             Scanner scanner = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())) {
+        var in = ResourceManager.class.getResourceAsStream(path);
+        if (in == null) {
+            throw new FileNotFoundException("Resource " + path + " not found.");
+        }
+
+        try (Scanner scanner = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())) {
             result = scanner.useDelimiter("\\A").next();
         }
 
         return result;
     }
 
-    private String loadResource(String resource) {
+    private String loadResource(String resource) throws FileNotFoundException {
         return loadResourceByUrl(getClass().getResource(resource), resource);
     }
 
-    private String loadResourceByUrl(URL url, String resource) {
+    private String loadResourceByUrl(URL url, String resource) throws FileNotFoundException {
         if (url != null) {
             return url.getPath().replaceFirst("^/(.:/)", "$1");
         } else {
-            throw new SgOglException("Resource " + resource + " not found.");
+            throw new FileNotFoundException("Resource " + resource + " not found.");
         }
     }
 
@@ -125,12 +127,16 @@ public class ResourceManager {
     //-------------------------------------------------
 
     public void cleanUp() {
+        LOGGER.debug("Clean up Resources.");
+
         if (!resources.isEmpty()) {
             LOGGER.debug("Clean up {} resources.", resources.size());
 
             for (var resource : resources.entrySet()) {
                 resource.getValue().cleanUp();
             }
+        } else {
+            LOGGER.debug("There is nothing to clean up.");
         }
     }
 }

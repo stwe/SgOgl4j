@@ -1,6 +1,6 @@
 package de.sg.ogl.buffer;
 
-import de.sg.ogl.SgOglException;
+import de.sg.ogl.SgOglRuntimeException;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -181,7 +181,7 @@ public final class Vao {
     static private int createVao() {
         var id = glGenVertexArrays();
         if (id == 0) {
-            throw new SgOglException("Vao creation has failed.");
+            throw new SgOglRuntimeException("Vao creation has failed.");
         }
 
         LOGGER.debug("A new Vao was created. The Id is {}.", id);

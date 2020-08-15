@@ -1,5 +1,7 @@
 package de.sg.ogl;
 
+import java.util.Objects;
+
 import static de.sg.ogl.Log.LOGGER;
 
 public abstract class BaseApplication implements Application {
@@ -36,7 +38,11 @@ public abstract class BaseApplication implements Application {
     // Setter
     //-------------------------------------------------
 
-    public void setEngine(SgOglEngine engine) {
-        this.engine = engine;
+    public void setEngineUnlessAlreadySet(SgOglEngine engine) {
+        this.engine = this.engine == null ? Objects.requireNonNull(engine, "engine must not be null") : throw_();
+    }
+
+    private SgOglEngine throw_() {
+        throw new SgOglRuntimeException("Engine is already set.");
     }
 }
