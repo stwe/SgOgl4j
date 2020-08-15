@@ -36,6 +36,10 @@ public class SgOglEngine implements Runnable {
         return window;
     }
 
+    public Input getInput() {
+        return input;
+    }
+
     public ResourceManager getResourceManager() {
         return resourceManager;
     }
@@ -68,7 +72,7 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Initializing SgOglEngine.");
 
         window.init();
-        input.init(window.getWindowHandle());
+        Input.init(window.getWindowHandle());
         OpenGL.init();
         application.init();
     }
