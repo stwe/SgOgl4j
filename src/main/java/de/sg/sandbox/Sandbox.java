@@ -64,6 +64,10 @@ public class Sandbox extends BaseApplication {
         if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
+
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+            System.out.println("Linke Maustaste");
+        }
     }
 
     @Override
