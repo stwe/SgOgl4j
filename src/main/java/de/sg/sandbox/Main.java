@@ -3,8 +3,15 @@ package de.sg.sandbox;
 import de.sg.ogl.SgOglEngine;
 
 public class Main {
+
     public static void main(String[] args) {
-        var sandbox = new Sandbox();
+        Sandbox sandbox = null;
+        try {
+            sandbox = new Sandbox();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         var engine = new SgOglEngine(sandbox);
         engine.run();
     }

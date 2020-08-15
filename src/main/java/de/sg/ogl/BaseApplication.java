@@ -1,5 +1,6 @@
 package de.sg.ogl;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import static de.sg.ogl.Log.LOGGER;
@@ -12,7 +13,7 @@ public abstract class BaseApplication implements Application {
     // Ctors.
     //-------------------------------------------------
 
-    public BaseApplication() {
+    public BaseApplication() throws IOException, IllegalAccessException {
         LOGGER.debug("Creates Application object and load config.");
 
         ConfigLoader.load(Config.class, "/config.properties");

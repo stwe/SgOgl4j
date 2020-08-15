@@ -8,6 +8,7 @@ import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.resource.Shader;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.COLOR;
@@ -20,18 +21,29 @@ public class Sandbox extends BaseApplication {
     private Vao vao;
     private Shader shader;
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public Sandbox() throws IOException, IllegalAccessException {
+    }
+
+    //-------------------------------------------------
+    // Override
+    //-------------------------------------------------
+
     @Override
     public void init() throws Exception {
         shader = getEngine().getResourceManager().loadShaderResource("simple");
 
-        float[] vertices = new float[]{
+        float[] vertices = new float[] {
                 -0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.0f,
                 -0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.5f,
                 0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.5f,
         };
 
-        int[] indices = new int[]{
+        int[] indices = new int[] {
                 0, 1, 3, 3, 1, 2,
         };
 
