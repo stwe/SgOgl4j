@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL20;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.GL_FIRST_VERTEX_CONVENTION;
 import static org.lwjgl.opengl.GL32.glProvokingVertex;
 
@@ -27,6 +28,7 @@ public final class OpenGL {
         GL.createCapabilities();
         printContextInitInfo();
         enableDepthAndStencilTesting();
+        glEnable(GL_MULTISAMPLE); // enabled by default on some drivers, but not all so always enable to make sure
     }
 
     //-------------------------------------------------

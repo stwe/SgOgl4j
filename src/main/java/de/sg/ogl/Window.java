@@ -25,8 +25,8 @@ public final class Window {
     private long windowHandle;
     private final boolean vSync;
 
-    private Matrix4f projectionMatrix;
-    private Matrix4f orthographicProjectionMatrix;
+    private final Matrix4f projectionMatrix;
+    private final Matrix4f orthographicProjectionMatrix;
 
     //-------------------------------------------------
     // Ctors.
@@ -101,6 +101,7 @@ public final class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_SAMPLES, 4);
 
         // Create the window.
         LOGGER.debug("Initializing a {}x{} window.", width, height);
