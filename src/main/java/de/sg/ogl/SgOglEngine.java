@@ -85,8 +85,8 @@ public class SgOglEngine implements Runnable {
         application.input();
     }
 
-    private void update() {
-        application.update();
+    private void update(float dt) {
+        application.update(dt);
     }
 
     private void render() {
@@ -109,7 +109,8 @@ public class SgOglEngine implements Runnable {
     private void renderingLoop() {
         var lastTime = System.nanoTime();
         var timer = System.currentTimeMillis();
-        final var frameTime = 1000000000.0 / 60.0;
+        final var frameTime = 1000000000.0 / Config.FPS;
+        final var frameTimeS = 1.0f / (float)Config.FPS;
         var dt = 0.0;
         var fps = 0;
         var updates = 0;
@@ -122,7 +123,7 @@ public class SgOglEngine implements Runnable {
             input();
 
             while (dt >= 1.0) {
-                update();
+                update(frameTimeS);
                 updates++;
                 dt--;
             }

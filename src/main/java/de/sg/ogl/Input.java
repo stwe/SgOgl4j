@@ -87,7 +87,7 @@ public class Input {
         return displVec;
     }
 
-//-------------------------------------------------
+    //-------------------------------------------------
     // Init
     //-------------------------------------------------
 
@@ -146,7 +146,7 @@ public class Input {
     // Logic
     //-------------------------------------------------
 
-    public void update() {
+    public void update(float dt) {
         resetKeyboard();
         resetMouse();
         updateMouse();

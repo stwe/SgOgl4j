@@ -108,29 +108,29 @@ public class FirstPersonCamera {
         processMouse();
     }
 
-    public void update() {
+    public void update(float dt) {
         if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
-            processKeyboard(Direction.FORWARD);
+            processKeyboard(Direction.FORWARD, dt);
         }
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
-            processKeyboard(Direction.BACKWARD);
+            processKeyboard(Direction.BACKWARD, dt);
         }
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
-            processKeyboard(Direction.LEFT);
+            processKeyboard(Direction.LEFT, dt);
         }
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
-            processKeyboard(Direction.RIGHT);
+            processKeyboard(Direction.RIGHT, dt);
         }
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_O)) {
-            processKeyboard(Direction.UP);
+            processKeyboard(Direction.UP, dt);
         }
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_U)) {
-            processKeyboard(Direction.DOWN);
+            processKeyboard(Direction.DOWN, dt);
         }
 
         updateFront();
@@ -147,8 +147,8 @@ public class FirstPersonCamera {
     // Helper
     //-------------------------------------------------
 
-    private void processKeyboard(Direction direction) {
-        var velocity = cameraVelocity * 0.16f; // todo
+    private void processKeyboard(Direction direction, float dt) {
+        var velocity = cameraVelocity * dt;
 
         if (direction == Direction.FORWARD)
         {

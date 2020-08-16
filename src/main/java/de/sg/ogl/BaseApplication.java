@@ -25,6 +25,7 @@ public abstract class BaseApplication implements Application {
         LOGGER.debug("Fov: {}", Config.FOV);
         LOGGER.debug("Near: {}", Config.NEAR);
         LOGGER.debug("Far: {}", Config.FAR);
+        LOGGER.debug("FPS: {}", Config.FPS);
     }
 
     //-------------------------------------------------

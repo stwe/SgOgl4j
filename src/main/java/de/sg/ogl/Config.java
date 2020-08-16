@@ -9,4 +9,6 @@ public class Config {
     public static float FOV;
     public static float NEAR;
     public static float FAR;
+
+    public static double FPS;
 }

@@ -57,6 +57,10 @@ public class ConfigLoader {
             return Float.parseFloat(value);
         }
 
+        if (type == double.class) {
+            return Double.parseDouble(value);
+        }
+
         throw new SgOglRuntimeException("Unknown configuration value type: " + type.getName());
     }
 }

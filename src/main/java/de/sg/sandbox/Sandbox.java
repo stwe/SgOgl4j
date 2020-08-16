@@ -82,9 +82,9 @@ public class Sandbox extends BaseApplication {
     }
 
     @Override
-    public void update() {
-        getEngine().getInput().update();
-        camera.update();
+    public void update(float dt) {
+        getEngine().getInput().update(dt);
+        camera.update(dt);
     }
 
     @Override
