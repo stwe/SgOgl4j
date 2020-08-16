@@ -1,5 +1,6 @@
 package de.sg.ogl;
 
+import org.joml.Vector2d;
 import org.lwjgl.glfw.*;
 
 import java.util.Arrays;
@@ -13,11 +14,17 @@ public class Input {
     private static final boolean[] KEYS = new boolean[GLFW.GLFW_KEY_LAST];
     private static final int[] KEY_STATES = new int[GLFW.GLFW_KEY_LAST];
 
-    private static boolean[] BUTTONS = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
-    private static int[] MOUSE_BUTTON_STATES = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
+    private static final boolean[] BUTTONS = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
+    private static final int[] MOUSE_BUTTON_STATES = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
 
-    private static double mouseX, mouseY;
+    private static double currentMouseX = 0.0;
+    private static double currentMouseY = 0.0;
+    private static double previousMouseX = -1.0;
+    private static double previousMouseY = -1.0;
     private static double scrollX, scrollY;
+
+    private static final Vector2d displVec = new Vector2d(0.0, 0.0);
+    private static boolean inWindow = false;
 
     //-------------------------------------------------
     // Ctors.
@@ -60,12 +67,12 @@ public class Input {
         return MOUSE_BUTTON_STATES[button] == GLFW_RELEASE;
     }
 
-    public static double getMouseX() {
-        return mouseX;
+    public static double getCurrentMouseX() {
+        return currentMouseX;
     }
 
-    public static double getMouseY() {
-        return mouseY;
+    public static double getCurrentMouseY() {
+        return currentMouseY;
     }
 
     public static double getScrollX() {
@@ -76,7 +83,11 @@ public class Input {
         return scrollY;
     }
 
-    //-------------------------------------------------
+    public static Vector2d getDisplVec() {
+        return displVec;
+    }
+
+//-------------------------------------------------
     // Init
     //-------------------------------------------------
 
@@ -96,8 +107,8 @@ public class Input {
         var mouseMove = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                mouseX = xpos;
-                mouseY = ypos;
+                currentMouseX = xpos;
+                currentMouseY = ypos;
             }
         };
 
@@ -117,10 +128,18 @@ public class Input {
             }
         };
 
+        var cursorEnter = new GLFWCursorEnterCallback() {
+            @Override
+            public void invoke(long window, boolean entered) {
+                inWindow = entered;
+            }
+        };
+
         GLFW.glfwSetKeyCallback(windowHandle, keyboard);
         GLFW.glfwSetCursorPosCallback(windowHandle, mouseMove);
         GLFW.glfwSetMouseButtonCallback(windowHandle, mouseButtons);
         GLFW.glfwSetScrollCallback(windowHandle, mouseScroll);
+        GLFW.glfwSetCursorEnterCallback(windowHandle, cursorEnter);
     }
 
     //-------------------------------------------------
@@ -130,6 +149,7 @@ public class Input {
     public void update() {
         resetKeyboard();
         resetMouse();
+        updateMouse();
     }
 
     //-------------------------------------------------
@@ -142,6 +162,19 @@ public class Input {
 
     private static void resetMouse() {
         Arrays.fill(MOUSE_BUTTON_STATES, -1);
+    }
+
+    private static void updateMouse() {
+        displVec.x = 0.0;
+        displVec.y = 0.0;
+
+        if (previousMouseX > 0.0 && previousMouseY > 0.0 && inWindow) {
+            displVec.x = currentMouseX - previousMouseX;
+            displVec.y = currentMouseY - previousMouseY;
+        }
+
+        previousMouseX = currentMouseX;
+        previousMouseY = currentMouseY;
     }
 
     //-------------------------------------------------

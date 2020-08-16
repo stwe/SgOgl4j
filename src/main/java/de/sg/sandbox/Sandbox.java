@@ -5,7 +5,10 @@ import de.sg.ogl.Input;
 import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.Vao;
 import de.sg.ogl.buffer.VertexAttribute;
+import de.sg.ogl.camera.FirstPersonCamera;
+import de.sg.ogl.math.Transform;
 import de.sg.ogl.resource.Shader;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -20,6 +23,8 @@ public class Sandbox extends BaseApplication {
 
     private Vao vao;
     private Shader shader;
+    private FirstPersonCamera camera;
+    private Transform transform;
 
     //-------------------------------------------------
     // Ctors.
@@ -57,50 +62,38 @@ public class Sandbox extends BaseApplication {
         vao = new Vao();
         vao.addVerticesVbo(vertices, 3, bufferLayout);
         vao.addIndicesEbo(indices);
+
+        camera = new FirstPersonCamera();
+        camera.setPosition(new Vector3f(0.0f, 0.0f, -2.0f));
+
+        transform = new Transform();
+        transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
+        transform.setRotation(new Vector3f(0.0f, 0.0f, 0.0f));
+        transform.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
     }
 
     @Override
     public void input() {
-        // close app
         if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
 
-        // test keyboard
-        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
-            System.out.println("isKeyDown Taste D");
-        }
-
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            System.out.println("isKeyPressed Taste P");
-        }
-
-        if (Input.isKeyReleased(GLFW.GLFW_KEY_R)) {
-            System.out.println("isKeyReleased Taste R");
-        }
-
-        // test mouse
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-            System.out.println("isButtonDown linke Maustaste");
-        }
-
-        if (Input.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
-            System.out.println("isMouseButtonPressed mittlere Maustaste");
-        }
-
-        if (Input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
-            System.out.println("isMouseButtonReleased rechte Maustaste");
-        }
+        camera.input();
     }
 
     @Override
     public void update() {
         getEngine().getInput().update();
+        camera.update();
     }
 
     @Override
     public void render() {
         shader.bind();
+
+        shader.setUniform("p", getEngine().getWindow().getProjectionMatrix());
+        shader.setUniform("v", camera.getViewMatrix());
+        shader.setUniform("m", transform.getModelMatrix());
 
         vao.bind();
         vao.drawPrimitives(GL_TRIANGLES);
