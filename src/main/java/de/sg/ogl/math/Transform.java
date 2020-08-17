@@ -4,9 +4,14 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public final class Transform {
+
     private Vector3f position;
     private Vector3f rotation;
     private Vector3f scale;
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
 
     public Vector3f getPosition() {
         return position;
@@ -20,18 +25,6 @@ public final class Transform {
         return scale;
     }
 
-    public void setPosition(Vector3f position) {
-        this.position = position;
-    }
-
-    public void setRotation(Vector3f rotation) {
-        this.rotation = rotation;
-    }
-
-    public void setScale(Vector3f scale) {
-        this.scale = scale;
-    }
-
     public Matrix4f getModelMatrix() {
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix
@@ -43,5 +36,21 @@ public final class Transform {
                 .scale(scale);
 
         return modelMatrix;
+    }
+
+    //-------------------------------------------------
+    // Setter
+    //-------------------------------------------------
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setScale(Vector3f scale) {
+        this.scale = scale;
     }
 }
