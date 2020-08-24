@@ -170,7 +170,16 @@ public final class Window {
     }
 
     public void updateOrthographicProjectionMatrix() {
-        orthographicProjectionMatrix.setOrtho(0.0f, width, 0.0f, height, Z_NEAR, Z_FAR);
+        /*
+        ---------------
+        | 0, 0        |
+        |             |
+        |             |
+        |        w, h |
+        ---------------
+        */
+
+        orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     }
 
     //-------------------------------------------------
