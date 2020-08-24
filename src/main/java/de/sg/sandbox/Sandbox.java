@@ -2,29 +2,25 @@ package de.sg.sandbox;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
-import de.sg.ogl.buffer.BufferLayout;
-import de.sg.ogl.buffer.VertexAttribute;
-import de.sg.ogl.camera.FirstPersonCamera;
-import de.sg.ogl.math.Transform;
-import de.sg.ogl.resource.Mesh;
-import de.sg.ogl.resource.Shader;
 import de.sg.ogl.resource.Texture;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class Sandbox extends BaseApplication {
 
-    private Mesh mesh;
-    private Texture texture;
-    private Shader shader;
-    private FirstPersonCamera camera;
-    private Transform transform;
+    private static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
+    private static final float PLAYER_VELOCITY = 500.0f;
+
+    private SpriteRenderer spriteRenderer;
+    private Texture background;
+    private Texture paddle;
+    private Level level;
+    private GameObject player;
 
     //-------------------------------------------------
     // Ctors.
@@ -39,44 +35,20 @@ public class Sandbox extends BaseApplication {
 
     @Override
     public void init() throws Exception {
-        shader = getEngine().getResourceManager().loadShaderResource("simple");
+        spriteRenderer = new SpriteRenderer(getEngine());
+        spriteRenderer.init();
 
-        float[] vertices = new float[] {
-                 // positions         // colors           // texture coords
-                 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-                 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-                -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-                -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
-        };
+        background = getEngine().getResourceManager().loadTextureResource("/texture/background.jpg");
+        paddle = getEngine().getResourceManager().loadTextureResource("/texture/paddle.png");
 
-        int[] indices = new int[] {
-                0, 1, 3, // first triangle
-                1, 2, 3  // second triangle
-        };
+        level = new Level("/level/level.lvl", getEngine());
 
-        BufferLayout bufferLayout = new BufferLayout(
-                new ArrayList<>(){{
-                    add(new VertexAttribute(POSITION, "aPosition"));
-                    add(new VertexAttribute(COLOR, "aColor"));
-                    add(new VertexAttribute(UV, "aUv"));
-                }}
+        var playerPosition = new Vector2f(
+                getEngine().getWindow().getWidth() / 2.0f - PLAYER_SIZE.x / 2.0f,
+                getEngine().getWindow().getHeight() - PLAYER_SIZE.y
         );
 
-        texture = getEngine().getResourceManager().loadTextureResource("/texture/Grass.jpg");
-
-        mesh = new Mesh();
-        mesh.getVao().addVerticesVbo(vertices, 6, bufferLayout);
-        mesh.getVao().addIndicesEbo(indices);
-
-        // todo mesh set material
-
-        camera = new FirstPersonCamera();
-        camera.setPosition(new Vector3f(0.0f, 0.0f, -2.0f));
-
-        transform = new Transform();
-        transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
-        transform.setRotation(new Vector3f(0.0f, 0.0f, 0.0f));
-        transform.setScale(new Vector3f(1.0f, 1.0f, 1.0f));
+        player = new GameObject(playerPosition, PLAYER_SIZE, paddle, new Vector3f(1.0f));
     }
 
     @Override
@@ -85,36 +57,48 @@ public class Sandbox extends BaseApplication {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
 
-        camera.input();
+        spriteRenderer.input();
     }
 
     @Override
     public void update(float dt) {
-        getEngine().getInput().update(dt);
-        camera.update(dt);
+        var velocity = PLAYER_VELOCITY * dt;
+
+        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+            if (player.getPosition().x >= 0.0f) {
+                player.getPosition().x -= velocity;
+            }
+        }
+
+        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+            if (player.getPosition().x <= getEngine().getWindow().getWidth() - player.getSize().x) {
+                player.getPosition().x += velocity;
+            }
+        }
+
+        spriteRenderer.update(dt);
     }
 
     @Override
     public void render() {
-        shader.bind();
+        spriteRenderer.prepareRendering();
 
-        Texture.bindForReading(texture.getId(), 0);
+        spriteRenderer.render(
+                background,
+                new Vector2f(0.0f),
+                new Vector2f(getEngine().getWindow().getWidth(), getEngine().getWindow().getHeight()),
+                0.0f,
+                new Vector3f(1.0f)
+        );
 
-        shader.setUniform("p", getEngine().getWindow().getProjectionMatrix());
-        shader.setUniform("v", camera.getViewMatrix());
-        shader.setUniform("m", transform.getModelMatrix());
-        shader.setUniform("hasDiffuseMap", true);
-        shader.setUniform("diffuseMap", 0);
+        level.render(spriteRenderer);
+        player.render(spriteRenderer);
 
-        mesh.initDraw();
-        mesh.drawPrimitives();
-        mesh.endDraw();
-
-        Shader.unbind();
+        spriteRenderer.finishRendering();
     }
 
     @Override
     public void cleanUp() {
-        mesh.cleanUp();
+        spriteRenderer.cleanUp();
     }
 }

@@ -73,7 +73,7 @@ public class SgOglEngine implements Runnable {
 
         window.init();
         Input.init(window.getWindowHandle());
-        OpenGL.init();
+        OpenGL.init(Config.ENABLE_DEPTH_AND_STENCIL_TESTING);
         application.init();
     }
 

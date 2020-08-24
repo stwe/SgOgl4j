@@ -57,6 +57,14 @@ public final class Window {
         return title;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public long getWindowHandle() {
         return windowHandle;
     }

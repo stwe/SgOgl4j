@@ -11,4 +11,6 @@ public class Config {
     public static float FAR;
 
     public static double FPS;
+
+    public static boolean ENABLE_DEPTH_AND_STENCIL_TESTING;
 }
