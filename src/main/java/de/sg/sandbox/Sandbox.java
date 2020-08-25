@@ -16,11 +16,16 @@ public class Sandbox extends BaseApplication {
     private static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
     private static final float PLAYER_VELOCITY = 500.0f;
 
+    private static final Vector2f INITIAL_BALL_VELOCITY = new Vector2f(100.0f, -350.0f);
+    private static final float BALL_RADIUS = 12.5f;
+
     private SpriteRenderer spriteRenderer;
-    private Texture background;
-    private Texture paddle;
+    private Texture backgroundTexture;
+    private Texture paddleTexture;
+    private Texture ballTexture;
     private Level level;
     private GameObject player;
+    private Ball ball;
 
     //-------------------------------------------------
     // Ctors.
@@ -38,8 +43,9 @@ public class Sandbox extends BaseApplication {
         spriteRenderer = new SpriteRenderer(getEngine());
         spriteRenderer.init();
 
-        background = getEngine().getResourceManager().loadTextureResource("/texture/background.jpg");
-        paddle = getEngine().getResourceManager().loadTextureResource("/texture/paddle.png");
+        backgroundTexture = getEngine().getResourceManager().loadTextureResource("/texture/background.jpg");
+        paddleTexture = getEngine().getResourceManager().loadTextureResource("/texture/paddle.png");
+        ballTexture = getEngine().getResourceManager().loadTextureResource("/texture/awesomeface.png");
 
         level = new Level("/level/level.lvl", getEngine());
 
@@ -48,7 +54,11 @@ public class Sandbox extends BaseApplication {
                 getEngine().getWindow().getHeight() - PLAYER_SIZE.y
         );
 
-        player = new GameObject(playerPosition, PLAYER_SIZE, paddle, new Vector3f(1.0f));
+        player = new GameObject(playerPosition, PLAYER_SIZE, paddleTexture);
+
+        var ballPosition = new Vector2f(playerPosition).add(new Vector2f(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f));
+
+        ball = new Ball(ballPosition, BALL_RADIUS, INITIAL_BALL_VELOCITY, ballTexture);
     }
 
     @Override
@@ -64,17 +74,30 @@ public class Sandbox extends BaseApplication {
     public void update(float dt) {
         var velocity = PLAYER_VELOCITY * dt;
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
             if (player.getPosition().x >= 0.0f) {
                 player.getPosition().x -= velocity;
+                if (ball.isStuck()) {
+                    ball.getPosition().x -= velocity;
+                }
             }
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+        if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
             if (player.getPosition().x <= getEngine().getWindow().getWidth() - player.getSize().x) {
                 player.getPosition().x += velocity;
+                if (ball.isStuck()) {
+                    ball.getPosition().x += velocity;
+                }
             }
         }
+
+        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+            ball.setStuck(false);
+        }
+
+        ball.update(dt, getEngine().getWindow().getWidth());
+        doCollisions();
 
         spriteRenderer.update(dt);
     }
@@ -84,7 +107,7 @@ public class Sandbox extends BaseApplication {
         spriteRenderer.prepareRendering();
 
         spriteRenderer.render(
-                background,
+                backgroundTexture,
                 new Vector2f(0.0f),
                 new Vector2f(getEngine().getWindow().getWidth(), getEngine().getWindow().getHeight()),
                 0.0f,
@@ -93,6 +116,7 @@ public class Sandbox extends BaseApplication {
 
         level.render(spriteRenderer);
         player.render(spriteRenderer);
+        ball.render(spriteRenderer);
 
         spriteRenderer.finishRendering();
     }
@@ -100,5 +124,32 @@ public class Sandbox extends BaseApplication {
     @Override
     public void cleanUp() {
         spriteRenderer.cleanUp();
+    }
+
+    //-------------------------------------------------
+    // Collisions
+    //-------------------------------------------------
+
+    private boolean checkCollision(GameObject brick, Ball ball) {
+        // collision x-axis?
+        boolean collisionX = brick.getPosition().x + brick.getSize().x >= ball.getPosition().x && ball.getPosition().x + ball.getSize().x >= brick.getPosition().x;
+
+        // collision y-axis?
+        boolean collisionY = brick.getPosition().y + brick.getSize().y >= ball.getPosition().y && ball.getPosition().y + ball.getSize().y >= brick.getPosition().y;
+
+        // collision only if on both axes
+        return collisionX && collisionY;
+    }
+
+    private void doCollisions() {
+        for (var brick : level.getBricks()) {
+            if (!brick.isDestroyed()) {
+                if (checkCollision(brick, ball)) {
+                    if (!brick.isSolid()) {
+                        brick.setDestroyed(true);
+                    }
+                }
+            }
+        }
     }
 }

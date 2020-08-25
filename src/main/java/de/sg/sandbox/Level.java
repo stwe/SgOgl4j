@@ -24,12 +24,22 @@ public class Level {
     }
 
     //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public ArrayList<GameObject> getBricks() {
+        return bricks;
+    }
+
+    //-------------------------------------------------
     // Logic
     //-------------------------------------------------
 
     public void render(SpriteRenderer renderer) {
         for (var brick : bricks) {
-            brick.render(renderer);
+            if (!brick.isDestroyed()) {
+                brick.render(renderer);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package de.sg.sandbox;
 
+import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.VertexAttribute;
@@ -97,13 +98,11 @@ public class SpriteRenderer {
     //-------------------------------------------------
 
     public void prepareRendering() {
-        // enable blending
-        // enable face culling
+        OpenGL.enableAlphaBlending();
     }
 
     public void finishRendering() {
-        // disable blending
-        // disable face culling
+        OpenGL.disableBlending();
     }
 
     //-------------------------------------------------
