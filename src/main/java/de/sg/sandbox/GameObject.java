@@ -1,10 +1,11 @@
 package de.sg.sandbox;
 
 import de.sg.ogl.resource.Texture;
+import de.sg.sandbox.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-public class GameObject {
+public class GameObject implements Entity {
 
     protected Vector2f position;
     protected Vector2f size;
@@ -16,6 +17,8 @@ public class GameObject {
     protected boolean destroyed = false;
     protected float rotation = 0.0f;
 
+    protected final Aabb aabb;
+
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
@@ -26,6 +29,8 @@ public class GameObject {
         this.texture = texture;
         this.color = color;
         this.velocity = velocity;
+
+        this.aabb = new Aabb(position, new Vector2f(position).add(size));
     }
 
     public GameObject(Vector2f position, Vector2f size, Texture texture, Vector3f color) {
@@ -37,10 +42,16 @@ public class GameObject {
     }
 
     //-------------------------------------------------
-    // Logic
+    // Implement Entity
     //-------------------------------------------------
 
-    public void render(SpriteRenderer renderer) {
+    @Override
+    public Vector2f update(float dt, int width) {
+        return null;
+    }
+
+    @Override
+    public void render(Renderer renderer) {
         renderer.render(texture, position, size, rotation, color);
     }
 
@@ -78,6 +89,10 @@ public class GameObject {
 
     public float getRotation() {
         return rotation;
+    }
+
+    public Aabb getAabb() {
+        return aabb;
     }
 
     //-------------------------------------------------

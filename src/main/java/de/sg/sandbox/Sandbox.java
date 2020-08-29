@@ -3,6 +3,7 @@ package de.sg.sandbox;
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.resource.Texture;
+import de.sg.sandbox.physics.Intersect;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -131,14 +132,7 @@ public class Sandbox extends BaseApplication {
     //-------------------------------------------------
 
     private boolean checkCollision(GameObject brick, Ball ball) {
-        // collision x-axis?
-        boolean collisionX = brick.getPosition().x + brick.getSize().x >= ball.getPosition().x && ball.getPosition().x + ball.getSize().x >= brick.getPosition().x;
-
-        // collision y-axis?
-        boolean collisionY = brick.getPosition().y + brick.getSize().y >= ball.getPosition().y && ball.getPosition().y + ball.getSize().y >= brick.getPosition().y;
-
-        // collision only if on both axes
-        return collisionX && collisionY;
+        return Intersect.circleIntersectsAabb(ball.getCircle(), brick.aabb);
     }
 
     private void doCollisions() {

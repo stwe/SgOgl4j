@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.*;
 
-public class SpriteRenderer {
+public class SpriteRenderer implements Renderer {
 
     private final SgOglEngine engine;
 
@@ -31,9 +31,10 @@ public class SpriteRenderer {
     }
 
     //-------------------------------------------------
-    // Init
+    // Implement Renderer
     //-------------------------------------------------
 
+    @Override
     public void init() throws Exception {
         float[] vertices = new float[] {
                 // pos      // tex
@@ -59,14 +60,13 @@ public class SpriteRenderer {
         shader = engine.getResourceManager().loadShaderResource("sprite");
     }
 
-    //-------------------------------------------------
-    // Logic
-    //-------------------------------------------------
-
+    @Override
     public void input() {}
 
+    @Override
     public void update(float dt) {}
 
+    @Override
     public void render(Texture texture, Vector2f position, Vector2f size, float rotate, Vector3f color) {
         shader.bind();
 
@@ -93,22 +93,17 @@ public class SpriteRenderer {
         Shader.unbind();
     }
 
-    //-------------------------------------------------
-    // OpenGL states
-    //-------------------------------------------------
-
+    @Override
     public void prepareRendering() {
         OpenGL.enableAlphaBlending();
     }
 
+    @Override
     public void finishRendering() {
         OpenGL.disableBlending();
     }
 
-    //-------------------------------------------------
-    // Clean up
-    //-------------------------------------------------
-
+    @Override
     public void cleanUp() {
         mesh.cleanUp();
     }

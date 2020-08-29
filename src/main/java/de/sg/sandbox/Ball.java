@@ -1,6 +1,7 @@
 package de.sg.sandbox;
 
 import de.sg.ogl.resource.Texture;
+import de.sg.sandbox.physics.Circle;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -8,6 +9,8 @@ public class Ball extends GameObject {
 
     private float radius;
     private boolean stuck;
+
+    private final Circle circle;
 
     //-------------------------------------------------
     // Ctors.
@@ -18,6 +21,8 @@ public class Ball extends GameObject {
 
         this.radius = radius;
         this.stuck = true;
+
+        this.circle = new Circle(position, radius);
     }
 
     //-------------------------------------------------
@@ -30,6 +35,10 @@ public class Ball extends GameObject {
 
     public boolean isStuck() {
         return stuck;
+    }
+
+    public Circle getCircle() {
+        return circle;
     }
 
     //-------------------------------------------------
@@ -45,7 +54,7 @@ public class Ball extends GameObject {
     }
 
     //-------------------------------------------------
-    // Logic
+    // Override
     //-------------------------------------------------
 
     public Vector2f update(float dt, int width) {
@@ -65,6 +74,11 @@ public class Ball extends GameObject {
                 position.y = 0.0f;
             }
         }
+
+        this.aabb.min = new Vector2f(position);
+        this.aabb.max = new Vector2f(position).add(size);
+
+        this.circle.center = new Vector2f(position).add(this.circle.radius, this.circle.radius);
 
         return position;
     }
