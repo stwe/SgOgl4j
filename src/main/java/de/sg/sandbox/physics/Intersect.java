@@ -16,15 +16,49 @@ public class Intersect {
         return true;
     }
 
-    public static boolean circleIntersectsAabb(Circle circle, Aabb aabb) {
+    public static Collision circleIntersectsAabb(Circle circle, Aabb aabb) {
         var closestPoint = closestPointOnAabb(circle.center, aabb);
 
-        //System.out.println("x: " + closestPoint.x + ", y: " + closestPoint.y);
-
         var v = new Vector2f(closestPoint).sub(circle.center);
+        var diff = new Vector2f(v);
         var dot = v.dot(v);
 
-        return dot <= circle.radius * circle.radius;
+        if (dot <= circle.radius * circle.radius) {
+            return new Collision(
+                    true,
+                    vectorDirection(diff),
+                    diff
+            );
+        }
+
+        return new Collision(
+                false,
+                Collision.Direction.UP,
+                new Vector2f(0.0f)
+        );
+    }
+
+    private static Collision.Direction vectorDirection(Vector2f target) {
+        Vector2f[] compass = new Vector2f[]{
+                new Vector2f(0.0f, 1.0f),
+                new Vector2f(1.0f, 0.0f),
+                new Vector2f(0.0f, -1.0f),
+                new Vector2f(1.0f, 0.0f)
+        };
+
+        var max = 0.0f;
+        var best = -1;
+
+        for (int i = 0; i < 4; i++) {
+            var normalTarget = new Vector2f(target).normalize();
+            var dot = new Vector2f(normalTarget).dot(compass[i]);
+            if (dot > max) {
+                max = dot;
+                best = i;
+            }
+        }
+
+        return Collision.Direction.fromInt(best);
     }
 
     public static Vector2f closestPointOnAabb(Vector2f givenPoint, Aabb aabb) {

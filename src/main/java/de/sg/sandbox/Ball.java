@@ -75,9 +75,6 @@ public class Ball extends GameObject {
             }
         }
 
-        this.aabb.min = new Vector2f(position);
-        this.aabb.max = new Vector2f(position).add(size);
-
         this.circle.center = new Vector2f(position).add(this.circle.radius, this.circle.radius);
 
         return position;

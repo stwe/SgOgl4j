@@ -47,6 +47,9 @@ public class GameObject implements Entity {
 
     @Override
     public Vector2f update(float dt, int width) {
+        this.aabb.min = new Vector2f(position);
+        this.aabb.max = new Vector2f(position).add(size);
+
         return null;
     }
 
