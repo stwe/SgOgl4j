@@ -43,7 +43,7 @@ public class Intersect {
                 new Vector2f(0.0f, 1.0f),
                 new Vector2f(1.0f, 0.0f),
                 new Vector2f(0.0f, -1.0f),
-                new Vector2f(1.0f, 0.0f)
+                new Vector2f(-1.0f, 0.0f)
         };
 
         var max = 0.0f;

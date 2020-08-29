@@ -20,7 +20,7 @@ public class Sandbox extends BaseApplication {
     private static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
     private static final float PLAYER_VELOCITY = 500.0f;
 
-    private static final Vector2f INITIAL_BALL_VELOCITY = new Vector2f(50.0f, -175.0f);
+    private static final Vector2f INITIAL_BALL_VELOCITY = new Vector2f(100.0f, -175.0f * 2.0f);
     private static final float BALL_RADIUS = 12.5f;
 
     private SpriteRenderer spriteRenderer;
@@ -142,15 +142,11 @@ public class Sandbox extends BaseApplication {
     // Collisions
     //-------------------------------------------------
 
-    private Collision checkCollision(GameObject brick, Ball ball) {
-        return Intersect.circleIntersectsAabb(ball.getCircle(), brick.aabb);
-    }
-
     private void doCollisions() {
         for (var brick : level.getBricks()) {
             if (!brick.isDestroyed()) {
 
-                var collision = checkCollision(brick, ball);
+                var collision = Intersect.circleIntersectsAabb(ball.getCircle(), brick.aabb);
 
                 if (collision.isCollision()) {
 
@@ -164,7 +160,7 @@ public class Sandbox extends BaseApplication {
                     if (direction == Collision.Direction.LEFT || direction == Collision.Direction.RIGHT) {
                         ball.velocity.x = -ball.velocity.x;
 
-                        var penetration = ball.getRadius() - abs(diff.x);
+                        var penetration = (ball.getRadius() - abs(diff.x)) * 4.0f;
 
                         if (direction == Collision.Direction.LEFT) {
                             ball.position.x += penetration;
@@ -174,7 +170,7 @@ public class Sandbox extends BaseApplication {
                     } else {
                         ball.velocity.y = -ball.velocity.y;
 
-                        var penetration = ball.getRadius() - abs(diff.y);
+                        var penetration = (ball.getRadius() - abs(diff.y)) * 4.0f;
 
                         if (direction == Collision.Direction.UP) {
                             ball.position.y -= penetration;
@@ -195,8 +191,7 @@ public class Sandbox extends BaseApplication {
                 var strength = 2.0f;
                 var oldVelocity = new Vector2f(ball.velocity);
                 ball.velocity.x = INITIAL_BALL_VELOCITY.x * percentage * strength;
-                ball.velocity = new Vector2f(ball.velocity).normalize();
-                ball.velocity = ball.velocity.mul(oldVelocity.length());
+                ball.velocity.normalize().mul(oldVelocity.length());
                 ball.velocity.y = -1 * abs(ball.velocity.y);
             }
         }
