@@ -9,6 +9,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.joml.Math.abs;
@@ -101,6 +102,15 @@ public class Sandbox extends BaseApplication {
         player.update(dt, getEngine().getWindow().getWidth());
         doCollisions();
 
+        if (ball.position.y >= getEngine().getWindow().getHeight()) {
+            try {
+                resetLevel();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            resetPlayer();
+        }
+
         spriteRenderer.update(dt);
     }
 
@@ -190,5 +200,25 @@ public class Sandbox extends BaseApplication {
                 ball.velocity.y = -1 * abs(ball.velocity.y);
             }
         }
+    }
+
+    //-------------------------------------------------
+    // Reset
+    //-------------------------------------------------
+
+    private void resetLevel() throws FileNotFoundException {
+        level = new Level("/level/level.lvl", getEngine());
+    }
+
+    private void resetPlayer() {
+        player.position = new Vector2f(
+                getEngine().getWindow().getWidth() / 2.0f - PLAYER_SIZE.x / 2.0f,
+                getEngine().getWindow().getHeight() - PLAYER_SIZE.y
+        );
+
+        ball.reset(
+                new Vector2f(player.position)
+                        .add(new Vector2f(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -(BALL_RADIUS * 2.0f))),
+                INITIAL_BALL_VELOCITY);
     }
 }
