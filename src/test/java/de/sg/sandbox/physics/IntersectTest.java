@@ -33,7 +33,7 @@ class IntersectTest {
 
         var res = Intersect.circleIntersectsAabb(circle, aabb);
 
-        assertThat(res, is(true));
+        assertThat(res.isCollision(), is(true));
     }
 
     @Test
