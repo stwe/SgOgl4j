@@ -124,7 +124,28 @@ public class PlayfieldRenderSystem {
                 mesh.drawPrimitives();
                 mesh.endDraw();
             } else if (manager.matchesSignature(e.id, "ballSig")) {
-                // todo
+                var colorTextureComp = manager.getComponent(e.id, ColorTextureComponent.class).get();
+                var transformComp = manager.getComponent(e.id, TransformComponent.class).get();
+
+                Texture.bindForReading(colorTextureComp.getTexture().getId(), 0);
+
+                Matrix4f modelMatrix = new Matrix4f();
+                modelMatrix
+                        .identity()
+                        .translate(new Vector3f(transformComp.getPosition(), 0.0f))
+                        .translate(new Vector3f(transformComp.getSize().x * 0.5f, transformComp.getSize().y * 0.5f, 0.0f))
+                        .rotateZ((float) Math.toRadians(transformComp.getRotation()))
+                        .translate(new Vector3f(transformComp.getSize().x * -0.5f, transformComp.getSize().y * -0.5f, 0.0f))
+                        .scale(new Vector3f(transformComp.getSize(), 1.0f));
+
+                shader.setUniform("model", modelMatrix);
+                shader.setUniform("projection", engine.getWindow().getOrthographicProjectionMatrix());
+                shader.setUniform("diffuseMap", 0);
+                shader.setUniform("color", colorTextureComp.getColor());
+
+                mesh.initDraw();
+                mesh.drawPrimitives();
+                mesh.endDraw();
             }
         }
 

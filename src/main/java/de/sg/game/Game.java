@@ -55,6 +55,7 @@ public class Game extends BaseApplication {
         componentTypes.add(TransformComponent.class);
         componentTypes.add(SolidComponent.class);
         componentTypes.add(BallComponent.class);
+        componentTypes.add(PlayerComponent.class);
 
         // brick signature
         Signature brickSig = new Signature(
@@ -64,11 +65,12 @@ public class Game extends BaseApplication {
                 TransformComponent.class     // position, size and rotation of a brick
         );
 
-        // paddle signature
+        // paddle (player) signature
         Signature paddleSig = new Signature(
                 ColorTextureComponent.class, // the color or texture of the paddle
                 TransformComponent.class,    // position, size and rotation of the paddle
-                PhysicsComponent.class       // the paddle has a velocity
+                PhysicsComponent.class,      // the paddle has a velocity
+                PlayerComponent.class        // only a Tag
         );
 
         // ball signature
@@ -147,6 +149,7 @@ public class Game extends BaseApplication {
         var colorTextureOpt= manager.addComponent(playerEntity, ColorTextureComponent.class);
         var transformOpt= manager.addComponent(playerEntity, TransformComponent.class);
         var physicsOpt = manager.addComponent(playerEntity, PhysicsComponent.class);
+        manager.addComponent(playerEntity, PlayerComponent.class);
 
         var colorTexture = colorTextureOpt.get();
         colorTexture.setColor(DEFAULT_COLOR);
