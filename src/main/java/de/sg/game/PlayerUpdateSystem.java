@@ -33,7 +33,7 @@ public class PlayerUpdateSystem {
                 var transformComp = manager.getComponent(e.id, TransformComponent.class).get();
                 var physicsComp = manager.getComponent(e.id, PhysicsComponent.class).get();
 
-                var velocity = physicsComp.getVelocity() * dt;
+                var velocity = physicsComp.getVelocity().x * dt;
 
                 if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
                     if (transformComp.getPosition().x >= 0.0f) {

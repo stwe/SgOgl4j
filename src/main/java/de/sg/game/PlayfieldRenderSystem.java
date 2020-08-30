@@ -123,6 +123,8 @@ public class PlayfieldRenderSystem {
                 mesh.initDraw();
                 mesh.drawPrimitives();
                 mesh.endDraw();
+            } else if (manager.matchesSignature(e.id, "ballSig")) {
+                // todo
             }
         }
 

@@ -1,8 +1,10 @@
 package de.sg.game;
 
+import org.joml.Vector2f;
+
 public class PhysicsComponent {
 
-    private float velocity = 0.0f;
+    private Vector2f velocity = new Vector2f(0.0f);
 
     //-------------------------------------------------
     // Ctors.
@@ -11,7 +13,7 @@ public class PhysicsComponent {
     public PhysicsComponent() {
     }
 
-    public PhysicsComponent(float velocity) {
+    public PhysicsComponent(Vector2f velocity) {
         this.velocity = velocity;
     }
 
@@ -19,7 +21,7 @@ public class PhysicsComponent {
     // Getter
     //-------------------------------------------------
 
-    public float getVelocity() {
+    public Vector2f getVelocity() {
         return velocity;
     }
 
@@ -27,7 +29,7 @@ public class PhysicsComponent {
     // Setter
     //-------------------------------------------------
 
-    public void setVelocity(float velocity) {
+    public void setVelocity(Vector2f velocity) {
         this.velocity = velocity;
     }
 }
