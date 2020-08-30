@@ -77,6 +77,10 @@ public class Manager {
         return size;
     }
 
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
     public void printState(boolean printEntities) {
         System.out.println("size (entity count): " + size);
         System.out.println("sizeNext: " + sizeNext);
