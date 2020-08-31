@@ -151,16 +151,16 @@ public class Game extends BaseApplication {
         var physicsOpt = manager.addComponent(playerEntity, PhysicsComponent.class);
         manager.addComponent(playerEntity, PlayerComponent.class);
 
-        var colorTexture = colorTextureOpt.get();
+        var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(DEFAULT_COLOR);
         colorTexture.setTexture(paddleTexture);
 
-        var transform = transformOpt.get();
+        var transform = transformOpt.orElseThrow();
         transform.setPosition(initialPlayerPosition);
         transform.setSize(PLAYER_SIZE);
         transform.setRotation(NO_ROTATION);
 
-        var physics = physicsOpt.get();
+        var physics = physicsOpt.orElseThrow();
         physics.setVelocity(new Vector2f(PLAYER_VELOCITY));
     }
 
@@ -176,19 +176,19 @@ public class Game extends BaseApplication {
         var physicsOpt = manager.addComponent(ballEntity, PhysicsComponent.class);
         var ballOpt = manager.addComponent(ballEntity, BallComponent.class);
 
-        var colorTexture = colorTextureOpt.get();
+        var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(DEFAULT_COLOR);
         colorTexture.setTexture(ballTexture);
 
-        var transform = transformOpt.get();
+        var transform = transformOpt.orElseThrow();
         transform.setPosition(initialBallPosition);
         transform.setSize(new Vector2f(BALL_RADIUS * 2.0f, BALL_RADIUS * 2.0f));
         transform.setRotation(NO_ROTATION);
 
-        var physics = physicsOpt.get();
+        var physics = physicsOpt.orElseThrow();
         physics.setVelocity(BALL_VELOCITY);
 
-        var ball = ballOpt.get();
+        var ball = ballOpt.orElseThrow();
         ball.setRadius(BALL_RADIUS);
         ball.setStuck(true);
     }
