@@ -24,27 +24,23 @@ public class PlayerUpdateSystem {
     //-------------------------------------------------
 
     public void update(float dt) {
-        var entities = manager.getEntities();
+        var paddleEntities = manager.getEntities("paddleSig");
 
-        for (int i = 0; i < manager.getEntityCount(); i++) {
-            var e = entities.get(i);
+        for (var e : paddleEntities) {
+            var transformComp = manager.getComponent(e.id, TransformComponent.class).orElseThrow();
+            var physicsComp = manager.getComponent(e.id, PhysicsComponent.class).orElseThrow();
 
-            if (manager.matchesSignature(e.id, "paddleSig")) {
-                var transformComp = manager.getComponent(e.id, TransformComponent.class).get();
-                var physicsComp = manager.getComponent(e.id, PhysicsComponent.class).get();
+            var velocity = physicsComp.getVelocity().x * dt;
 
-                var velocity = physicsComp.getVelocity().x * dt;
-
-                if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
-                    if (transformComp.getPosition().x >= 0.0f) {
-                        transformComp.getPosition().x -= velocity;
-                    }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
+                if (transformComp.getPosition().x >= 0.0f) {
+                    transformComp.getPosition().x -= velocity;
                 }
+            }
 
-                if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
-                    if (transformComp.getPosition().x <= engine.getWindow().getWidth() - transformComp.getSize().x) {
-                        transformComp.getPosition().x += velocity;
-                    }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
+                if (transformComp.getPosition().x <= engine.getWindow().getWidth() - transformComp.getSize().x) {
+                    transformComp.getPosition().x += velocity;
                 }
             }
         }

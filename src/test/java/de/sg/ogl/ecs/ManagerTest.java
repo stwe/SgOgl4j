@@ -250,6 +250,42 @@ class ManagerTest {
     }
 
     @Test
+    void getEntities() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            var e = manager.createEntity();
+
+            manager.addComponent(e, HealthComponent.class);
+            manager.addComponent(e, MeshComponent.class);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            var e = manager.createEntity();
+
+            manager.addComponent(e, HealthComponent.class);
+            manager.addComponent(e, InputComponent.class);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            var e = manager.createEntity();
+
+            manager.addComponent(e, MeshComponent.class);
+        }
+
+        manager.update();
+
+        var entitiesMeshComp = manager.getEntities(MeshComponent.class);
+        var entitiesInputComp = manager.getEntities(InputComponent.class);
+        assertThat(entitiesMeshComp.size(), is(20));
+        assertThat(entitiesInputComp.size(), is(10));
+
+        var entitiesMeshVelSig = manager.getEntities("meshVelocitySignature");
+        assertThat(entitiesMeshVelSig.size(), is(0));
+
+        var entitiesHealthInSig = manager.getEntities("healthInputSignature");
+        assertThat(entitiesHealthInSig.size(), is(10));
+    }
+
+    @Test
     void matchesSignature() throws Exception {
         // create entity
         var e0 = manager.createEntity();

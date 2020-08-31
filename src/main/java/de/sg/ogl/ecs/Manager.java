@@ -1,9 +1,8 @@
 package de.sg.ogl.ecs;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+
+import static de.sg.ogl.Log.LOGGER;
 
 public class Manager {
 
@@ -18,24 +17,18 @@ public class Manager {
     private int size = 0;
     private int sizeNext = 0;
 
-    //private boolean needsAnUpdate = false; // todo
+    private boolean needsAnUpdate = false;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
     public Manager(Settings settings) throws Exception {
-        this.settings = settings;
+        LOGGER.debug("Creates ECS Manager object.");
+
+        this.settings = Objects.requireNonNull(settings, "settings must not be null");
 
         growTo(DEFAULT_ENTITY_CAPACITY);
-    }
-
-    //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
-
-    public Settings getSettings() {
-        return settings;
     }
 
     //-------------------------------------------------
@@ -51,6 +44,8 @@ public class Manager {
         entity.alive = true;
         entity.bitSet.clear();
 
+        needsAnUpdate = true;
+
         return freeIndex;
     }
 
@@ -61,6 +56,7 @@ public class Manager {
     public void killEntity(int entityId) {
         getEntity(entityId).alive = false;
         getEntity(entityId).bitSet.clear();
+        needsAnUpdate = true;
     }
 
     public void update() {
@@ -70,21 +66,21 @@ public class Manager {
             return;
         }
 
-        size = sizeNext = arrangeAliveEntitiesToLeft();
+        if (needsAnUpdate) {
+            size = sizeNext = arrangeAliveEntitiesToLeft();
+            needsAnUpdate = false;
+        }
     }
 
     public int getEntityCount() {
         return size;
     }
 
-    public ArrayList<Entity> getEntities() {
-        return entities;
-    }
-
     public void printState(boolean printEntities) {
         System.out.println("size (entity count): " + size);
         System.out.println("sizeNext: " + sizeNext);
         System.out.println("capacity: " + capacity);
+        System.out.println("needs an update: " + needsAnUpdate);
 
         if (printEntities) {
             for (var i = 0; i < sizeNext; i++) {
@@ -96,7 +92,7 @@ public class Manager {
             }
         }
 
-        System.out.println("");
+        System.out.println();
     }
 
     private int arrangeAliveEntitiesToLeft() {
@@ -202,8 +198,32 @@ public class Manager {
     }
 
     //-------------------------------------------------
-    // Iterate
+    // Signature / Iterate
     //-------------------------------------------------
+
+    public ArrayList<Entity> getEntities(String signatureId) {
+        var result = new ArrayList<Entity>();
+
+        for (var i = 0; i < size; i++) {
+            if (matchesSignature(entities.get(i).id, signatureId)) {
+                result.add(entities.get(i));
+            }
+        }
+
+        return result;
+    }
+
+    public <T> ArrayList<Entity> getEntities(Class<T> componentType) {
+        var result = new ArrayList<Entity>();
+
+        for (var i = 0; i < size; i++) {
+            if (hasComponent(entities.get(i).id, componentType)) {
+                result.add(entities.get(i));
+            }
+        }
+
+        return result;
+    }
 
     public boolean matchesSignature(int entityId, String signatureId) {
         if (!isEntityAlive(entityId)) {
