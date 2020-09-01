@@ -103,21 +103,26 @@ public class Level {
         var healthOpt= manager.addComponent(solidBrick, HealthComponent.class);
         var solidOpt= manager.addComponent(solidBrick, SolidComponent.class);
         var transformOpt= manager.addComponent(solidBrick, TransformComponent.class);
+        var aabbOpt = manager.addComponent(solidBrick, AabbComponent.class);
 
-        var colorTexture = colorTextureOpt.get();
+        var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(color);
         colorTexture.setTexture(solidTexture);
 
-        var health = healthOpt.get();
+        var health = healthOpt.orElseThrow();
         health.setDestroyed(false);
 
-        var solid = solidOpt.get();
+        var solid = solidOpt.orElseThrow();
         solid.setSolid(true);
 
-        var transform = transformOpt.get();
+        var transform = transformOpt.orElseThrow();
         transform.setPosition(position);
         transform.setSize(size);
         transform.setRotation(rotation);
+
+        var aabb = aabbOpt.orElseThrow();
+        aabb.setMin(new Vector2f(position));
+        aabb.setMax(new Vector2f(position).add(size));
     }
 
     private void createBrickEntity(Vector2f position, Vector2f size, int levelValue) throws Exception {
@@ -138,21 +143,26 @@ public class Level {
         var healthOpt= manager.addComponent(brick, HealthComponent.class);
         var solidOpt= manager.addComponent(brick, SolidComponent.class);
         var transformOpt= manager.addComponent(brick, TransformComponent.class);
+        var aabbOpt = manager.addComponent(brick, AabbComponent.class);
 
-        var colorTexture = colorTextureOpt.get();
+        var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(color);
         colorTexture.setTexture(blockTexture);
 
-        var health = healthOpt.get();
+        var health = healthOpt.orElseThrow();
         health.setDestroyed(false);
 
-        var solid = solidOpt.get();
+        var solid = solidOpt.orElseThrow();
         solid.setSolid(false);
 
-        var transform = transformOpt.get();
+        var transform = transformOpt.orElseThrow();
         transform.setPosition(position);
         transform.setSize(size);
         transform.setRotation(rotation);
+
+        var aabb = aabbOpt.orElseThrow();
+        aabb.setMin(new Vector2f(position));
+        aabb.setMax(new Vector2f(position).add(size));
     }
 
     //-------------------------------------------------

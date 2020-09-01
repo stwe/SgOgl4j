@@ -56,13 +56,15 @@ public class Game extends BaseApplication {
         componentTypes.add(SolidComponent.class);
         componentTypes.add(BallComponent.class);
         componentTypes.add(PlayerComponent.class);
+        componentTypes.add(AabbComponent.class);
 
         // brick signature
         Signature brickSig = new Signature(
                 ColorTextureComponent.class, // the color or texture of a brick
                 HealthComponent.class,       // a brick can be destroyed
                 SolidComponent.class,        // a brick can be solid
-                TransformComponent.class     // position, size and rotation of a brick
+                TransformComponent.class,    // position, size and rotation of a brick
+                AabbComponent.class          // the brick has an Aabb
         );
 
         // paddle (player) signature
@@ -70,7 +72,8 @@ public class Game extends BaseApplication {
                 ColorTextureComponent.class, // the color or texture of the paddle
                 TransformComponent.class,    // position, size and rotation of the paddle
                 PhysicsComponent.class,      // the paddle has a velocity
-                PlayerComponent.class        // only a Tag
+                PlayerComponent.class,       // only a Tag
+                AabbComponent.class          // the paddle has an Aabb
         );
 
         // ball signature
@@ -78,7 +81,8 @@ public class Game extends BaseApplication {
                 ColorTextureComponent.class, // the color or texture of the ball
                 TransformComponent.class,    // position, size and rotation of the ball
                 PhysicsComponent.class,      // the ball has a velocity
-                BallComponent.class          // the ball has a radius and a stuck state
+                BallComponent.class,         // the ball has a radius and a stuck state
+                AabbComponent.class          // the ball has an Aabb
         );
 
         // signatures
@@ -150,6 +154,7 @@ public class Game extends BaseApplication {
         var transformOpt= manager.addComponent(playerEntity, TransformComponent.class);
         var physicsOpt = manager.addComponent(playerEntity, PhysicsComponent.class);
         manager.addComponent(playerEntity, PlayerComponent.class);
+        var aabbOpt = manager.addComponent(playerEntity, AabbComponent.class);
 
         var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(DEFAULT_COLOR);
@@ -162,6 +167,10 @@ public class Game extends BaseApplication {
 
         var physics = physicsOpt.orElseThrow();
         physics.setVelocity(new Vector2f(PLAYER_VELOCITY));
+
+        var aabb = aabbOpt.orElseThrow();
+        aabb.setMin(new Vector2f(initialPlayerPosition));
+        aabb.setMax(new Vector2f(initialPlayerPosition).add(PLAYER_SIZE));
     }
 
     private void createBallEntity() throws Exception {
@@ -175,6 +184,7 @@ public class Game extends BaseApplication {
         var transformOpt= manager.addComponent(ballEntity, TransformComponent.class);
         var physicsOpt = manager.addComponent(ballEntity, PhysicsComponent.class);
         var ballOpt = manager.addComponent(ballEntity, BallComponent.class);
+        var aabbOpt = manager.addComponent(ballEntity, AabbComponent.class);
 
         var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(DEFAULT_COLOR);
@@ -191,5 +201,9 @@ public class Game extends BaseApplication {
         var ball = ballOpt.orElseThrow();
         ball.setRadius(BALL_RADIUS);
         ball.setStuck(true);
+
+        var aabb = aabbOpt.orElseThrow();
+        aabb.setMin(new Vector2f(initialBallPosition));
+        aabb.setMax(new Vector2f(initialBallPosition).add(new Vector2f(BALL_RADIUS * 2.0f, BALL_RADIUS * 2.0f)));
     }
 }
