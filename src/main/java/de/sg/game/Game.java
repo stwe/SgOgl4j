@@ -30,7 +30,7 @@ public class Game extends BaseApplication {
     private Manager manager;
 
     private PlayfieldRenderSystem playfieldRenderSystem;
-    private PlayerUpdateSystem playerUpdateSystem;
+    private UpdateSystem playerUpdateSystem;
 
     private Vector2f initialPlayerPosition;
 
@@ -98,7 +98,7 @@ public class Game extends BaseApplication {
         playfieldRenderSystem.init();
 
         // create paddle update system
-        playerUpdateSystem = new PlayerUpdateSystem(getEngine(), manager);
+        playerUpdateSystem = new UpdateSystem(getEngine(), manager);
 
         // create player
         createPlayerEntity();
