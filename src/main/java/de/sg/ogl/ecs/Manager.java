@@ -1,8 +1,17 @@
+/*
+ * This file is part of the SgOgl4j project.
+ *
+ * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ *
+ * License: MIT
+ */
+
 package de.sg.ogl.ecs;
 
 import java.util.*;
 
 import static de.sg.ogl.Log.LOGGER;
+import static java.lang.System.*;
 
 public class Manager {
 
@@ -24,7 +33,7 @@ public class Manager {
     //-------------------------------------------------
 
     public Manager(Settings settings) throws Exception {
-        LOGGER.debug("Creates ECS Manager object.");
+        LOGGER.debug("Creates SgOgl4j Ecs Manager object.");
 
         this.settings = Objects.requireNonNull(settings, "settings must not be null");
 
@@ -77,22 +86,22 @@ public class Manager {
     }
 
     public void printState(boolean printEntities) {
-        System.out.println("size (entity count): " + size);
-        System.out.println("sizeNext: " + sizeNext);
-        System.out.println("capacity: " + capacity);
-        System.out.println("needs an update: " + needsAnUpdate);
+        out.println("size (entity count): " + size);
+        out.println("sizeNext: " + sizeNext);
+        out.println("capacity: " + capacity);
+        out.println("needs an update: " + needsAnUpdate);
 
         if (printEntities) {
             for (var i = 0; i < sizeNext; i++) {
                 if (getEntity(i).alive) {
-                    System.out.println("A");
+                    out.println("A");
                 } else {
-                    System.out.println("D");
+                    out.println("D");
                 }
             }
         }
 
-        System.out.println();
+        out.println();
     }
 
     private int arrangeAliveEntitiesToLeft() {
@@ -145,20 +154,19 @@ public class Manager {
     //-------------------------------------------------
 
     public <T> Optional<T> addComponent(int entityId, Class<T> componentType) throws Exception {
-        if (!isEntityAlive(entityId)) {
-            System.out.println("[Warning in addComponent()] The entity " + entityId + " is dead.");
+        if (warnIfDeadEntity(entityId)) {
             return Optional.empty();
         }
 
         if (hasComponent(entityId, componentType)) {
-            System.out.println("[Warning in addComponent()] The component already exists for the entity " + entityId + ".");
+            LOGGER.warn("The component already exists for the entity {}.", entityId);
             return Optional.empty();
         }
 
         var entity = getEntity(entityId);
-        entity.bitSet.set(settings.getComponentId(componentType));
+        entity.bitSet.set(settings.getComponentIdByType(componentType));
 
-        var pool = componentPools.get(settings.getComponentId(componentType));
+        var pool = componentPools.get(settings.getComponentIdByType(componentType));
         var component = newInstance(componentType);
         pool.set(entityId, component);
 
@@ -166,33 +174,28 @@ public class Manager {
     }
 
     public <T> boolean hasComponent(int entityId, Class<T> componentType) {
-        if (!isEntityAlive(entityId)) {
-            System.out.println("[Warning in hasComponent()] The entity " + entityId + " is dead.");
-        }
+        warnIfDeadEntity(entityId);
 
-        return getEntity(entityId).bitSet.get(settings.getComponentId(componentType));
+        return getEntity(entityId).bitSet.get(settings.getComponentIdByType(componentType));
     }
 
     public <T> void deleteComponent(int entityId, Class<T> componentType) {
-        if (!isEntityAlive(entityId)) {
-            System.out.println("[Warning in deleteComponent()] The entity " + entityId + " is dead.");
-        }
+        warnIfDeadEntity(entityId);
 
-        getEntity(entityId).bitSet.clear(settings.getComponentId(componentType));
+        getEntity(entityId).bitSet.clear(settings.getComponentIdByType(componentType));
     }
 
     public <T> Optional<T> getComponent(int entityId, Class<T> componentType) {
-        if (!isEntityAlive(entityId)) {
-            System.out.println("[Warning in getComponent()] The entity " + entityId + " is dead.");
+        if (warnIfDeadEntity(entityId)) {
             return Optional.empty();
         }
 
         if (hasComponent(entityId, componentType)) {
-            var component = componentType.cast(componentPools.get(settings.getComponentId(componentType)).get(entityId));
+            var component = componentType.cast(componentPools.get(settings.getComponentIdByType(componentType)).get(entityId));
             return Optional.of(component);
         }
 
-        System.out.println("[Warning in getComponent()] The component does not exist for the entity " + entityId + ".");
+        LOGGER.warn("The component does not exist for the entity {}.", entityId);
 
         return Optional.empty();
     }
@@ -201,11 +204,11 @@ public class Manager {
     // Signature / Iterate
     //-------------------------------------------------
 
-    public ArrayList<Entity> getEntities(String signatureId) {
+    public ArrayList<Entity> getEntities(String signatureKey) {
         var result = new ArrayList<Entity>();
 
         for (var i = 0; i < size; i++) {
-            if (matchesSignature(entities.get(i).id, signatureId)) {
+            if (matchesSignature(entities.get(i).id, signatureKey)) {
                 result.add(entities.get(i));
             }
         }
@@ -225,14 +228,12 @@ public class Manager {
         return result;
     }
 
-    public boolean matchesSignature(int entityId, String signatureId) {
-        if (!isEntityAlive(entityId)) {
-            System.out.println("[Warning in matchesSignature()] The entity " + entityId + " is dead.");
-        }
+    public boolean matchesSignature(int entityId, String signatureKey) {
+        warnIfDeadEntity(entityId);
 
         var bitset = new BitSet();
         bitset= (BitSet) getEntity(entityId).bitSet.clone();
-        var signatureBitset = settings.getSignature(signatureId).getBitSet();
+        var signatureBitset = settings.getSignatureByKey(signatureKey).getBitSet();
 
         bitset.and(signatureBitset);
 
@@ -242,6 +243,15 @@ public class Manager {
     //-------------------------------------------------
     // Helper
     //-------------------------------------------------
+
+    private boolean warnIfDeadEntity(int entityId) {
+        if (!isEntityAlive(entityId)) {
+            LOGGER.warn("The entity {} is dead.", entityId);
+            return true; // there was a warning
+        }
+
+        return false;
+    }
 
     private static <T> T newInstance(Class<T> type) throws Exception {
         return type.getConstructor().newInstance();

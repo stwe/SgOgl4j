@@ -28,6 +28,9 @@ class VelocityComponent {
 
 class ManagerTest {
 
+    public static final String HEALTH_INPUT_SIGNATURE = "HEALTH_INPUT_SIGNATURE";
+    public static final String MESH_VELOCITY_SIGNATURE = "MESH_VELOCITY_SIGNATURE";
+
     private static Manager manager;
 
     @BeforeEach
@@ -44,8 +47,8 @@ class ManagerTest {
         Signature meshVelocitySig = new Signature(MeshComponent.class, VelocityComponent.class);
 
         var signatures = new HashMap<String, Signature>();
-        signatures.put("healthInputSignature", healthInputSig);
-        signatures.put("meshVelocitySignature", meshVelocitySig);
+        signatures.put(HEALTH_INPUT_SIGNATURE, healthInputSig);
+        signatures.put(MESH_VELOCITY_SIGNATURE, meshVelocitySig);
 
         // manager
         manager = new Manager(new Settings(componentTypes, signatures));
@@ -278,10 +281,10 @@ class ManagerTest {
         assertThat(entitiesMeshComp.size(), is(20));
         assertThat(entitiesInputComp.size(), is(10));
 
-        var entitiesMeshVelSig = manager.getEntities("meshVelocitySignature");
+        var entitiesMeshVelSig = manager.getEntities(MESH_VELOCITY_SIGNATURE);
         assertThat(entitiesMeshVelSig.size(), is(0));
 
-        var entitiesHealthInSig = manager.getEntities("healthInputSignature");
+        var entitiesHealthInSig = manager.getEntities(HEALTH_INPUT_SIGNATURE);
         assertThat(entitiesHealthInSig.size(), is(10));
     }
 
@@ -295,12 +298,12 @@ class ManagerTest {
         manager.addComponent(e0, MeshComponent.class);
         manager.addComponent(e0, InputComponent.class);
 
-        assertThat(manager.matchesSignature(e0, "healthInputSignature"), is(true));
+        assertThat(manager.matchesSignature(e0, HEALTH_INPUT_SIGNATURE), is(true));
 
         // kill the entity
         manager.killEntity(e0);
 
         // matchesSignature should return false
-        assertThat(manager.matchesSignature(e0, "healthInputSignature"), is(false));
+        assertThat(manager.matchesSignature(e0, HEALTH_INPUT_SIGNATURE), is(false));
     }
 }
