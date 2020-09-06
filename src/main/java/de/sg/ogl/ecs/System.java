@@ -8,9 +8,10 @@
 
 package de.sg.ogl.ecs;
 
-public class System {
+public interface System {
 
-    public void update(float dt) {
-
-    }
+    void init() throws Exception;
+    void update(float dt);
+    void render();
+    void cleanUp();
 }
