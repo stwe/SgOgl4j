@@ -74,7 +74,7 @@ public class Game extends BaseApplication {
         initEcs();
 
         // load level - create brick entities
-        new Level("/level/level.lvl", getEngine(), manager);
+        new Level("/level/level.lvl", getEngine(), manager, mesh);
 
         // create player
         createPlayerEntity();

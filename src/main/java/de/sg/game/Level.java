@@ -2,6 +2,7 @@ package de.sg.game;
 
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.ecs.Manager;
+import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -16,6 +17,7 @@ public class Level {
 
     private final SgOglEngine engine;
     private final Manager manager;
+    private final Mesh mesh;
 
     private final Texture solidTexture;
     private final Texture blockTexture;
@@ -24,9 +26,10 @@ public class Level {
     // Ctors.
     //-------------------------------------------------
 
-    public Level(String path, SgOglEngine engine, Manager manager) throws Exception {
+    public Level(String path, SgOglEngine engine, Manager manager, Mesh mesh) throws Exception {
         this.engine = engine;
         this.manager = manager;
+        this.mesh = mesh;
 
         this.solidTexture = engine.getResourceManager().loadTextureResource("/texture/block_solid.png");
         this.blockTexture = engine.getResourceManager().loadTextureResource("/texture/block.png");
@@ -99,11 +102,15 @@ public class Level {
 
         var solidBrick = manager.createEntity();
 
+        var meshOpt = manager.addComponent(solidBrick, MeshComponent.class);
         var colorTextureOpt= manager.addComponent(solidBrick, ColorTextureComponent.class);
         var healthOpt= manager.addComponent(solidBrick, HealthComponent.class);
         var solidOpt= manager.addComponent(solidBrick, SolidComponent.class);
         var transformOpt= manager.addComponent(solidBrick, TransformComponent.class);
         var aabbOpt = manager.addComponent(solidBrick, AabbComponent.class);
+
+        var mesh = meshOpt.orElseThrow();
+        mesh.setMesh(this.mesh);
 
         var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(color);
@@ -139,11 +146,15 @@ public class Level {
 
         var brick = manager.createEntity();
 
+        var meshOpt = manager.addComponent(brick, MeshComponent.class);
         var colorTextureOpt= manager.addComponent(brick, ColorTextureComponent.class);
         var healthOpt= manager.addComponent(brick, HealthComponent.class);
         var solidOpt= manager.addComponent(brick, SolidComponent.class);
         var transformOpt= manager.addComponent(brick, TransformComponent.class);
         var aabbOpt = manager.addComponent(brick, AabbComponent.class);
+
+        var mesh = meshOpt.orElseThrow();
+        mesh.setMesh(this.mesh);
 
         var colorTexture = colorTextureOpt.orElseThrow();
         colorTexture.setColor(color);
