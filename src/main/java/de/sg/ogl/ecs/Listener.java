@@ -8,7 +8,36 @@
 
 package de.sg.ogl.ecs;
 
-public abstract class Listener {
-    public abstract <T> Class<T> getEventType();
-    public abstract String getName();
+import java.util.function.Consumer;
+
+public class Listener<T extends Event> {
+
+    private Consumer<T> consumer = onEvent();
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public Listener() {
+    }
+
+    public Listener(Consumer<T> consumer) {
+        this.consumer = consumer;
+    }
+
+    //-------------------------------------------------
+    // Can be override
+    //-------------------------------------------------
+
+    protected Consumer<T> onEvent() {
+        return null;
+    }
+
+    //-------------------------------------------------
+    // Invoke
+    //-------------------------------------------------
+
+    void invoke(T event){
+        consumer.accept(event);
+    }
 }
