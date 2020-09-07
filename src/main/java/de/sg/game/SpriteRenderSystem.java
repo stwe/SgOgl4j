@@ -58,16 +58,27 @@ public class SpriteRenderSystem implements System {
         var entities = manager.getEntities(MeshComponent.class);
 
         for (var e : entities) {
+            var skip = false;
+
             var colorTextureComp = manager.getComponent(e.id, ColorTextureComponent.class).orElseThrow();
             var transformComp = manager.getComponent(e.id, TransformComponent.class).orElseThrow();
 
-            renderMesh(
-                    colorTextureComp.getTexture().getId(),
-                    transformComp.getPosition(),
-                    transformComp.getRotation(),
-                    transformComp.getSize(),
-                    colorTextureComp.getColor()
-            );
+            var healthComp = manager.getComponent(e.id, HealthComponent.class);
+            if (healthComp.isPresent()) {
+                if (healthComp.get().isDestroyed()) {
+                    skip = true;
+                }
+            }
+
+            if (!skip) {
+                renderMesh(
+                        colorTextureComp.getTexture().getId(),
+                        transformComp.getPosition(),
+                        transformComp.getRotation(),
+                        transformComp.getSize(),
+                        colorTextureComp.getColor()
+                );
+            }
         }
 
         mesh.endDraw();

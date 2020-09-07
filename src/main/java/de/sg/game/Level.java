@@ -15,6 +15,9 @@ import java.util.Scanner;
 
 public class Level {
 
+    public static final String TEXTURE_SOLID = "/texture/sgbrick/solid.png";
+    public static final String TEXTURE_BLOCK = "/texture/sgbrick/block.png";
+
     private final SgOglEngine engine;
     private final Manager manager;
     private final Mesh mesh;
@@ -31,8 +34,8 @@ public class Level {
         this.manager = manager;
         this.mesh = mesh;
 
-        this.solidTexture = engine.getResourceManager().loadTextureResource("/texture/block_solid.png");
-        this.blockTexture = engine.getResourceManager().loadTextureResource("/texture/block.png");
+        this.solidTexture = engine.getResourceManager().loadTextureResource(TEXTURE_SOLID);
+        this.blockTexture = engine.getResourceManager().loadTextureResource(TEXTURE_BLOCK);
 
         load(path);
     }

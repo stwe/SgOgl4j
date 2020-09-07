@@ -28,6 +28,9 @@ public class Game extends BaseApplication {
     // Const
     //-------------------------------------------------
 
+    public static final String TEXTURE_PADDLE = "/texture/sgbrick/paddle.png";
+    public static final String TEXTURE_BALL = "/texture/sgbrick/ball.png";
+
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f);
     private static final float NO_ROTATION = 0.0f;
 
@@ -53,6 +56,7 @@ public class Game extends BaseApplication {
     private SpriteRenderSystem spriteRenderSystem;
     private UpdatePlayerSystem updatePlayerSystem;
     private UpdateBallSystem updateBallSystem;
+    private CollisionSystem collisionSystem;
 
     //-------------------------------------------------
     // Ctors.
@@ -94,8 +98,12 @@ public class Game extends BaseApplication {
         updateBallSystem = new UpdateBallSystem(getEngine(), manager);
         updateBallSystem.init();
 
-        // the UpdateBallSystem listen to UpdatePlayerEvents
+        // the UpdateBallSystem also reacts to UpdatePlayerEvents
         dispatcher.addListener(UpdatePlayerEvent.class, updateBallSystem);
+
+        // create collision system
+        collisionSystem = new CollisionSystem(getEngine(), manager);
+        collisionSystem.init();
     }
 
     @Override
@@ -112,6 +120,7 @@ public class Game extends BaseApplication {
         spriteRenderSystem.update(dt);
         updatePlayerSystem.update(dt);
         updateBallSystem.update(dt);
+        collisionSystem.update(dt);
     }
 
     @Override
@@ -122,6 +131,7 @@ public class Game extends BaseApplication {
 
         updatePlayerSystem.render();
         updateBallSystem.render();
+        collisionSystem.render();
     }
 
     @Override
@@ -131,6 +141,7 @@ public class Game extends BaseApplication {
         spriteRenderSystem.cleanUp();
         updatePlayerSystem.cleanUp();
         updateBallSystem.cleanUp();
+        collisionSystem.cleanUp();
     }
 
     //-------------------------------------------------
@@ -199,7 +210,7 @@ public class Game extends BaseApplication {
     //-------------------------------------------------
 
     private void createPlayerEntity() throws Exception {
-        Texture paddleTexture = getEngine().getResourceManager().loadTextureResource("/texture/paddle.png");
+        Texture paddleTexture = getEngine().getResourceManager().loadTextureResource(TEXTURE_PADDLE);
 
         initialPlayerPosition = new Vector2f(
                 getEngine().getWindow().getWidth() / 2.0f - PLAYER_SIZE.x / 2.0f,
@@ -236,7 +247,7 @@ public class Game extends BaseApplication {
     }
 
     private void createBallEntity() throws Exception {
-        Texture ballTexture = getEngine().getResourceManager().loadTextureResource("/texture/awesomeface.png");
+        Texture ballTexture = getEngine().getResourceManager().loadTextureResource(TEXTURE_BALL);
 
         var initialBallPosition = new Vector2f(initialPlayerPosition).add(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f);
 

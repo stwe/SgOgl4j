@@ -195,8 +195,6 @@ public class Manager {
             return Optional.of(component);
         }
 
-        LOGGER.warn("The component does not exist for the entity {}.", entityId);
-
         return Optional.empty();
     }
 
