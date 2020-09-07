@@ -30,15 +30,18 @@ public class Game extends BaseApplication {
 
     public static final String TEXTURE_PADDLE = "/texture/sgbrick/paddle.png";
     public static final String TEXTURE_BALL = "/texture/sgbrick/ball.png";
+    public static final String LEVEL = "/level/level.lvl";
 
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f);
     private static final float NO_ROTATION = 0.0f;
 
-    private static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
+    // todo -> player component
+    static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
     private static final float PLAYER_VELOCITY = 500.0f;
 
-    private static final float BALL_RADIUS = 12.5f;
-    private static final Vector2f BALL_VELOCITY = new Vector2f(100.0f, -350.0f);
+    // todo -> ball component
+    static final float BALL_RADIUS = 12.5f;
+    static final Vector2f BALL_VELOCITY = new Vector2f(100.0f, -350.0f);
 
     public static final String BRICK_SIGNATURE = "BRICK_SIGNATURE";
 
@@ -57,6 +60,7 @@ public class Game extends BaseApplication {
     private UpdatePlayerSystem updatePlayerSystem;
     private UpdateBallSystem updateBallSystem;
     private CollisionSystem collisionSystem;
+    private ResetSystem resetSystem;
 
     //-------------------------------------------------
     // Ctors.
@@ -78,7 +82,7 @@ public class Game extends BaseApplication {
         initEcs();
 
         // load level - create brick entities
-        new Level("/level/level.lvl", getEngine(), manager, mesh);
+        new Level(LEVEL, getEngine(), manager, mesh);
 
         // create player
         createPlayerEntity();
@@ -95,15 +99,22 @@ public class Game extends BaseApplication {
         updatePlayerSystem.init();
 
         // create update system for the ball
-        updateBallSystem = new UpdateBallSystem(getEngine(), manager);
+        updateBallSystem = new UpdateBallSystem(getEngine(), manager, dispatcher);
         updateBallSystem.init();
-
-        // the UpdateBallSystem also reacts to UpdatePlayerEvents
-        dispatcher.addListener(UpdatePlayerEvent.class, updateBallSystem);
 
         // create collision system
         collisionSystem = new CollisionSystem(getEngine(), manager);
         collisionSystem.init();
+
+        // create reset system
+        resetSystem = new ResetSystem(getEngine(), manager, mesh, LEVEL);
+        resetSystem.init();
+
+        // the UpdateBallSystem also reacts to UpdatePlayerEvents
+        dispatcher.addListener(UpdatePlayerEvent.class, updateBallSystem);
+
+        // the ResetSystem reacts to GameOverEvents
+        dispatcher.addListener(GameOverEvent.class, resetSystem);
     }
 
     @Override
@@ -121,6 +132,7 @@ public class Game extends BaseApplication {
         updatePlayerSystem.update(dt);
         updateBallSystem.update(dt);
         collisionSystem.update(dt);
+        resetSystem.update(dt);
     }
 
     @Override
@@ -132,6 +144,7 @@ public class Game extends BaseApplication {
         updatePlayerSystem.render();
         updateBallSystem.render();
         collisionSystem.render();
+        resetSystem.render();
     }
 
     @Override
@@ -142,13 +155,14 @@ public class Game extends BaseApplication {
         updatePlayerSystem.cleanUp();
         updateBallSystem.cleanUp();
         collisionSystem.cleanUp();
+        resetSystem.cleanUp();
     }
 
     //-------------------------------------------------
-    // Init Ecs
+    // Init
     //-------------------------------------------------
 
-    void createMesh() {
+    private void createMesh() {
         float[] vertices = new float[] {
                 // pos      // tex
                 0.0f, 1.0f, 0.0f, 1.0f,
@@ -171,7 +185,7 @@ public class Game extends BaseApplication {
         mesh.getVao().addVerticesVbo(vertices, 6, bufferLayout);
     }
 
-    void initEcs() throws Exception {
+    private void initEcs() throws Exception {
         // components
         ArrayList<Class<?>> componentTypes = new ArrayList<>();
         componentTypes.add(MeshComponent.class);

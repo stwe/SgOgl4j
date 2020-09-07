@@ -11,6 +11,7 @@ package de.sg.game;
 import de.sg.ogl.Input;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
+import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Listener;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
@@ -23,14 +24,16 @@ public class UpdateBallSystem extends Listener<UpdatePlayerEvent> implements Sys
 
     private final SgOglEngine engine;
     private final Manager manager;
+    private final Dispatcher dispatcher;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public UpdateBallSystem(SgOglEngine engine, Manager manager) {
+    public UpdateBallSystem(SgOglEngine engine, Manager manager, Dispatcher dispatcher) {
         this.engine = engine;
         this.manager = manager;
+        this.dispatcher = dispatcher;
     }
 
     //-------------------------------------------------
@@ -116,6 +119,12 @@ public class UpdateBallSystem extends Listener<UpdatePlayerEvent> implements Sys
             if (ballTransformComp.getPosition().y <= 0.0f) {
                 ballPhysicsComp.getVelocity().y = -ballPhysicsComp.getVelocity().y;
                 ballTransformComp.getPosition().y = 0.0f;
+            }
+
+            // the game was lost
+            if (ballTransformComp.getPosition().y >= engine.getWindow().getHeight()) {
+                // dispatch game over event
+                dispatcher.dispatch(new GameOverEvent());
             }
 
             // update ball aabb
