@@ -1,35 +1,33 @@
-package de.sg.game;
+package de.sg.sgbrick;
 
-import org.joml.Vector2f;
+public class SolidComponent {
 
-public class PhysicsComponent {
-
-    private Vector2f velocity = new Vector2f(0.0f);
+    private boolean solid = false;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public PhysicsComponent() {
+    public SolidComponent() {
     }
 
-    public PhysicsComponent(Vector2f velocity) {
-        this.velocity = velocity;
+    public SolidComponent(boolean solid) {
+        this.solid = solid;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Vector2f getVelocity() {
-        return velocity;
+    public boolean isSolid() {
+        return solid;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setVelocity(Vector2f velocity) {
-        this.velocity = velocity;
+    public void setSolid(boolean solid) {
+        this.solid = solid;
     }
 }

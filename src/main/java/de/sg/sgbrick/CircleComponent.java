@@ -6,38 +6,43 @@
  * License: MIT
  */
 
-package de.sg.game;
+package de.sg.sgbrick;
 
-import de.sg.ogl.resource.Mesh;
+import org.joml.Vector2f;
 
-public class MeshComponent {
+public class CircleComponent {
 
-    private Mesh mesh;
+    private Vector2f center;
+    private float radius;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public MeshComponent() {
-    }
-
-    public MeshComponent(Mesh mesh) {
-        this.mesh = mesh;
+    public CircleComponent() {
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Mesh getMesh() {
-        return mesh;
+    public Vector2f getCenter() {
+        return center;
+    }
+
+    public float getRadius() {
+        return radius;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setMesh(Mesh mesh) {
-        this.mesh = mesh;
+    public void setCenter(Vector2f center) {
+        this.center = center;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

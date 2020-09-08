@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.game;
+package de.sg.sgbrick;
 
 import de.sg.ogl.ecs.Event;
 

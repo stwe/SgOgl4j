@@ -1,4 +1,4 @@
-package de.sg.game;
+package de.sg.sgbrick;
 
 import de.sg.ogl.SgOglEngine;
 

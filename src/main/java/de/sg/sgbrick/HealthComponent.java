@@ -1,33 +1,33 @@
-package de.sg.game;
+package de.sg.sgbrick;
 
-public class SolidComponent {
+public class HealthComponent {
 
-    private boolean solid = false;
+    private boolean destroyed = false;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public SolidComponent() {
+    public HealthComponent() {
     }
 
-    public SolidComponent(boolean solid) {
-        this.solid = solid;
+    public HealthComponent(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public boolean isSolid() {
-        return solid;
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setSolid(boolean solid) {
-        this.solid = solid;
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 }

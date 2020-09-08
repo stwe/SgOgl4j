@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.game;
+package de.sg.sgbrick;
 
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
@@ -14,8 +14,8 @@ import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
 import org.joml.Vector2f;
 
-import static de.sg.game.Game.BALL_VELOCITY;
-import static de.sg.game.Game.BRICK_SIGNATURE;
+import static de.sg.sgbrick.Game.BALL_VELOCITY;
+import static de.sg.sgbrick.Game.BRICK_SIGNATURE;
 import static org.joml.Math.abs;
 
 public class CollisionSystem implements System {

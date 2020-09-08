@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.game;
+package de.sg.sgbrick;
 
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
@@ -19,7 +19,7 @@ import org.joml.Vector2f;
 
 import java.util.function.Consumer;
 
-import static de.sg.game.Game.*;
+import static de.sg.sgbrick.Game.*;
 
 public class ResetSystem extends Listener<GameOverEvent> implements System {
 

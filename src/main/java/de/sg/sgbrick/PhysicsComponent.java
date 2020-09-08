@@ -1,40 +1,35 @@
-package de.sg.game;
+package de.sg.sgbrick;
 
 import org.joml.Vector2f;
 
-public class AabbComponent {
+public class PhysicsComponent {
 
-    private Vector2f min;
-    private Vector2f max;
+    private Vector2f velocity = new Vector2f(0.0f);
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public AabbComponent() {
+    public PhysicsComponent() {
+    }
+
+    public PhysicsComponent(Vector2f velocity) {
+        this.velocity = velocity;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Vector2f getMin() {
-        return min;
-    }
-
-    public Vector2f getMax() {
-        return max;
+    public Vector2f getVelocity() {
+        return velocity;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setMin(Vector2f min) {
-        this.min = min;
-    }
-
-    public void setMax(Vector2f max) {
-        this.max = max;
+    public void setVelocity(Vector2f velocity) {
+        this.velocity = velocity;
     }
 }

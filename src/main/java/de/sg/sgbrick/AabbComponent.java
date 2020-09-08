@@ -1,33 +1,40 @@
-package de.sg.game;
+package de.sg.sgbrick;
 
-public class HealthComponent {
+import org.joml.Vector2f;
 
-    private boolean destroyed = false;
+public class AabbComponent {
+
+    private Vector2f min;
+    private Vector2f max;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public HealthComponent() {
-    }
-
-    public HealthComponent(boolean destroyed) {
-        this.destroyed = destroyed;
+    public AabbComponent() {
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public boolean isDestroyed() {
-        return destroyed;
+    public Vector2f getMin() {
+        return min;
+    }
+
+    public Vector2f getMax() {
+        return max;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setDestroyed(boolean destroyed) {
-        this.destroyed = destroyed;
+    public void setMin(Vector2f min) {
+        this.min = min;
+    }
+
+    public void setMax(Vector2f max) {
+        this.max = max;
     }
 }
