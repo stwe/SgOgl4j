@@ -4,6 +4,7 @@ import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Texture;
+import de.sg.sgbrick.component.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

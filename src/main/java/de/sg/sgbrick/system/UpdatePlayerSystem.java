@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.system;
 
 import de.sg.ogl.Input;
 import de.sg.ogl.SgOglEngine;
@@ -14,6 +14,11 @@ import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
+import de.sg.sgbrick.event.UpdatePlayerEvent;
+import de.sg.sgbrick.component.AabbComponent;
+import de.sg.sgbrick.component.PhysicsComponent;
+import de.sg.sgbrick.component.PlayerComponent;
+import de.sg.sgbrick.component.TransformComponent;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 

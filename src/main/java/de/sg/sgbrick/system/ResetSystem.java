@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.system;
 
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
@@ -15,6 +15,12 @@ import de.sg.ogl.ecs.Listener;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
 import de.sg.ogl.resource.Mesh;
+import de.sg.sgbrick.event.GameOverEvent;
+import de.sg.sgbrick.Level;
+import de.sg.sgbrick.component.BallComponent;
+import de.sg.sgbrick.component.PhysicsComponent;
+import de.sg.sgbrick.component.PlayerComponent;
+import de.sg.sgbrick.component.TransformComponent;
 import org.joml.Vector2f;
 
 import java.util.function.Consumer;

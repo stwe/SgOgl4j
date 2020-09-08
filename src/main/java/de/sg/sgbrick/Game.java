@@ -10,6 +10,10 @@ import de.sg.ogl.ecs.Settings;
 import de.sg.ogl.ecs.Signature;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Texture;
+import de.sg.sgbrick.component.*;
+import de.sg.sgbrick.event.GameOverEvent;
+import de.sg.sgbrick.event.UpdatePlayerEvent;
+import de.sg.sgbrick.system.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -36,12 +40,12 @@ public class Game extends BaseApplication {
     private static final float NO_ROTATION = 0.0f;
 
     // todo -> player component
-    static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
-    private static final float PLAYER_VELOCITY = 500.0f;
+    public static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
+    public static final float PLAYER_VELOCITY = 500.0f;
 
     // todo -> ball component
-    static final float BALL_RADIUS = 12.5f;
-    static final Vector2f BALL_VELOCITY = new Vector2f(100.0f, -350.0f);
+    public static final float BALL_RADIUS = 12.5f;
+    public static final Vector2f BALL_VELOCITY = new Vector2f(100.0f, -350.0f);
 
     public static final String BRICK_SIGNATURE = "BRICK_SIGNATURE";
 
@@ -103,7 +107,7 @@ public class Game extends BaseApplication {
         updateBallSystem.init();
 
         // create collision system
-        collisionSystem = new CollisionSystem(getEngine(), manager);
+        collisionSystem = new CollisionSystem(manager);
         collisionSystem.init();
 
         // create reset system

@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.system;
 
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
@@ -15,6 +15,10 @@ import de.sg.ogl.ecs.System;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Shader;
 import de.sg.ogl.resource.Texture;
+import de.sg.sgbrick.component.ColorTextureComponent;
+import de.sg.sgbrick.component.HealthComponent;
+import de.sg.sgbrick.component.MeshComponent;
+import de.sg.sgbrick.component.TransformComponent;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;

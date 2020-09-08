@@ -6,28 +6,22 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.component;
 
-import de.sg.ogl.ecs.Event;
+import org.joml.Vector2f;
 
-public class UpdatePlayerEvent extends Event {
+public class PhysicsComponent {
 
-    enum DIRECTION {
-        LEFT, RIGHT, NONE
-    }
-
-    private DIRECTION direction = DIRECTION.NONE;
-    private float velocity = 0.0f;
+    private Vector2f velocity = new Vector2f(0.0f);
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public UpdatePlayerEvent() {
+    public PhysicsComponent() {
     }
 
-    public UpdatePlayerEvent(DIRECTION direction, float velocity) {
-        this.direction = direction;
+    public PhysicsComponent(Vector2f velocity) {
         this.velocity = velocity;
     }
 
@@ -35,11 +29,7 @@ public class UpdatePlayerEvent extends Event {
     // Getter
     //-------------------------------------------------
 
-    public DIRECTION getDirection() {
-        return direction;
-    }
-
-    public float getVelocity() {
+    public Vector2f getVelocity() {
         return velocity;
     }
 
@@ -47,11 +37,7 @@ public class UpdatePlayerEvent extends Event {
     // Setter
     //-------------------------------------------------
 
-    public void setDirection(DIRECTION direction) {
-        this.direction = direction;
-    }
-
-    public void setVelocity(float velocity) {
+    public void setVelocity(Vector2f velocity) {
         this.velocity = velocity;
     }
 }

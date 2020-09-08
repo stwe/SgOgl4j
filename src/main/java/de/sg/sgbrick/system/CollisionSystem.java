@@ -6,12 +6,13 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.system;
 
-import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
+import de.sg.sgbrick.Collision;
+import de.sg.sgbrick.component.*;
 import org.joml.Vector2f;
 
 import static de.sg.sgbrick.Game.BALL_VELOCITY;
@@ -20,15 +21,13 @@ import static org.joml.Math.abs;
 
 public class CollisionSystem implements System {
 
-    private final SgOglEngine engine;
     private final Manager manager;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public CollisionSystem(SgOglEngine engine, Manager manager) {
-        this.engine = engine;
+    public CollisionSystem(Manager manager) {
         this.manager = manager;
     }
 

@@ -6,9 +6,8 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.component;
 
-import de.sg.ogl.ecs.Event;
-
-public class GameOverEvent extends Event {
+public class PlayerComponent {
+    public String name = "player";
 }

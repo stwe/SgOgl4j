@@ -6,38 +6,36 @@
  * License: MIT
  */
 
-package de.sg.sgbrick;
+package de.sg.sgbrick.component;
 
-import de.sg.ogl.resource.Mesh;
+public class SolidComponent {
 
-public class MeshComponent {
-
-    private Mesh mesh;
+    private boolean solid = false;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public MeshComponent() {
+    public SolidComponent() {
     }
 
-    public MeshComponent(Mesh mesh) {
-        this.mesh = mesh;
+    public SolidComponent(boolean solid) {
+        this.solid = solid;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Mesh getMesh() {
-        return mesh;
+    public boolean isSolid() {
+        return solid;
     }
 
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
 
-    public void setMesh(Mesh mesh) {
-        this.mesh = mesh;
+    public void setSolid(boolean solid) {
+        this.solid = solid;
     }
 }
