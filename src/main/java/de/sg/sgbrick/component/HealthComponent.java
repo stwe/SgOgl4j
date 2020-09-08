@@ -19,10 +19,6 @@ public class HealthComponent {
     public HealthComponent() {
     }
 
-    public HealthComponent(boolean destroyed) {
-        this.destroyed = destroyed;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

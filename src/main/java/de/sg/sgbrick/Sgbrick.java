@@ -2,7 +2,7 @@ package de.sg.sgbrick;
 
 import de.sg.ogl.SgOglEngine;
 
-public class Main {
+public class Sgbrick {
 
     public static void main(String[] args) {
         Game game = null;

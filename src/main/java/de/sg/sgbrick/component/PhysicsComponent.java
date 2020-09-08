@@ -21,10 +21,6 @@ public class PhysicsComponent {
     public PhysicsComponent() {
     }
 
-    public PhysicsComponent(Vector2f velocity) {
-        this.velocity = velocity;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

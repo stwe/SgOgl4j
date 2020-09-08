@@ -23,11 +23,6 @@ public class ColorTextureComponent {
     public ColorTextureComponent() {
     }
 
-    public ColorTextureComponent(Vector3f color, Texture texture) {
-        this.color = color;
-        this.texture = texture;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

@@ -21,10 +21,6 @@ public class MeshComponent {
     public MeshComponent() {
     }
 
-    public MeshComponent(Mesh mesh) {
-        this.mesh = mesh;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

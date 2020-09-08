@@ -9,5 +9,4 @@
 package de.sg.sgbrick.component;
 
 public class PlayerComponent {
-    public String name = "player";
 }

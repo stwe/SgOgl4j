@@ -19,10 +19,6 @@ public class SolidComponent {
     public SolidComponent() {
     }
 
-    public SolidComponent(boolean solid) {
-        this.solid = solid;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

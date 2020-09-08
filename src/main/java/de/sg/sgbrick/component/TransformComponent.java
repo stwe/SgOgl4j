@@ -23,16 +23,6 @@ public class TransformComponent {
     public TransformComponent() {
     }
 
-    public TransformComponent(Vector2f position, Vector2f size, float rotation) {
-        this.position = position;
-        this.size = size;
-        this.rotation = rotation;
-    }
-
-    public TransformComponent(Vector2f position, Vector2f size) {
-        this(position, size, 0.0f);
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

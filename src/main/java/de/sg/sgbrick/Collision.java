@@ -26,11 +26,19 @@ public class Collision {
     private final Direction direction;
     private final Vector2f difference;
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public Collision(boolean collision, Direction direction, Vector2f difference) {
         this.collision = collision;
         this.direction = direction;
         this.difference = difference;
     }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
 
     public boolean isCollision() {
         return collision;

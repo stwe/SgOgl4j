@@ -20,11 +20,6 @@ public class BallComponent {
     public BallComponent() {
     }
 
-    public BallComponent(float radius, boolean stuck) {
-        this.radius = radius;
-        this.stuck = stuck;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
