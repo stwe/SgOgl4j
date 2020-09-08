@@ -14,11 +14,6 @@ public class AabbComponent {
     public AabbComponent() {
     }
 
-    public AabbComponent(Vector2f min, Vector2f max) {
-        this.min = min;
-        this.max = max;
-    }
-
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------

@@ -1,4 +1,4 @@
-package de.sg.sandbox.physics;
+package de.sg.game;
 
 import org.joml.Vector2f;
 

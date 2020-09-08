@@ -197,6 +197,7 @@ public class Game extends BaseApplication {
         componentTypes.add(BallComponent.class);
         componentTypes.add(PlayerComponent.class);
         componentTypes.add(AabbComponent.class);
+        componentTypes.add(CircleComponent.class);
 
         // brick signature
         Signature brickSig = new Signature(
@@ -272,7 +273,7 @@ public class Game extends BaseApplication {
         var transformOpt= manager.addComponent(ballEntity, TransformComponent.class);
         var physicsOpt = manager.addComponent(ballEntity, PhysicsComponent.class);
         var ballOpt = manager.addComponent(ballEntity, BallComponent.class);
-        var aabbOpt = manager.addComponent(ballEntity, AabbComponent.class);
+        var circleOpt = manager.addComponent(ballEntity, CircleComponent.class);
 
         var mesh = meshOpt.orElseThrow();
         mesh.setMesh(this.mesh);
@@ -293,8 +294,8 @@ public class Game extends BaseApplication {
         ball.setRadius(BALL_RADIUS);
         ball.setStuck(true);
 
-        var aabb = aabbOpt.orElseThrow();
-        aabb.setMin(new Vector2f(initialBallPosition));
-        aabb.setMax(new Vector2f(initialBallPosition).add(new Vector2f(BALL_RADIUS * 2.0f, BALL_RADIUS * 2.0f)));
+        var circle = circleOpt.orElseThrow();
+        circle.setRadius(BALL_RADIUS);
+        circle.setCenter(new Vector2f(initialBallPosition));
     }
 }

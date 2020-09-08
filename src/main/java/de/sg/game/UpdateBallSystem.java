@@ -103,7 +103,7 @@ public class UpdateBallSystem extends Listener<UpdatePlayerEvent> implements Sys
         if (!ballComp.isStuck()) {
             var ballPhysicsComp = manager.getComponent(ball.id, PhysicsComponent.class).orElseThrow();
             var ballTransformComp = manager.getComponent(ball.id, TransformComponent.class).orElseThrow();
-            var ballAabbComp = manager.getComponent(ball.id, AabbComponent.class).orElseThrow();
+            var ballCircleComp = manager.getComponent(ball.id, CircleComponent.class).orElseThrow();
 
             var ballVelocity = new Vector2f(ballPhysicsComp.getVelocity()).mul(dt);
             ballTransformComp.getPosition().add(ballVelocity);
@@ -127,9 +127,8 @@ public class UpdateBallSystem extends Listener<UpdatePlayerEvent> implements Sys
                 dispatcher.dispatch(new GameOverEvent());
             }
 
-            // update ball aabb
-            ballAabbComp.setMin(new Vector2f(ballTransformComp.getPosition()));
-            ballAabbComp.setMax(new Vector2f(ballTransformComp.getPosition()).add(ballTransformComp.getSize()));
+            // update circle
+            ballCircleComp.setCenter(new Vector2f(ballTransformComp.getPosition()).add(ballComp.getRadius(), ballCircleComp.getRadius()));
         }
     }
 
