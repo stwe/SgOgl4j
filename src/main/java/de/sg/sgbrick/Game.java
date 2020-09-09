@@ -34,6 +34,7 @@ public class Game extends BaseApplication {
 
     public static final String TEXTURE_PADDLE = "/texture/sgbrick/paddle.png";
     public static final String TEXTURE_BALL = "/texture/sgbrick/ball.png";
+    public static final String TEXTURE_BG = "/texture/sgbrick/alm.jpg";
     public static final String LEVEL = "/level/level.lvl";
 
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f);
@@ -97,6 +98,9 @@ public class Game extends BaseApplication {
         // init Ecs / Dispatcher
         initEcs();
 
+        // create background
+        createBgEntity();
+
         // load level - create brick entities
         new Level(LEVEL, getEngine(), manager, mesh);
 
@@ -112,19 +116,15 @@ public class Game extends BaseApplication {
 
         // create update system for the player
         updatePlayerSystem = new UpdatePlayerSystem(getEngine(), manager, dispatcher);
-        updatePlayerSystem.init();
 
         // create update system for the ball
         updateBallSystem = new UpdateBallSystem(getEngine(), manager, dispatcher);
-        updateBallSystem.init();
 
         // create collision system
         collisionSystem = new CollisionSystem(manager);
-        collisionSystem.init();
 
         // create reset system
         resetSystem = new ResetSystem(this);
-        resetSystem.init();
 
         // the UpdateBallSystem also reacts to UpdatePlayerEvents
         dispatcher.addListener(UpdatePlayerEvent.class, updateBallSystem);
@@ -144,11 +144,9 @@ public class Game extends BaseApplication {
     public void update(float dt) {
         manager.update();
 
-        spriteRenderSystem.update(dt);
         updatePlayerSystem.update(dt);
         updateBallSystem.update(dt);
         collisionSystem.update(dt);
-        resetSystem.update(dt);
     }
 
     @Override
@@ -156,22 +154,11 @@ public class Game extends BaseApplication {
         spriteRenderSystem.prepareRendering();
         spriteRenderSystem.render();
         spriteRenderSystem.finishRendering();
-
-        updatePlayerSystem.render();
-        updateBallSystem.render();
-        collisionSystem.render();
-        resetSystem.render();
     }
 
     @Override
     public void cleanUp() {
         mesh.cleanUp();
-
-        spriteRenderSystem.cleanUp();
-        updatePlayerSystem.cleanUp();
-        updateBallSystem.cleanUp();
-        collisionSystem.cleanUp();
-        resetSystem.cleanUp();
     }
 
     //-------------------------------------------------
@@ -313,5 +300,27 @@ public class Game extends BaseApplication {
         var circle = circleOpt.orElseThrow();
         circle.setRadius(BALL_RADIUS);
         circle.setCenter(new Vector2f(initialBallPosition));
+    }
+
+    public void createBgEntity() throws Exception {
+        Texture bgTexture = getEngine().getResourceManager().loadTextureResource(TEXTURE_BG);
+
+        var bgEntity = manager.createEntity();
+
+        var meshOpt = manager.addComponent(bgEntity, MeshComponent.class);
+        var colorTextureOpt= manager.addComponent(bgEntity, ColorTextureComponent.class);
+        var transformOpt= manager.addComponent(bgEntity, TransformComponent.class);
+
+        var mesh = meshOpt.orElseThrow();
+        mesh.setMesh(this.mesh);
+
+        var colorTexture = colorTextureOpt.orElseThrow();
+        colorTexture.setColor(DEFAULT_COLOR);
+        colorTexture.setTexture(bgTexture);
+
+        var transform = transformOpt.orElseThrow();
+        transform.setPosition(new Vector2f(0.0f));
+        transform.setSize(new Vector2f(getEngine().getWindow().getWidth(), getEngine().getWindow().getHeight()));
+        transform.setRotation(NO_ROTATION);
     }
 }

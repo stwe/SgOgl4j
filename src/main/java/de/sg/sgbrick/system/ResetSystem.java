@@ -74,6 +74,9 @@ public class ResetSystem extends Listener<GameOverEvent> implements System {
     private void resetLevel() throws Exception {
         game.getManager().clear();
 
+        // create background
+        game.createBgEntity();
+
         // load level - create brick entities
         new Level(Game.LEVEL, game.getEngine(), game.getManager(), game.getMesh());
 
