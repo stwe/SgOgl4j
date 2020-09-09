@@ -41,7 +41,7 @@ public class Game extends BaseApplication {
     private static final float NO_ROTATION = 0.0f;
 
     // todo -> player component
-    public static final Vector2f PLAYER_SIZE = new Vector2f(100.0f, 20.0f);
+    public static final Vector2f PLAYER_SIZE = new Vector2f(160.0f, 16.0f);
     public static final float PLAYER_VELOCITY = 500.0f;
 
     // todo -> ball component

@@ -122,7 +122,7 @@ public class CollisionSystem implements System {
                     var centerBoard = paddleTransformComp.getPosition().x + paddleTransformComp.getSize().x / 2.0f;
                     var distance = (ballTransformComp.getPosition().x + ballComp.getRadius()) - centerBoard;
                     var percentage = distance / (paddleTransformComp.getSize().x / 2.0f);
-                    var strength = 2.0f;
+                    var strength = 3.0f;
                     var oldVelocity = new Vector2f(ballPhysicsComp.getVelocity());
                     ballPhysicsComp.getVelocity().x = BALL_VELOCITY.x * percentage * strength;
                     ballPhysicsComp.getVelocity().normalize().mul(oldVelocity.length());
