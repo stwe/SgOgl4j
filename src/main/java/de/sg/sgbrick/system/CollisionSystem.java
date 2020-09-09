@@ -91,7 +91,7 @@ public class CollisionSystem implements System {
                     if (direction == Collision.Direction.LEFT || direction == Collision.Direction.RIGHT) {
                         ballPhysicsComp.getVelocity().x = -ballPhysicsComp.getVelocity().x;
 
-                        var penetration = (ballComp.getRadius() - abs(difference.x)) * 4.0f;
+                        var penetration = ballComp.getRadius() - abs(difference.x);
 
                         if (direction == Collision.Direction.LEFT) {
                             ballTransformComp.getPosition().x += penetration;
@@ -101,7 +101,7 @@ public class CollisionSystem implements System {
                     } else {
                         ballPhysicsComp.getVelocity().y = -ballPhysicsComp.getVelocity().y;
 
-                        var penetration = (ballComp.getRadius() - abs(difference.y)) * 4.0f;
+                        var penetration = ballComp.getRadius() - abs(difference.y);
 
                         if (direction == Collision.Direction.UP) {
                             ballTransformComp.getPosition().y -= penetration;

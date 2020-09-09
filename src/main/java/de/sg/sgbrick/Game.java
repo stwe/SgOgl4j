@@ -74,6 +74,18 @@ public class Game extends BaseApplication {
     }
 
     //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    //-------------------------------------------------
     // Override
     //-------------------------------------------------
 
@@ -111,7 +123,7 @@ public class Game extends BaseApplication {
         collisionSystem.init();
 
         // create reset system
-        resetSystem = new ResetSystem(getEngine(), manager, mesh, LEVEL);
+        resetSystem = new ResetSystem(this);
         resetSystem.init();
 
         // the UpdateBallSystem also reacts to UpdatePlayerEvents
@@ -228,7 +240,7 @@ public class Game extends BaseApplication {
     // Create entities
     //-------------------------------------------------
 
-    private void createPlayerEntity() throws Exception {
+    public void createPlayerEntity() throws Exception {
         Texture paddleTexture = getEngine().getResourceManager().loadTextureResource(TEXTURE_PADDLE);
 
         initialPlayerPosition = new Vector2f(
@@ -265,7 +277,7 @@ public class Game extends BaseApplication {
         aabb.setMax(new Vector2f(initialPlayerPosition).add(PLAYER_SIZE));
     }
 
-    private void createBallEntity() throws Exception {
+    public void createBallEntity() throws Exception {
         Texture ballTexture = getEngine().getResourceManager().loadTextureResource(TEXTURE_BALL);
 
         var initialBallPosition = new Vector2f(initialPlayerPosition).add(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f);

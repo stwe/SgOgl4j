@@ -8,41 +8,24 @@
 
 package de.sg.sgbrick.system;
 
-import de.sg.ogl.SgOglEngine;
-import de.sg.ogl.SgOglRuntimeException;
-import de.sg.ogl.ecs.Entity;
 import de.sg.ogl.ecs.Listener;
-import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
-import de.sg.ogl.resource.Mesh;
+import de.sg.sgbrick.Game;
 import de.sg.sgbrick.event.GameOverEvent;
 import de.sg.sgbrick.Level;
-import de.sg.sgbrick.component.BallComponent;
-import de.sg.sgbrick.component.PhysicsComponent;
-import de.sg.sgbrick.component.PlayerComponent;
-import de.sg.sgbrick.component.TransformComponent;
-import org.joml.Vector2f;
 
 import java.util.function.Consumer;
 
-import static de.sg.sgbrick.Game.*;
-
 public class ResetSystem extends Listener<GameOverEvent> implements System {
 
-    private final SgOglEngine engine;
-    private final Manager manager;
-    private final Mesh mesh;
-    private final String levelPath;
+    private final Game game;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public ResetSystem(SgOglEngine engine, Manager manager, Mesh mesh, String levelPath) {
-        this.engine = engine;
-        this.manager = manager;
-        this.mesh = mesh;
-        this.levelPath = levelPath;
+    public ResetSystem(Game game) {
+        this.game = game;
     }
 
     //-------------------------------------------------
@@ -54,21 +37,6 @@ public class ResetSystem extends Listener<GameOverEvent> implements System {
         return (event) -> {
             try {
                 resetLevel();
-
-                var playerEntities = manager.getEntities(PlayerComponent.class);
-                if (playerEntities.size() > 1) {
-                    throw new SgOglRuntimeException("Invalid number of player entities.");
-                }
-
-                var ballEntities = manager.getEntities(BallComponent.class);
-                if (ballEntities.size() > 1) {
-                    throw new SgOglRuntimeException("Invalid number of ball entities.");
-                }
-
-                var player = playerEntities.get(0);
-                var ball = ballEntities.get(0);
-
-                resetPlayerAndBall(player, ball);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -104,27 +72,17 @@ public class ResetSystem extends Listener<GameOverEvent> implements System {
     //-------------------------------------------------
 
     private void resetLevel() throws Exception {
-        new Level(levelPath, engine, manager, mesh);
-    }
+        game.getManager().clear();
 
-    private void resetPlayerAndBall(Entity player, Entity ball) {
-        // reset player
-        var playerTransformComp = manager.getComponent(player.id, TransformComponent.class).orElseThrow();
-        playerTransformComp.setPosition(new Vector2f(
-                engine.getWindow().getWidth() / 2.0f - PLAYER_SIZE.x / 2.0f,
-                engine.getWindow().getHeight() - PLAYER_SIZE.y
-        ));
+        // load level - create brick entities
+        new Level(Game.LEVEL, game.getEngine(), game.getManager(), game.getMesh());
 
-        // reset ball
-        var ballComp = manager.getComponent(ball.id, BallComponent.class).orElseThrow();
-        ballComp.setStuck(true);
+        // create player
+        game.createPlayerEntity();
 
-        var ballTransformComp = manager.getComponent(ball.id, TransformComponent.class).orElseThrow();
-        var ballPhysicsComp = manager.getComponent(ball.id, PhysicsComponent.class).orElseThrow();
+        // create ball
+        game.createBallEntity();
 
-        ballTransformComp.setPosition(new Vector2f(playerTransformComp.getPosition())
-                .add(new Vector2f(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -(BALL_RADIUS * 2.0f))));
-
-        ballPhysicsComp.setVelocity(BALL_VELOCITY);
+        game.getManager().update();
     }
 }
