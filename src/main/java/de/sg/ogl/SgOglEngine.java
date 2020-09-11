@@ -17,7 +17,6 @@ import static de.sg.ogl.Log.LOGGER;
 public class SgOglEngine implements Runnable {
 
     private final Window window;
-    private final Input input;
     private final BaseApplication application;
     private final ResourceManager resourceManager;
 
@@ -29,7 +28,6 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Creates SgOglEngine object.");
 
         this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
-        this.input = new Input();
         this.application = Objects.requireNonNull(application, "application must not be null");
         this.resourceManager = new ResourceManager();
 
@@ -42,10 +40,6 @@ public class SgOglEngine implements Runnable {
 
     public Window getWindow() {
         return window;
-    }
-
-    public Input getInput() {
-        return input;
     }
 
     public ResourceManager getResourceManager() {
@@ -94,6 +88,7 @@ public class SgOglEngine implements Runnable {
     }
 
     private void update(float dt) {
+        Input.update(dt);
         application.update(dt);
     }
 

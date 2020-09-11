@@ -8,9 +8,12 @@
 
 package de.sg.ogl;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
+import java.nio.FloatBuffer;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL11.*;
@@ -72,7 +75,18 @@ public final class OpenGL {
     }
 
     //-------------------------------------------------
-    // Helper
+    // OpenGL helper
+    //-------------------------------------------------
+
+    public static FloatBuffer getPixel(int x, int y) {
+        var pixel = BufferUtils.createFloatBuffer(4);
+        glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, pixel);
+
+        return pixel;
+    }
+
+    //-------------------------------------------------
+    // Info
     //-------------------------------------------------
 
     private static void printContextInitInfo() {

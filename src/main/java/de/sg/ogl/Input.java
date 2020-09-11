@@ -32,7 +32,7 @@ public class Input {
     private static double scrollX, scrollY;
 
     private static final Vector2d displVec = new Vector2d(0.0, 0.0);
-    private static boolean inWindow = false;
+    private static boolean mouseInWindow = false;
 
     //-------------------------------------------------
     // Ctors.
@@ -95,6 +95,10 @@ public class Input {
         return displVec;
     }
 
+    public static boolean isMouseInWindow() {
+        return mouseInWindow;
+    }
+
     //-------------------------------------------------
     // Init
     //-------------------------------------------------
@@ -139,7 +143,7 @@ public class Input {
         var cursorEnter = new GLFWCursorEnterCallback() {
             @Override
             public void invoke(long window, boolean entered) {
-                inWindow = entered;
+                mouseInWindow = entered;
             }
         };
 
@@ -154,7 +158,7 @@ public class Input {
     // Logic
     //-------------------------------------------------
 
-    public void update(float dt) {
+    public static void update(float dt) {
         resetKeyboard();
         resetMouse();
         updateMouse();
@@ -176,7 +180,7 @@ public class Input {
         displVec.x = 0.0;
         displVec.y = 0.0;
 
-        if (previousMouseX > 0.0 && previousMouseY > 0.0 && inWindow) {
+        if (previousMouseX > 0.0 && previousMouseY > 0.0 && mouseInWindow) {
             displVec.x = currentMouseX - previousMouseX;
             displVec.y = currentMouseY - previousMouseY;
         }
