@@ -32,6 +32,10 @@ public class Application extends BaseApplication {
     private Texture click;
     private Texture empty;
     private Texture coll;
+    private Texture sand;
+    private Texture tree;
+    private Texture water;
+    private Texture grass;
 
     private Pixel[] pixels;
 
@@ -45,9 +49,14 @@ public class Application extends BaseApplication {
     @Override
     public void init() throws Exception {
         empty = getEngine().getResourceManager().loadTextureResource("/texture/tiles/empty.png");
-        click = getEngine().getResourceManager().loadTextureResource("/texture/tiles/click.png");
-        coll = getEngine().getResourceManager().loadTextureResource("/texture/tiles/coll.png");
+        sand = getEngine().getResourceManager().loadTextureResource("/texture/tiles/sand.png");
+        tree = getEngine().getResourceManager().loadTextureResource("/texture/tiles/tree.png");
+        water = getEngine().getResourceManager().loadTextureResource("/texture/tiles/water.png");
+        grass = getEngine().getResourceManager().loadTextureResource("/texture/tiles/grass.png");
 
+        click = getEngine().getResourceManager().loadTextureResource("/texture/tiles/click.png");
+
+        coll = getEngine().getResourceManager().loadTextureResource("/texture/tiles/coll.png");
         pixels = createPixels();
 
         renderer = new SpriteRenderer(getEngine());
@@ -84,6 +93,19 @@ public class Application extends BaseApplication {
         if (pixel.equals(Pixel.GREEN)) selected.y += 1;
         if (pixel.equals(Pixel.YELLOW)) selected.x += 1;
 
+        if (Input.isMouseButtonReleased(0)) {
+            if (selected.x >= 0 && selected.x < worldSize.x && selected.y >= 0 && selected.y < worldSize.y) {
+                map[selected.y * worldSize.x + selected.x]++;
+
+                if (map[selected.y * worldSize.x + selected.x] > 4) {
+                    map[selected.y * worldSize.x + selected.x] = 0;
+                }
+
+                System.out.println("Texture: " + map[selected.y * worldSize.x + selected.x]);
+            }
+            Input.update(0.0f); // reset mouse
+        }
+
         for (int y = 0; y < worldSize.y; y++) {
             for (int x = 0; x < worldSize.x; x++) {
 
@@ -91,7 +113,10 @@ public class Application extends BaseApplication {
 
                 switch (map[y * worldSize.x + x]) {
                     case 0: renderer.render(empty.getId(), new Vector2f(world), 0.0f, new Vector2f(tileSize)); break;
-                    case 1: renderer.render(click.getId(), new Vector2f(world), 0.0f, new Vector2f(tileSize)); break;
+                    case 1: renderer.render(grass.getId(), new Vector2f(world), 0.0f, new Vector2f(tileSize)); break;
+                    case 2: renderer.render(sand.getId(), new Vector2f(world), 0.0f, new Vector2f(tileSize)); break;
+                    case 3: renderer.render(water.getId(), new Vector2f(world), 0.0f, new Vector2f(tileSize)); break;
+                    case 4: renderer.render(tree.getId(), new Vector2f(world.x, world.y - tileSize.y), 0.0f, new Vector2f(tileSize.x, tileSize.y * 2.0f)); break;
                 }
             }
         }
