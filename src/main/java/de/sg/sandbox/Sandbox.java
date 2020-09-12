@@ -8,19 +8,54 @@
 
 package de.sg.sandbox;
 
-import de.sg.ogl.SgOglEngine;
+import de.sg.ogl.BaseApplication;
+import de.sg.ogl.Input;
+import de.sg.ogl.camera.FirstPersonCamera;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
-public class Sandbox {
+import java.io.IOException;
 
-    public static void main(String[] args) {
-        Application application = null;
-        try {
-            application = new Application();
-        } catch (Exception e) {
-            e.printStackTrace();
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+
+public class Sandbox extends BaseApplication {
+
+    LineRenderer renderer;
+    FirstPersonCamera camera;
+
+    public Sandbox() throws IOException, IllegalAccessException {
+    }
+
+    @Override
+    public void init() throws Exception {
+        camera = new FirstPersonCamera();
+        camera.setPosition(new Vector3f(0.0f, 0.0f, 1.0f));
+        camera.setYaw(-90.0f);
+
+        renderer = new LineRenderer(getEngine(), camera);
+    }
+
+    @Override
+    public void input() {
+        if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+            glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
 
-        var engine = new SgOglEngine(application);
-        engine.run();
+        camera.input();
+    }
+
+    @Override
+    public void update(float dt) {
+        camera.update(dt);
+    }
+
+    @Override
+    public void render() {
+        renderer.render();
+    }
+
+    @Override
+    public void cleanUp() {
+
     }
 }

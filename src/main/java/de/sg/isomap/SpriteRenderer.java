@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.isomap;
 
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
@@ -21,8 +21,7 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.UV;
+import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.*;
 
 public class SpriteRenderer {
 
@@ -31,11 +30,19 @@ public class SpriteRenderer {
     private Mesh mesh;
     private Shader shader;
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public SpriteRenderer(SgOglEngine engine) throws Exception {
         this.engine = engine;
         createMesh();
         loadShader();
     }
+
+    //-------------------------------------------------
+    // Render
+    //-------------------------------------------------
 
     public void prepareRendering() {
         OpenGL.enableAlphaBlending();
@@ -55,9 +62,17 @@ public class SpriteRenderer {
         Shader.unbind();
     }
 
+    //-------------------------------------------------
+    // Clean up
+    //-------------------------------------------------
+
     public void cleanUp() {
         mesh.cleanUp();
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     private void renderMesh(int textureId, Vector2f position, float rotation, Vector2f size) {
         Texture.bindForReading(textureId, 0);
@@ -76,14 +91,6 @@ public class SpriteRenderer {
         shader.setUniform("diffuseMap", 0);
 
         mesh.drawPrimitives();
-    }
-
-    private Vector2f getTextureOffset(int index) {
-        var col = index % 4;
-        var row = index / 4;
-        var rows = 4.0f;
-
-        return new Vector2f(col / rows, row / rows);
     }
 
     private void loadShader() throws Exception {

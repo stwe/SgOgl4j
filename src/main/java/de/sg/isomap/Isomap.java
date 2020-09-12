@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.isomap;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Application extends BaseApplication {
+public class Isomap extends BaseApplication {
 
     private final Vector2i worldSize = new Vector2i(14, 10);
     private final Vector2i tileSize = new Vector2i(40 ,20);
@@ -43,8 +43,16 @@ public class Application extends BaseApplication {
 
     private final int[] map = new int[worldSize.x * worldSize.y];
 
-    public Application() throws IOException, IllegalAccessException {
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public Isomap() throws IOException, IllegalAccessException {
     }
+
+    //-------------------------------------------------
+    // Override
+    //-------------------------------------------------
 
     @Override
     public void init() throws Exception {
@@ -103,7 +111,8 @@ public class Application extends BaseApplication {
 
                 System.out.println("Texture: " + map[selected.y * worldSize.x + selected.x]);
             }
-            Input.update(0.0f); // reset mouse
+
+            Input.reset();
         }
 
         for (int y = 0; y < worldSize.y; y++) {
@@ -129,8 +138,12 @@ public class Application extends BaseApplication {
 
     @Override
     public void cleanUp() {
-
+        renderer.cleanUp();
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     private Vector2i toScreen(int x, int y) {
         return new Vector2i(

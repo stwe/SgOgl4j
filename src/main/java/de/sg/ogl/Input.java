@@ -159,14 +159,18 @@ public class Input {
     //-------------------------------------------------
 
     public static void update(float dt) {
-        resetKeyboard();
-        resetMouse();
-        updateMouse();
+        reset();
     }
 
     //-------------------------------------------------
     // Helper
     //-------------------------------------------------
+
+    public static void reset() {
+        resetKeyboard();
+        resetMouse();
+        updateMouse();
+    }
 
     private static void resetKeyboard() {
         Arrays.fill(KEY_STATES, -1);

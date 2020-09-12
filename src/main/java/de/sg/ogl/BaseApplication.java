@@ -22,7 +22,7 @@ public abstract class BaseApplication implements Application {
     //-------------------------------------------------
 
     public BaseApplication() throws IOException, IllegalAccessException {
-        LOGGER.debug("Creates Application object and load config.");
+        LOGGER.debug("Creates Isomap object and load config.");
 
         ConfigLoader.load(Config.class, "/config.properties");
         LOGGER.debug("Configuration loaded successfully.");
