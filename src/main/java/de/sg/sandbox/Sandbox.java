@@ -17,15 +17,20 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class Sandbox extends BaseApplication {
 
-    BshReader bshReader;
+    ColFile colFile;
+    BshFile bshFile;
 
     public Sandbox() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        bshReader = new BshReader("/bsh/STADTFLD.BSH");
-        bshReader.load();
+        colFile = new ColFile("/bsh/STADTFLD.COL");
+        colFile.loadData();
+
+        bshFile = new BshFile("/bsh/STADTFLD.BSH");
+        bshFile.loadData();
+        bshFile.decodeImages();
     }
 
     @Override
