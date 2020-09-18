@@ -6,9 +6,25 @@ public class ColFile extends Chunk  {
 
     private final int[] palette = new int[256];
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public ColFile(String filePath) throws IOException {
         super(filePath, Type.COL);
     }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public int[] getPalette() {
+        return palette;
+    }
+
+    //-------------------------------------------------
+    // Override
+    //-------------------------------------------------
 
     @Override
     public void loadData() {
@@ -22,6 +38,10 @@ public class ColFile extends Chunk  {
             palette[i] = rgbToInt(red, green, blue);
         }
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     private static int rgbToInt(int red, int green, int blue) {
         var alpha = 255;

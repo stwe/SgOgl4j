@@ -25,11 +25,23 @@ public abstract class Chunk {
         }
     }
 
+    /**
+     * The expected file type identifier.
+     */
     private final Type type;
+
+    /**
+     * The file to be read.
+     */
     private final File file;
 
     /**
-     * A file type identifier.
+     * The ByteBuffer with the chunk data.
+     */
+    ByteBuffer byteBuffer;
+
+    /**
+     * The file type identifier.
      */
     private final byte[] id = new byte[16];
 
@@ -38,8 +50,6 @@ public abstract class Chunk {
      */
     private final byte[] dataLength = new byte[4];
 
-    ByteBuffer byteBuffer;
-
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
@@ -47,28 +57,45 @@ public abstract class Chunk {
     public Chunk(String filePath, Type type) throws IOException {
         this.type = type;
         this.file = new File(loadResource(filePath));
-        readHeader();
+
+        readChunkHeader();
     }
 
     //-------------------------------------------------
     // Read header
     //-------------------------------------------------
 
-    private void readHeader() throws IOException {
+    private void readChunkHeader() throws IOException {
         var in = new FileInputStream(file);
-        in.read(id, 0, id.length);
-        in.read(dataLength, 0, dataLength.length);
 
-        if (getIdAsString().equals(this.type.getType())) {
+        // read file type id
+        var result = in.read(id, 0, id.length);
+        if (result != id.length) {
+            throw new RuntimeException("Unexpected error.");
+        }
+
+        // read size of chunk
+        result = in.read(dataLength, 0, dataLength.length);
+        if (result != dataLength.length) {
+            throw new RuntimeException("Unexpected error.");
+        }
+
+        // if the type is right ...
+        if (idToString().equals(this.type.getType())) {
             var length = bytesToInt(dataLength, 0);
             byte[] data = new byte[length];
 
-            in.read(data, 0, length);
+            // read chunk data
+            result = in.read(data, 0, length);
+            if (result != length) {
+                throw new RuntimeException("Unexpected error.");
+            }
 
+            // wraps into a byte buffer
             byteBuffer = ByteBuffer.wrap(data);
             byteBuffer.order(ByteOrder.nativeOrder());
         } else {
-            throw new RuntimeException("Invalid type");
+            throw new RuntimeException("Invalid file type identifier.");
         }
 
         in.close();
@@ -92,13 +119,13 @@ public abstract class Chunk {
                 bytes[index] & 0xff;
     }
 
-    private String getIdAsString() {
+    private String idToString() {
         char[] chars = new char[] { (char)id[0], (char)id[1], (char)id[2] };
         return String.valueOf(chars);
     }
 
     //-------------------------------------------------
-    // Get resource url
+    // Create resource url
     //-------------------------------------------------
 
     private String loadResource(String resource) throws FileNotFoundException {
