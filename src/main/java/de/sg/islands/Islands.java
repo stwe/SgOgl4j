@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.islands;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
@@ -14,6 +14,7 @@ import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.resource.Mesh;
 import org.lwjgl.glfw.GLFW;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -21,16 +22,27 @@ import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.UV;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class Sandbox extends BaseApplication {
+public class Islands extends BaseApplication {
 
-    ColFile colFile;
-    BshFile bshFile;
+    private DevelopmentFile devFile;
+    private PaletteFile paletteFile;
+    private BshFile bshFile;
+    private ScpFile scpFile;
+    //private CodFile codFile;
 
     private Mesh mesh;
     private Renderer renderer;
 
-    public Sandbox() throws IOException, IllegalAccessException {
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public Islands() throws IOException, IllegalAccessException {
     }
+
+    //-------------------------------------------------
+    // Override
+    //-------------------------------------------------
 
     @Override
     public void init() throws Exception {
@@ -38,11 +50,12 @@ public class Sandbox extends BaseApplication {
         renderer = new Renderer(getEngine(), mesh);
         renderer.init();
 
-        colFile = new ColFile("/bsh/STADTFLD.COL");
-        colFile.loadData();
+        devFile = new DevelopmentFile("/island/bebauung.txt");
+        paletteFile = new PaletteFile("/island/STADTFLD.COL");
+        bshFile = new BshFile("/island/STADTFLD.BSH", paletteFile.getPalette());
+        scpFile = new ScpFile("/island/big.scp", devFile);
 
-        bshFile = new BshFile("/bsh/STADTFLD.BSH", colFile.getPalette());
-        bshFile.loadData();
+        //codFile = new CodFile("/bsh/haeuser.cod");
     }
 
     @Override
@@ -54,17 +67,22 @@ public class Sandbox extends BaseApplication {
 
     @Override
     public void update(float dt) {
+
     }
 
     @Override
     public void render() {
-        renderer.render(bshFile.getImages().get(200));
+        renderer.render(bshFile.getBshTextures().get(200), 100, 100);
     }
 
     @Override
     public void cleanUp() {
 
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     private void createMesh() {
         float[] vertices = new float[] {

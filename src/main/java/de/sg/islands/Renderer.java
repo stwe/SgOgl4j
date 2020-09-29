@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.islands;
 
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
@@ -43,12 +43,12 @@ public class Renderer {
         shader = engine.getResourceManager().loadShaderResource("sprite2");
     }
 
-    public void render(BshImage image) {
+    public void render(BshTexture texture, int posX, int posY) {
         OpenGL.enableAlphaBlending();
         shader.bind();
         mesh.initDraw();
 
-        renderMesh(image, new Vector2f(100.0f,100.0f), 0.0f);
+        renderMesh(texture, new Vector2f(posX, posY), 0.0f);
 
         mesh.endDraw();
         Shader.unbind();
@@ -58,14 +58,14 @@ public class Renderer {
     // Helper
     //-------------------------------------------------
 
-    private void renderMesh(BshImage image, Vector2f position, float rotation) {
-        glActiveTexture(image.getTextureId());
-        glBindTexture(GL_TEXTURE_2D, image.getTextureId());
+    private void renderMesh(BshTexture texture, Vector2f position, float rotation) {
+        glActiveTexture(texture.getTextureId());
+        glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        var size = new Vector2f(image.getImage().getWidth(), image.getImage().getHeight());
+        var size = new Vector2f(texture.getBufferedImage().getWidth(), texture.getBufferedImage().getHeight());
 
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix

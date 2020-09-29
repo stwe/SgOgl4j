@@ -6,29 +6,29 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.islands;
 
 import java.awt.image.BufferedImage;
 
-public class BshImage {
+public class BshTexture {
 
-    private BufferedImage image;
+    private final BufferedImage bufferedImage;
     private int textureId;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public BshImage(BufferedImage image) {
-        this.image = image;
+    public BshTexture(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public BufferedImage getImage() {
-        return image;
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
     }
 
     public int getTextureId() {

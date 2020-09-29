@@ -6,15 +6,15 @@
  * License: MIT
  */
 
-package de.sg.sandbox;
+package de.sg.islands;
 
 import de.sg.ogl.SgOglEngine;
 
-public class SandboxMain {
+public class IslandsMain {
     public static void main(String[] args) {
-        Sandbox application = null;
+        Islands application = null;
         try {
-            application = new Sandbox();
+            application = new Islands();
         } catch (Exception e) {
             e.printStackTrace();
         }
