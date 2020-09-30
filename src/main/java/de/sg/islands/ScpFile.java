@@ -16,9 +16,9 @@ import java.util.Vector;
 public class ScpFile extends de.sg.islands.File {
 
     private final DevelopmentFile developmentFile;
+
     private Island5 island5;
     private IslandHouse islandHouse;
-
     private List<IslandTile> layer;
 
     //-------------------------------------------------
@@ -44,6 +44,10 @@ public class ScpFile extends de.sg.islands.File {
 
     public IslandHouse getIslandHouse() {
         return islandHouse;
+    }
+
+    public List<IslandTile> getLayer() {
+        return layer;
     }
 
     //-------------------------------------------------
@@ -72,6 +76,7 @@ public class ScpFile extends de.sg.islands.File {
     // Layer
     //-------------------------------------------------
 
+    // todo
     private void raster() {
         layer = new Vector<>(island5.width * island5.height);
 
@@ -91,7 +96,18 @@ public class ScpFile extends de.sg.islands.File {
                 throw new RuntimeException("Invalid tile position.");
             }
 
-            System.out.println("Tile dev name: " + developmentFile.getMeta(tile.developmentId).name);
+            //System.out.println("Tile dev name: " + developmentFile.getMeta(tile.developmentId).name);
+
+            var info = developmentFile.getMeta(tile.developmentId);
+            int buildingWidth = info.width;
+            int buildingHeight = info.height;
+            for (int y = 0; y < buildingHeight && tile.yPosOnIsland + y < island5.height; y++) {
+                for (int x = 0; x < buildingWidth && tile.xPosOnIsland + x < island5.width; x++) {
+                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).developmentId = tile.developmentId;
+                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).xPosOnIsland = x;
+                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).yPosOnIsland = y;
+                }
+            }
         }
     }
 }

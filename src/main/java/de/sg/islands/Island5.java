@@ -11,9 +11,11 @@ package de.sg.islands;
 import static de.sg.islands.Util.byteToInt;
 import static de.sg.islands.Util.shortToInt;
 
+import static de.sg.ogl.Log.LOGGER;
+
 public class Island5 {
 
-    // original only 8 bytes
+    // original 8 bytes
     private static class OreDeposit {
         public int type;
         public int xPos;
@@ -22,7 +24,7 @@ public class Island5 {
         public int unknow;
     }
 
-    // original only 116 bytes
+    // original 116 bytes
     public int index;
     public int width;
     public int height;
@@ -45,7 +47,25 @@ public class Island5 {
     public int diff;
     public int [] bytes2 = new int[14];
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public Island5(Chunk chunk) {
+        LOGGER.debug("Creates Island5 object.");
+
+        readIslandData(chunk);
+
+        LOGGER.debug("Island5 width: {}, height: {}, xPos: {}, yPos: {}, prod: {}", width, height, xPos, yPos, productivity);
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private void readIslandData(Chunk chunk) {
+        LOGGER.debug("Start reading the Island5 data...");
+
         index = byteToInt(chunk.getData().get());
         width = byteToInt(chunk.getData().get());
         height = byteToInt(chunk.getData().get());
@@ -98,9 +118,6 @@ public class Island5 {
             bytes2[i] = byteToInt(b2[i]);
         }
 
-        System.out.println("width: " + width + ", height: " + height +
-                           ", x: " + xPos + ", y: " + yPos +
-                           ", ore " + ore + ", prod: " + productivity
-        );
+        LOGGER.debug("Island5 data read successfully.");
     }
 }

@@ -72,7 +72,27 @@ public class Islands extends BaseApplication {
 
     @Override
     public void render() {
-        renderer.render(bshFile.getBshTextures().get(200), 100, 100);
+        /*
+        for (int y = 0; y < scpFile.getIsland5().height; y++) {
+            for (int x = 0; x < scpFile.getIsland5().width; x++) {
+
+                var xp = scpFile.getLayer().get(y * scpFile.getIsland5().width + x).xPosOnIsland;
+                var yp = scpFile.getLayer().get(y * scpFile.getIsland5().width + x).yPosOnIsland;
+
+                var target = scpFile.getLayer().get((y - yp) * scpFile.getIsland5().width + x - xp);
+                target.xPosOnIsland = xp;
+                target.yPosOnIsland = yp;
+
+                var info = devFile.getMeta(target.developmentId);
+
+                renderer.render(
+                        bshFile.getBshTextures().get(target.developmentId),
+                        (100 + (x - y) * info.width),
+                        (100 + (x + y) * info.height / 2)
+                );
+            }
+        }
+        */
     }
 
     @Override

@@ -57,4 +57,20 @@ public class Util {
     public static int shortToInt(short value) {
         return (int) value & 0xFFFF;
     }
+
+    //-------------------------------------------------
+    // Bits
+    //-------------------------------------------------
+
+    /**
+     * Extract k bits from position p.
+     *
+     * @param number The given value.
+     * @param k Number of bits to extract.
+     * @param p The position from which to extract.
+     * @return The extracted value as integer.
+     */
+    public static int bitExtracted(int number, int k, int p) {
+        return (((1 << k) - 1) & (number >> (p - 1)));
+    }
 }
