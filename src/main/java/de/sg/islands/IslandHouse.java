@@ -9,6 +9,7 @@
 package de.sg.islands;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import static de.sg.islands.Util.byteToInt;
@@ -23,6 +24,8 @@ public class IslandHouse {
     private final List<IslandTile> tiles = new Vector<>();
     private final int count;
 
+    private final Chunk chunk;
+
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
@@ -30,8 +33,10 @@ public class IslandHouse {
     public IslandHouse(Chunk chunk) {
         LOGGER.debug("Creates IslandHouse object.");
 
-        count = calcNrOfTiles(chunk);
-        readTileData(chunk);
+        this.chunk = Objects.requireNonNull(chunk, "chunk must not be null");
+
+        count = calcNrOfTiles();
+        readTileData();
     }
 
     //-------------------------------------------------
@@ -50,14 +55,14 @@ public class IslandHouse {
     // Helper
     //-------------------------------------------------
 
-    private int calcNrOfTiles(Chunk chunk) {
+    private int calcNrOfTiles() {
         var res = chunk.getDataLength() / BYTES_PER_TILE;
-        LOGGER.debug("Detected {} tiles.", count);
+        LOGGER.debug("Detected {} tiles.", res);
 
         return res;
     }
 
-    private void readTileData(Chunk chunk) {
+    private void readTileData() {
         LOGGER.debug("Start reading the tile data...");
 
         for (var i = 0; i < count; i++) {
@@ -74,8 +79,19 @@ public class IslandHouse {
 
             tile.rotation = Util.bitExtracted(packedInt, 2, 1);
             tile.animationCount = Util.bitExtracted(packedInt, 4, 3);
+
             tile.unknow = Util.bitExtracted(packedInt, 8, 7);
+            if (tile.unknow < 0 || tile.unknow > 17) {
+                throw new RuntimeException("Invalid value in tile data.");
+            }
+
             tile.state = Util.bitExtracted(packedInt, 3, 15);
+            if (tile.state < 0 || tile.state > 1) {
+                if (tile.state != 7) {
+                    throw new RuntimeException("Invalid value in tile data.");
+                }
+            }
+
             tile.random = Util.bitExtracted(packedInt, 5, 18);
             tile.player = Util.bitExtracted(packedInt, 3, 23);
             tile.empty = Util.bitExtracted(packedInt,7, 26);

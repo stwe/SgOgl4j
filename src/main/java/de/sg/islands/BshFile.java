@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
+import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL11.*;
 
 public class BshFile extends File {
@@ -35,6 +36,8 @@ public class BshFile extends File {
 
     public BshFile(String filePath, int[] palette) throws IOException {
         super(Objects.requireNonNull(filePath, "filePath must not be null"));
+
+        LOGGER.debug("Creates BshFile object from file {}.", filePath);
 
         this.palette = Objects.requireNonNull(palette, "palette must not be null");
 
@@ -64,6 +67,8 @@ public class BshFile extends File {
 
     @Override
     public void readDataFromChunks() {
+        LOGGER.debug("Start reading data from Chunks...");
+
         // get offset of the first texture
         var texturesStartOffset = chunk0.getData().getInt();
         offsets.add(texturesStartOffset);
@@ -73,11 +78,15 @@ public class BshFile extends File {
             offsets.add(offset);
         }
 
+        LOGGER.debug("Detected {} texture offsets.", offsets.size());
+
         // decode
         decodeTextures();
 
         // create OpenGL textures
         createGlTextures();
+
+        LOGGER.debug("Chunks data read successfully.");
     }
 
     //-------------------------------------------------

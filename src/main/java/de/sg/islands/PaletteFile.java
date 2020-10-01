@@ -11,6 +11,8 @@ package de.sg.islands;
 import java.io.IOException;
 import java.util.Objects;
 
+import static de.sg.ogl.Log.LOGGER;
+
 public class PaletteFile extends File {
 
     private static final int NUMBER_OF_COLORS = 256;
@@ -25,6 +27,8 @@ public class PaletteFile extends File {
 
     public PaletteFile(String filePath) throws IOException {
         super(Objects.requireNonNull(filePath, "filePath must not be null"));
+
+        LOGGER.debug("Creates Palette object from file {}.", filePath);
 
         if (getNumberOfChunks() != NUMBER_OF_CHUNKS) {
             throw new RuntimeException("Invalid number of Chunks.");
@@ -51,6 +55,8 @@ public class PaletteFile extends File {
 
     @Override
     public void readDataFromChunks() {
+        LOGGER.debug("Start reading data from Chunks...");
+
         var chunk0 = getChunk(0);
 
         for (int i = 0; i < palette.length; i++) {
@@ -62,6 +68,8 @@ public class PaletteFile extends File {
 
             palette[i] = rgbToInt(red, green, blue);
         }
+
+        LOGGER.debug("Chunks data read successfully.");
     }
 
     //-------------------------------------------------

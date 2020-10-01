@@ -129,6 +129,8 @@ public class DevelopmentFile {
     private void loadFile(String fileUrl) throws IOException {
         var br = new BufferedReader(new FileReader(Objects.requireNonNull(fileUrl, "filePath must not be null")));
 
+        LOGGER.debug("Start reading development data from {}...", fileUrl);
+
         String line;
         while ((line = br.readLine()) != null) {
             if (!line.isEmpty() && line.charAt(0) != ';') {
@@ -147,5 +149,7 @@ public class DevelopmentFile {
                 ));
             }
         }
+
+        LOGGER.debug("Development data read successfully.");
     }
 }

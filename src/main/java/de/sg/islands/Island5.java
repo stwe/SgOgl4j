@@ -8,6 +8,8 @@
 
 package de.sg.islands;
 
+import java.util.Objects;
+
 import static de.sg.islands.Util.byteToInt;
 import static de.sg.islands.Util.shortToInt;
 
@@ -54,7 +56,7 @@ public class Island5 {
     public Island5(Chunk chunk) {
         LOGGER.debug("Creates Island5 object.");
 
-        readIslandData(chunk);
+        readIslandData(Objects.requireNonNull(chunk, "chunk must not be null"));
 
         LOGGER.debug("Island5 width: {}, height: {}, xPos: {}, yPos: {}, prod: {}", width, height, xPos, yPos, productivity);
     }

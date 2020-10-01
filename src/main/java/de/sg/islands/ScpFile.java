@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
+import static de.sg.ogl.Log.LOGGER;
+
 public class ScpFile extends de.sg.islands.File {
 
     private final DevelopmentFile developmentFile;
@@ -27,6 +29,8 @@ public class ScpFile extends de.sg.islands.File {
 
     public ScpFile(String filePath, DevelopmentFile developmentFile) throws IOException {
         super(Objects.requireNonNull(filePath, "filePath must not be null"));
+
+        LOGGER.debug("Creates ScpFile object from file {}.", filePath);
 
         this.developmentFile = developmentFile;
 
@@ -56,20 +60,23 @@ public class ScpFile extends de.sg.islands.File {
 
     @Override
     public void readDataFromChunks() {
+        LOGGER.debug("Start reading data from Chunks...");
+
         for (var chunk : getChunks()) {
             if (chunk.getId().equals("INSEL5")) {
                 island5 = new Island5(chunk);
-                System.out.println("Insel5 found.");
+                LOGGER.debug("INSEL5 found");
             }
             if (chunk.getId().equals("INSELHAUS")) {
                 islandHouse = new IslandHouse(chunk);
-                System.out.println("Island House entries: " + islandHouse.getCount());
-                System.out.println("Inselhaus found.");
+                LOGGER.debug("INSELHAUS found");
             }
             if (chunk.getId().equals("HIRSCH2")) {
-                System.out.println("Hirsch2 found.");
+                LOGGER.debug("HIRSCH2 found");
             }
         }
+
+        LOGGER.debug("Chunks data read successfully.");
     }
 
     //-------------------------------------------------

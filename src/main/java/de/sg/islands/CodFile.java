@@ -18,8 +18,10 @@ import java.io.File;
 public class CodFile {
 
     private final String filePath;
-    private byte[] bytes;
-    private byte[] decrypted;
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
 
     public CodFile(String filePath) throws IOException {
         this.filePath = Objects.requireNonNull(filePath, "filePath must not be null");
@@ -27,12 +29,16 @@ public class CodFile {
         readFileData();
     }
 
+    //-------------------------------------------------
+    // Decrypt
+    //-------------------------------------------------
+
     private void readFileData() throws IOException {
         var file = new java.io.File(Util.loadResource(filePath));
         var fileInputStream = new FileInputStream(file);
 
-        bytes = fileInputStream.readAllBytes();
-        decrypted = new byte[bytes.length];
+        byte[] bytes = fileInputStream.readAllBytes();
+        byte[] decrypted = new byte[bytes.length];
 
         var i = 0;
         for (var b : bytes) {
