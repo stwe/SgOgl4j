@@ -83,38 +83,91 @@ public class ScpFile extends de.sg.islands.File {
     // Layer
     //-------------------------------------------------
 
-    // todo
     private void raster() {
+        if (island5 == null) {
+            LOGGER.warn("ISLAND5 missing.");
+
+            return;
+        }
+
         layer = new Vector<>(island5.width * island5.height);
 
-        // default dev Id for each Tile (4200)
+        LOGGER.debug("Create a Layer with {}x{} Tiles", island5.width, island5.height);
+
+        clearTiles();
+        initTiles();
+    }
+
+    private void clearTiles() {
+        LOGGER.debug("Set FF as default value for the devId for each of the {} Tiles", island5.width * island5.height);
+
         for (int y = 0; y < island5.height; y++) {
             for (int x = 0; x < island5.width; x++) {
                 layer.add(new IslandTile());
                 layer.get(y * island5.width + x).developmentId = 0xFF;
             }
         }
+    }
 
-        // only 4068
+    /*
+        Im INSELHAUS chunk ist an einer Stelle an der ein Haus steht nur an einer Stelle
+        (naemlich am Feld des unteren linken Ecks des Gebaeudes) die Gebaeude-ID gespeichert.
+                                                                                     |
+                                                                                     |
+                                                                                    / \
+                                                                              -----    ------
+y                                                                             |             |
+                                                                              |             |
+          269    270    271    272    273    274    275    276    277         |             | 278
+        |------|------|------|------|------|------|------|------|------|------|------|------|------|
+9       | 1201 | 1201 | 1204 | 1203 | 1214 | 1011 | 2722 | 2722 | 1104 |      | berg5| berg5| 1104 |
+        |------|------|------|------|------|------|------|------|------|------|------|------|------|
+                                                                              |             |
+                                                                              |             |
+          240    241    242    243    244    245    246    247    248    249  | 250         | 251
+        |------|------|------|------|------|------|------|------|------|------|------|------|------|
+8       | 1201 | 1201 | 1204 | 1203 | 1214 | 1011 | 2722 | 2722 | 2722 | 2722 | 1104 | berg5| 2722 |
+        |------|------|------|------|------|------|------|------|------|------|------|------|------|
+    x      0       1      2     3      4      5      6      7      8      9   |   10     11 |   12
+     */
+
+    private void initTiles() {
+        LOGGER.debug("Initialize the Layer Tiles with the IslandHouse data.");
+
         for (int i = 0; i < islandHouse.getCount(); i++) {
             var tile = islandHouse.getTiles().get(i);
 
-            if (tile.xPosOnIsland >= island5.width || tile.yPosOnIsland >= island5.height) {
-                throw new RuntimeException("Invalid tile position.");
-            }
+            if (isValidTilePosition(tile.xPosOnIsland, tile.yPosOnIsland)) {
+                var tileDevInfo = developmentFile.getMeta(tile.developmentId);
 
-            //System.out.println("Tile dev name: " + developmentFile.getMeta(tile.developmentId).name);
+                for (int y = 0; y < tileDevInfo.height && isValidTilePosY(tile.yPosOnIsland + y); y++) {
+                    for (int x = 0; x < tileDevInfo.width && isValidTilePosX(tile.xPosOnIsland + x); x++) {
+                        var targetIndex = (tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x;
 
-            var info = developmentFile.getMeta(tile.developmentId);
-            int buildingWidth = info.width;
-            int buildingHeight = info.height;
-            for (int y = 0; y < buildingHeight && tile.yPosOnIsland + y < island5.height; y++) {
-                for (int x = 0; x < buildingWidth && tile.xPosOnIsland + x < island5.width; x++) {
-                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).developmentId = tile.developmentId;
-                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).xPosOnIsland = x;
-                    layer.get((tile.yPosOnIsland + y) * island5.width + tile.xPosOnIsland + x).yPosOnIsland = y;
+                        layer.get(targetIndex).developmentId = tile.developmentId;
+                        layer.get(targetIndex).xPosOnIsland = x;
+                        layer.get(targetIndex).yPosOnIsland = y;
+                    }
                 }
+            } else {
+                throw new RuntimeException("Invalid Tile position.");
             }
         }
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private boolean isValidTilePosition(int xPosOnIsland, int yPosOnIsland) {
+        return isValidTilePosX(xPosOnIsland) && isValidTilePosY(yPosOnIsland);
+    }
+
+    private boolean isValidTilePosX(int xPosOnIsland) {
+        return xPosOnIsland < island5.width;
+    }
+
+    private boolean isValidTilePosY(int yPosOnIsland) {
+        return yPosOnIsland < island5.height;
     }
 }

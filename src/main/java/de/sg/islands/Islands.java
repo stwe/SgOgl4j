@@ -25,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Islands extends BaseApplication {
 
     private DevelopmentFile devFile;
+    private GraphicFile graphicFile;
     private PaletteFile paletteFile;
     private BshFile bshFile;
     private ScpFile scpFile;
@@ -51,9 +52,10 @@ public class Islands extends BaseApplication {
         renderer.init();
 
         devFile = new DevelopmentFile("/island/bebauung.txt");
+        graphicFile = new GraphicFile("/island/grafiken.txt");
         paletteFile = new PaletteFile("/island/STADTFLD.COL");
         bshFile = new BshFile("/island/STADTFLD.BSH", paletteFile.getPalette());
-        scpFile = new ScpFile("/island/big.scp", devFile);
+        scpFile = new ScpFile("/island/lit.scp", devFile);
 
         //codFile = new CodFile("/bsh/haeuser.cod");
     }
@@ -72,27 +74,15 @@ public class Islands extends BaseApplication {
 
     @Override
     public void render() {
-        /*
-        for (int y = 0; y < scpFile.getIsland5().height; y++) {
-            for (int x = 0; x < scpFile.getIsland5().width; x++) {
+        // Galgen: devId 841 -> graphicIdx 5372
+        var info = devFile.getMeta(841);
+        var galgenGraphicIdx = graphicFile.getGraphicIndexByDevId(841);
 
-                var xp = scpFile.getLayer().get(y * scpFile.getIsland5().width + x).xPosOnIsland;
-                var yp = scpFile.getLayer().get(y * scpFile.getIsland5().width + x).yPosOnIsland;
-
-                var target = scpFile.getLayer().get((y - yp) * scpFile.getIsland5().width + x - xp);
-                target.xPosOnIsland = xp;
-                target.yPosOnIsland = yp;
-
-                var info = devFile.getMeta(target.developmentId);
-
-                renderer.render(
-                        bshFile.getBshTextures().get(target.developmentId),
-                        (100 + (x - y) * info.width),
-                        (100 + (x + y) * info.height / 2)
-                );
-            }
-        }
-        */
+        renderer.render(
+                bshFile.getBshTextures().get(5372),
+                100,
+                100
+        );
     }
 
     @Override

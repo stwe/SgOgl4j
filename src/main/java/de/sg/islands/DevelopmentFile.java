@@ -129,7 +129,7 @@ public class DevelopmentFile {
     private void loadFile(String fileUrl) throws IOException {
         var br = new BufferedReader(new FileReader(Objects.requireNonNull(fileUrl, "filePath must not be null")));
 
-        LOGGER.debug("Start reading development data from {}...", fileUrl);
+        LOGGER.debug("Start reading development meta data from {}...", fileUrl);
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -150,6 +150,6 @@ public class DevelopmentFile {
             }
         }
 
-        LOGGER.debug("Development data read successfully.");
+        LOGGER.debug("Development meta data read successfully.");
     }
 }
