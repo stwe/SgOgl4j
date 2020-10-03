@@ -18,11 +18,16 @@ import org.lwjgl.glfw.GLFW;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static de.sg.ogl.Log.LOGGER;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.UV;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class Islands extends BaseApplication {
+
+    private static final int XRASTER = 32;
+    private static final int YRASTER = 16;
+    private static final int ELEVATION = 20;
 
     private DevelopmentFile devFile;
     private GraphicFile graphicFile;
@@ -75,14 +80,36 @@ public class Islands extends BaseApplication {
     @Override
     public void render() {
         // Galgen: devId 841 -> graphicIdx 5372
-        var info = devFile.getMeta(841);
-        var galgenGraphicIdx = graphicFile.getGraphicIndexByDevId(841);
+        //var info = devFile.getMeta(841);
+        //var galgenGraphicIdx = graphicFile.getGraphicIndexByDevId(841);
 
+        /*
         renderer.render(
                 bshFile.getBshTextures().get(5372),
                 100,
                 100
         );
+        */
+
+        var island5 = scpFile.getIsland5();
+
+        for (int y = 0; y < island5.height; y++) {
+            for (int x = 0; x < island5.width; x++) {
+
+                // tile kann null sein
+                var tile = scpFile.getTileFromLayer(x, y);
+                var field = scpFile.getGraphicForTile(x, y, tile, devFile, graphicFile);
+
+                if (field.index != -1) {
+                    var bshTexture = bshFile.getBshTextures().get(field.index);
+                    renderer.render(
+                            bshTexture,
+                            (x - y + island5.height) * XRASTER,
+                            (x + y) * YRASTER + 2 * YRASTER - field.baseHeight * ELEVATION
+                    );
+                }
+            }
+        }
     }
 
     @Override

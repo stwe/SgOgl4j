@@ -55,6 +55,57 @@ public class ScpFile extends de.sg.islands.File {
     }
 
     //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    public IslandTile getTileFromLayer(int x, int y) {
+        var xPos = layer.get(y * island5.width + x).xPosOnIsland;
+        var yPos = layer.get(y * island5.width + x).yPosOnIsland;
+
+        if (yPos > y || xPos > x) {
+            return null;
+        }
+
+        var islandTile = layer.get((y - yPos) * island5.width + x - xPos);
+        islandTile.xPosOnIsland = xPos;
+        islandTile.yPosOnIsland = yPos;
+
+        return islandTile;
+    }
+
+    public Field getGraphicForTile(int x, int y, IslandTile islandTile, DevelopmentFile developmentFile, GraphicFile graphicFile) {
+        var targetField = new Field();
+
+        if (islandTile == null) {
+            targetField.index = -1;
+            targetField.baseHeight = 0;
+            return targetField;
+        }
+
+        var devInfo = developmentFile.getMeta(islandTile.developmentId);
+        var index = graphicFile.getGraphicIndexByDevId(islandTile.developmentId);
+        index += devInfo.width * devInfo.height * (islandTile.rotation % devInfo.directions);
+
+        switch (islandTile.rotation) {
+            case 0: index += islandTile.yPosOnIsland * devInfo.width + islandTile.xPosOnIsland;
+                    break;
+            case 1: index += (devInfo.height - islandTile.xPosOnIsland - 1) * devInfo.width + islandTile.yPosOnIsland;
+                    break;
+            case 2: index += (devInfo.height - islandTile.yPosOnIsland - 1) * devInfo.width + (devInfo.width - islandTile.xPosOnIsland - 1);
+                    break;
+            case 3: index += islandTile.xPosOnIsland * devInfo.width + (devInfo.width - islandTile.yPosOnIsland - 1);
+                    break;
+        }
+
+        index += devInfo.width * devInfo.height * devInfo.directions * (islandTile.animationCount % devInfo.animationSteps);
+
+        targetField.index = index;
+        targetField.baseHeight = devInfo.baseHeight;
+
+        return targetField;
+    }
+
+    //-------------------------------------------------
     // FileInterface
     //-------------------------------------------------
 
