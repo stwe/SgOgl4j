@@ -95,6 +95,7 @@ public class ScpFile extends de.sg.islands.File {
                     break;
             case 3: index += islandTile.xPosOnIsland * devInfo.width + (devInfo.width - islandTile.yPosOnIsland - 1);
                     break;
+            default: LOGGER.warn("Unknow rotation.");
         }
 
         index += devInfo.width * devInfo.height * devInfo.directions * (islandTile.animationCount % devInfo.animationSteps);
@@ -198,6 +199,14 @@ y                                                                             | 
                         layer.get(targetIndex).developmentId = tile.developmentId;
                         layer.get(targetIndex).xPosOnIsland = x;
                         layer.get(targetIndex).yPosOnIsland = y;
+
+                        layer.get(targetIndex).rotation = tile.rotation;
+                        layer.get(targetIndex).animationCount = tile.animationCount;
+                        layer.get(targetIndex).unknow = tile.unknow;
+                        layer.get(targetIndex).state = tile.state;
+                        layer.get(targetIndex).random = tile.random;
+                        layer.get(targetIndex).player = tile.player;
+                        layer.get(targetIndex).empty = tile.empty;
                     }
                 }
             } else {

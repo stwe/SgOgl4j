@@ -15,6 +15,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import static de.sg.ogl.Log.LOGGER;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class OrthographicCamera {
 
@@ -78,19 +79,19 @@ public class OrthographicCamera {
     //-------------------------------------------------
 
     public void update(float dt) {
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_W)) {
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_W) || Input.isKeyPressed(GLFW_KEY_UP)) {
             processKeyboard(Direction.UP, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_S)) {
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_S) || Input.isKeyPressed(GLFW_KEY_DOWN)) {
             processKeyboard(Direction.DOWN, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_A)) {
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_A) || Input.isKeyPressed(GLFW_KEY_LEFT)) {
             processKeyboard(Direction.LEFT, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_D)) {
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_D) || Input.isKeyPressed(GLFW_KEY_RIGHT)) {
             processKeyboard(Direction.RIGHT, dt);
         }
 
