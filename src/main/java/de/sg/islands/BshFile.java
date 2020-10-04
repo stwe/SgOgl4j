@@ -17,6 +17,8 @@ import java.util.Vector;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
+import static org.lwjgl.opengl.GL12.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class BshFile extends File {
 
@@ -162,12 +164,12 @@ public class BshFile extends File {
             glTexImage2D(
                     GL_TEXTURE_2D,
                     0,
-                    GL_RGBA,
+                    GL_RGBA8,
                     texture.getBufferedImage().getWidth(),
                     texture.getBufferedImage().getHeight(),
                     0,
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
+                    GL_BGRA,
+                    GL_UNSIGNED_INT_8_8_8_8_REV,
                     dbb.getData()
             );
 
