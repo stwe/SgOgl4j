@@ -10,6 +10,7 @@ package de.sg.islands;
 
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
+import de.sg.ogl.camera.OrthographicCamera;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Shader;
 import org.joml.Matrix4f;
@@ -43,12 +44,12 @@ public class Renderer {
         shader = engine.getResourceManager().loadShaderResource("sprite2");
     }
 
-    public void render(BshTexture texture, int posX, int posY) {
+    public void render(BshTexture texture, int posX, int posY, OrthographicCamera camera) {
         OpenGL.enableAlphaBlending();
         shader.bind();
         mesh.initDraw();
 
-        renderMesh(texture, new Vector2f(posX, posY), 0.0f);
+        renderMesh(texture, new Vector2f(posX, posY), 0.0f, camera);
 
         mesh.endDraw();
         Shader.unbind();
@@ -58,7 +59,7 @@ public class Renderer {
     // Helper
     //-------------------------------------------------
 
-    private void renderMesh(BshTexture texture, Vector2f position, float rotation) {
+    private void renderMesh(BshTexture texture, Vector2f position, float rotation, OrthographicCamera camera) {
         glActiveTexture(texture.getTextureId());
         glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
 
@@ -77,7 +78,7 @@ public class Renderer {
                 .scale(new Vector3f(size, 1.0f));
 
         shader.setUniform("model", modelMatrix);
-        shader.setUniform("projection", engine.getWindow().getOrthographicProjectionMatrix());
+        shader.setUniform("viewProjection", new Matrix4f(engine.getWindow().getOrthographicProjectionMatrix()).mul(camera.getViewMatrix()));
         shader.setUniform("diffuseMap", 0);
 
         mesh.drawPrimitives();

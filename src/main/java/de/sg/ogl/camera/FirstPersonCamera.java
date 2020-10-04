@@ -144,8 +144,7 @@ public class FirstPersonCamera {
         updateFront();
         updateRightAndUp();
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_I))
-        {
+        if (Input.isKeyDown(GLFW.GLFW_KEY_I)) {
             LOGGER.info("Camera x: {}  y: {}  z: {}", position.x, position.y, position.z);
             LOGGER.info("Camera yaw: {}  pitch: {}", yaw, pitch);
         }
@@ -158,46 +157,39 @@ public class FirstPersonCamera {
     private void processKeyboard(Direction direction, float dt) {
         var velocity = cameraVelocity * dt;
 
-        if (direction == Direction.FORWARD)
-        {
+        if (direction == Direction.FORWARD) {
             var v = new Vector3f(front.mul(velocity));
             position.add(v);
         }
 
-        if (direction == Direction.BACKWARD)
-        {
+        if (direction == Direction.BACKWARD) {
             var v = new Vector3f(front.mul(velocity));
             position.sub(v);
         }
 
-        if (direction == Direction.LEFT)
-        {
+        if (direction == Direction.LEFT) {
             var v = new Vector3f(right.mul(velocity));
             position.sub(v);
         }
 
-        if (direction == Direction.RIGHT)
-        {
+        if (direction == Direction.RIGHT) {
             var v = new Vector3f(right.mul(velocity));
             position.add(v);
         }
 
-        if (direction == Direction.UP)
-        {
+        if (direction == Direction.UP) {
             var v = new Vector3f(up.mul(velocity));
             position.add(v);
         }
 
-        if (direction == Direction.DOWN)
-        {
+        if (direction == Direction.DOWN) {
             var v = new Vector3f(up.mul(velocity));
             position.sub(v);
         }
     }
 
     private void processMouse() {
-        if (Input.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
-        {
+        if (Input.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
             yaw += Input.getDisplVec().x * mouseSensitivity;
             pitch += Input.getDisplVec().y * mouseSensitivity;
         }

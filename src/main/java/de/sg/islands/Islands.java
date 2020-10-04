@@ -12,13 +12,14 @@ import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.buffer.BufferLayout;
 import de.sg.ogl.buffer.VertexAttribute;
+import de.sg.ogl.camera.OrthographicCamera;
 import de.sg.ogl.resource.Mesh;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static de.sg.ogl.Log.LOGGER;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.UV;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -36,6 +37,7 @@ public class Islands extends BaseApplication {
     private ScpFile scpFile;
     //private CodFile codFile;
 
+    private OrthographicCamera camera;
     private Mesh mesh;
     private Renderer renderer;
 
@@ -52,6 +54,9 @@ public class Islands extends BaseApplication {
 
     @Override
     public void init() throws Exception {
+        camera = new OrthographicCamera(new Vector2f(580.0f, 220.0f));
+        camera.setCameraVelocity(300.0f);
+
         createMesh();
         renderer = new Renderer(getEngine(), mesh);
         renderer.init();
@@ -70,6 +75,9 @@ public class Islands extends BaseApplication {
         if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
+
+        // todo dt -> input
+        camera.update(0.016f);
     }
 
     @Override
@@ -82,14 +90,6 @@ public class Islands extends BaseApplication {
         // Galgen: devId 841 -> graphicIdx 5372
         //var info = devFile.getMeta(841);
         //var galgenGraphicIdx = graphicFile.getGraphicIndexByDevId(841);
-
-        /*
-        renderer.render(
-                bshFile.getBshTextures().get(5372),
-                100,
-                100
-        );
-        */
 
         var island5 = scpFile.getIsland5();
 
@@ -105,7 +105,8 @@ public class Islands extends BaseApplication {
                     renderer.render(
                             bshTexture,
                             (x - y + island5.height) * XRASTER,
-                            (x + y) * YRASTER + 2 * YRASTER - field.baseHeight * ELEVATION
+                            (x + y) * YRASTER + 2 * YRASTER - field.baseHeight * ELEVATION,
+                            camera
                     );
                 }
             }
