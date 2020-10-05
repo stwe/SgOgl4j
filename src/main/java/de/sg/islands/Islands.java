@@ -50,7 +50,7 @@ public class Islands extends BaseApplication {
 
     @Override
     public void init() throws Exception {
-        camera = new OrthographicCamera(new Vector2f(1174.0f, 638.0f));
+        camera = new OrthographicCamera(new Vector2f(569.0f, 129.0f));
         camera.setCameraVelocity(600.0f);
 
         createMesh();
@@ -61,7 +61,7 @@ public class Islands extends BaseApplication {
         graphicFile = new GraphicFile("/island/grafiken.txt");
         paletteFile = new PaletteFile("/island/STADTFLD.COL");
         bshFile = new BshFile("/island/GFX/STADTFLD.BSH", paletteFile.getPalette());
-        scpFile = new ScpFile("/island/big.scp", devFile);
+        scpFile = new ScpFile("/island/lit.scp", devFile);
 
         //codFile = new CodFile("/bsh/haeuser.cod");
     }
