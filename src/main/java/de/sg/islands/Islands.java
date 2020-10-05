@@ -26,10 +26,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class Islands extends BaseApplication {
 
-    private static final int XRASTER = 32;
-    private static final int YRASTER = 16;
-    private static final int ELEVATION = 20;
-
     private DevelopmentFile devFile;
     private GraphicFile graphicFile;
     private PaletteFile paletteFile;
@@ -54,7 +50,7 @@ public class Islands extends BaseApplication {
 
     @Override
     public void init() throws Exception {
-        camera = new OrthographicCamera(new Vector2f(580.0f, 220.0f));
+        camera = new OrthographicCamera(new Vector2f(114.0f, -72.0f));
         camera.setCameraVelocity(300.0f);
 
         createMesh();
@@ -98,16 +94,26 @@ public class Islands extends BaseApplication {
 
                 // tile kann null sein
                 var tile = scpFile.getTileFromLayer(x, y);
-                var field = scpFile.getGraphicForTile(x, y, tile, devFile, graphicFile);
+                var field = scpFile.getGraphicForTile(tile, devFile, graphicFile);
 
                 if (field.index != -1) {
+                    DevelopmentFile.Info info = null;
+                    if (tile != null) { // todo
+                        info = devFile.getMeta(tile.developmentId);
+                    }
+
                     var bshTexture = bshFile.getBshTextures().get(field.index);
-                    renderer.render(
-                            bshTexture,
-                            (x - y + island5.height) * XRASTER,
-                            (x + y) * YRASTER + 2 * YRASTER - field.baseHeight * ELEVATION,
-                            camera
-                    );
+
+                    if (info != null) {
+                        var sx = (x - y + island5.height) * 16;
+                        var sy = (x + y) * 8 + 2 * 8 - field.baseHeight * 10;
+                        renderer.render(
+                                bshTexture,
+                                sx - bshTexture.getBufferedImage().getWidth() / 2,
+                                sy - bshTexture.getBufferedImage().getHeight(),
+                                camera
+                        );
+                    }
                 }
             }
         }

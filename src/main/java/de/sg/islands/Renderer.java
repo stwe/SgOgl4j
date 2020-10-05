@@ -72,9 +72,9 @@ public class Renderer {
         modelMatrix
                 .identity()
                 .translate(new Vector3f(position, 0.0f))
-                .translate(new Vector3f(size.x * 0.5f, size.y * 0.5f, 0.0f))
-                .rotateZ((float) Math.toRadians(rotation))
-                .translate(new Vector3f(size.x * -0.5f, size.y * -0.5f, 0.0f))
+                //.translate(new Vector3f(size.x * 0.5f, size.y * 0.5f, 0.0f))
+                //.rotateZ((float) Math.toRadians(rotation))
+                //.translate(new Vector3f(size.x * -0.5f, size.y * -0.5f, 0.0f))
                 .scale(new Vector3f(size, 1.0f));
 
         shader.setUniform("model", modelMatrix);

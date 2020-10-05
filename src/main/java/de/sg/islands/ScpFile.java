@@ -73,7 +73,7 @@ public class ScpFile extends de.sg.islands.File {
         return islandTile;
     }
 
-    public Field getGraphicForTile(int x, int y, IslandTile islandTile, DevelopmentFile developmentFile, GraphicFile graphicFile) {
+    public Field getGraphicForTile(IslandTile islandTile, DevelopmentFile developmentFile, GraphicFile graphicFile) {
         var targetField = new Field();
 
         if (islandTile == null) {
