@@ -131,13 +131,13 @@ public class Islands extends BaseApplication {
     private void createMesh() {
         float[] vertices = new float[] {
                 // pos      // tex
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f,
+                1.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 1.0f, 0.0f, 1.0f,
 
                 0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f
+                1.0f, 0.0f, 1.0f, 0.0f,
+                1.0f, 1.0f, 1.0f, 1.0f
         };
 
         BufferLayout bufferLayout = new BufferLayout(
