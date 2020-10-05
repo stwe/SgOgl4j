@@ -13,6 +13,7 @@ import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.camera.OrthographicCamera;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.Shader;
+import de.sg.ogl.resource.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -63,8 +64,8 @@ public class Renderer {
         glActiveTexture(texture.getTextureId());
         glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        Texture.useNoFilter();
+        Texture.useClampToEdgeWrapping();
 
         var size = new Vector2f(texture.getBufferedImage().getWidth(), texture.getBufferedImage().getHeight());
 

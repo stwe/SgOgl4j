@@ -50,8 +50,8 @@ public class Islands extends BaseApplication {
 
     @Override
     public void init() throws Exception {
-        camera = new OrthographicCamera(new Vector2f(114.0f, -72.0f));
-        camera.setCameraVelocity(300.0f);
+        camera = new OrthographicCamera(new Vector2f(1174.0f, 638.0f));
+        camera.setCameraVelocity(600.0f);
 
         createMesh();
         renderer = new Renderer(getEngine(), mesh);
@@ -60,8 +60,8 @@ public class Islands extends BaseApplication {
         devFile = new DevelopmentFile("/island/bebauung.txt");
         graphicFile = new GraphicFile("/island/grafiken.txt");
         paletteFile = new PaletteFile("/island/STADTFLD.COL");
-        bshFile = new BshFile("/island/STADTFLD.BSH", paletteFile.getPalette());
-        scpFile = new ScpFile("/island/lit.scp", devFile);
+        bshFile = new BshFile("/island/GFX/STADTFLD.BSH", paletteFile.getPalette());
+        scpFile = new ScpFile("/island/big.scp", devFile);
 
         //codFile = new CodFile("/bsh/haeuser.cod");
     }
@@ -105,8 +105,8 @@ public class Islands extends BaseApplication {
                     var bshTexture = bshFile.getBshTextures().get(field.index);
 
                     if (info != null) {
-                        var sx = (x - y + island5.height) * 16;
-                        var sy = (x + y) * 8 + 2 * 8 - field.baseHeight * 10;
+                        var sx = (x - y + island5.height) * 32;
+                        var sy = (x + y) * 16 + 2 * 16 - field.baseHeight * 20;
                         renderer.render(
                                 bshTexture,
                                 sx - bshTexture.getBufferedImage().getWidth() / 2,
