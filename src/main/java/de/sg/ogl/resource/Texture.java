@@ -140,28 +140,28 @@ public class Texture implements Resource {
     // Bind / Unbind
     //-------------------------------------------------
 
-    static public void bind(int id, int target) {
+    public static void bind(int id, int target) {
         glBindTexture(target, id);
     }
 
-    static public void bind(int id) {
+    public static void bind(int id) {
         bind(id, GL_TEXTURE_2D);
     }
 
-    static public void unbind(int target) {
+    public static void unbind(int target) {
         glBindTexture(target, 0);
     }
 
-    static public void unbind() {
+    public static void unbind() {
         unbind(GL_TEXTURE_2D);
     }
 
-    static public void bindForReading(int id, int textureUnit, int target) {
-        glActiveTexture(id);
+    public static void bindForReading(int id, int textureUnit, int target) {
+        glActiveTexture(textureUnit);
         bind(id, target);
     }
 
-    static public void bindForReading(int id, int textureUnit) {
+    public static void bindForReading(int id, int textureUnit) {
         bindForReading(id, textureUnit, GL_TEXTURE_2D);
     }
 
@@ -169,30 +169,30 @@ public class Texture implements Resource {
     // Filter
     //-------------------------------------------------
 
-    static public void useNoFilter(int target) {
+    public static void useNoFilter(int target) {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     }
 
-    static public void useNoFilter() {
+    public static void useNoFilter() {
         useNoFilter(GL_TEXTURE_2D);
     }
 
-    static public void useBilinearFilter(int target) {
+    public static void useBilinearFilter(int target) {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
 
-    static public void useBilinearFilter() {
+    public static void useBilinearFilter() {
         useBilinearFilter(GL_TEXTURE_2D);
     }
 
-    static public void useBilinearMipmapFilter(int target) {
+    public static void useBilinearMipmapFilter(int target) {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
 
-    static public void useBilinearMipmapFilter() {
+    public static void useBilinearMipmapFilter() {
         useBilinearMipmapFilter(GL_TEXTURE_2D);
     }
 
@@ -200,30 +200,30 @@ public class Texture implements Resource {
     // Wrapping
     //-------------------------------------------------
 
-    static public void useRepeatWrapping(int target) {
+    public static void useRepeatWrapping(int target) {
         glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
-    static public void useRepeatWrapping() {
+    public static void useRepeatWrapping() {
         useRepeatWrapping(GL_TEXTURE_2D);
     }
 
-    static public void useClampToEdgeWrapping(int target) {
+    public static void useClampToEdgeWrapping(int target) {
         glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
-    static public void useClampToEdgeWrapping() {
+    public static void useClampToEdgeWrapping() {
         useClampToEdgeWrapping(GL_TEXTURE_2D);
     }
 
     //-------------------------------------------------
-    // Helper
+    // Texture Handle
     //-------------------------------------------------
 
-    static private int generateNewTextureHandle() {
+    public static int generateNewTextureHandle() {
         var textureId = glGenTextures();
         if (textureId == 0) {
             throw new SgOglRuntimeException("Texture name creation has failed.");

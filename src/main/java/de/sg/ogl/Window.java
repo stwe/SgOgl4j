@@ -195,7 +195,7 @@ public final class Window {
         ---------------
         */
 
-        orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+        orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, 1.0f, -1.0f);
     }
 
     //-------------------------------------------------
