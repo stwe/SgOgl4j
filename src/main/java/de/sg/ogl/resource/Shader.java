@@ -157,7 +157,7 @@ public class Shader implements Resource {
         glUseProgram(id);
     }
 
-    static public void unbind() {
+    public static void unbind() {
         glUseProgram(0);
     }
 
@@ -204,7 +204,7 @@ public class Shader implements Resource {
     // Create Program && Shader
     //-------------------------------------------------
 
-    static private int createProgram() {
+    private static int createProgram() {
         var programId = glCreateProgram();
         if (programId == 0) {
             throw new SgOglRuntimeException("Shader program creation has failed.");
@@ -215,7 +215,7 @@ public class Shader implements Resource {
         return programId;
     }
 
-    static private int createShaderObject(int shaderType) {
+    private static int createShaderObject(int shaderType) {
         var shaderId = glCreateShader(shaderType);
         if (shaderId == 0) {
             throw new SgOglRuntimeException("Shader object creation has failed. The type is " + shaderType + ".");
@@ -270,12 +270,12 @@ public class Shader implements Resource {
         return shaderId;
     }
 
-    static private void compileShader(int shaderId, String shaderCode) {
+    private static void compileShader(int shaderId, String shaderCode) {
         glShaderSource(shaderId, shaderCode);
         glCompileShader(shaderId);
     }
 
-    static private void checkCompileStatus(int shaderId) {
+    private static void checkCompileStatus(int shaderId) {
         var status = glGetShaderi(shaderId, GL_COMPILE_STATUS);
         if (status == GL_FALSE) {
             throw new SgOglRuntimeException("Error while compiling Shader code. Log: " + glGetShaderInfoLog(shaderId, 1024));

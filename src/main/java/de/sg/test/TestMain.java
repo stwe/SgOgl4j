@@ -6,15 +6,16 @@
  * License: MIT
  */
 
-package de.sg.islands;
+package de.sg.test;
 
 import de.sg.ogl.SgOglEngine;
 
-public class IslandsMain {
+public class TestMain {
+
     public static void main(String[] args) {
-        Islands application = null;
+        TestApp application = null;
         try {
-            application = new Islands();
+            application = new TestApp();
         } catch (Exception e) {
             e.printStackTrace();
         }
