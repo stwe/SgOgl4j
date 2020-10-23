@@ -44,8 +44,8 @@ public class TestApp extends BaseApplication {
     @Override
     public void render() {
         renderer.prepareRendering();
-        renderer.render(new Vector2f(100.0f, 100.0f), new Vector2f(64.0f, 64.0f), 0);
-        renderer.render(new Vector2f(200.0f, 200.0f), new Vector2f(64.0f, 64.0f), 1);
+        renderer.render(new Vector2f(100.0f, 100.0f), new Vector2f(64.0f, 64.0f), 1);
+        renderer.render(new Vector2f(200.0f, 200.0f), new Vector2f(64.0f, 64.0f), 0);
         renderer.finishRendering();
     }
 

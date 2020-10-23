@@ -184,10 +184,10 @@ public class SpriteRenderer {
 
         textureUniformBufferId = Vbo.createVbo();
         Vbo.bindVbo(textureUniformBufferId, GL_UNIFORM_BUFFER);
-        glBufferData(GL_UNIFORM_BUFFER, 64, GL_STATIC_DRAW);
+        glBufferData(GL_UNIFORM_BUFFER, 32, GL_STATIC_DRAW);
         Vbo.unbindVbo(GL_UNIFORM_BUFFER);
 
-        glBindBufferRange(GL_UNIFORM_BUFFER, 1, textureUniformBufferId, 0, 64);
+        glBindBufferRange(GL_UNIFORM_BUFFER, 1, textureUniformBufferId, 0, 32);
 
         Vbo.bindVbo(textureUniformBufferId, GL_UNIFORM_BUFFER);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, handles);
