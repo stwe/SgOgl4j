@@ -19,10 +19,8 @@ import de.sg.ogl.resource.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
@@ -45,7 +43,7 @@ public class SpriteRenderer {
     private int matricesUniformBufferId;
 
     private int textureUniformBufferId;
-    private long[] handles = new long[2];
+    private long[] handles = new long[4];
 
     //-------------------------------------------------
     // Ctors.
@@ -108,9 +106,6 @@ public class SpriteRenderer {
                 .scale(new Vector3f(size, 1.0f));
 
         shader.setUniform("index", index);
-        //shader.setUniform("model", modelMatrix);
-        //shader.setUniform("projection", engine.getWindow().getOrthographicProjectionMatrix());
-
         updateMatricesUniformBuffer(modelMatrix);
 
         mesh.drawPrimitives();
@@ -171,34 +166,31 @@ public class SpriteRenderer {
 
         handles[0] = glGetTextureHandleARB(grass.getId());
         glMakeTextureHandleResidentARB(handles[0]);
+        handles[1] = 0;
+
 
         Texture.bind(water.getId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         Texture.unbind();
 
-        handles[1] = glGetTextureHandleARB(water.getId());
-        glMakeTextureHandleResidentARB(handles[1]);
+        handles[2] = glGetTextureHandleARB(water.getId());
+        glMakeTextureHandleResidentARB(handles[2]);
+        handles[3] = 0;
     }
 
     private void createTexturesUniformBuffer() {
         shader.setUniformBlockBindingPoint("maps", 1);
 
-         textureUniformBufferId = Vbo.createVbo();
+        textureUniformBufferId = Vbo.createVbo();
         Vbo.bindVbo(textureUniformBufferId, GL_UNIFORM_BUFFER);
-        glBufferData(GL_UNIFORM_BUFFER, 32, GL_STATIC_DRAW);
+        glBufferData(GL_UNIFORM_BUFFER, 64, GL_STATIC_DRAW);
         Vbo.unbindVbo(GL_UNIFORM_BUFFER);
 
-        glBindBufferRange(GL_UNIFORM_BUFFER, 1, textureUniformBufferId, 0, 32);
-
-
-        var fb = BufferUtils.createFloatBuffer(4);
-        var v0 = new Vector4f(0.5f, 0.5f, 0.5f, 0.5f);
-        var v1 = new Vector4f(10.0f, 10.0f, 10.0f, 10.0f);
+        glBindBufferRange(GL_UNIFORM_BUFFER, 1, textureUniformBufferId, 0, 64);
 
         Vbo.bindVbo(textureUniformBufferId, GL_UNIFORM_BUFFER);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, v0.get(fb));
-        glBufferSubData(GL_UNIFORM_BUFFER, 16, v1.get(fb));
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, handles);
         Vbo.unbindVbo(GL_UNIFORM_BUFFER);
     }
 }
