@@ -15,6 +15,8 @@ import org.lwjgl.system.MemoryStack;
 import static de.sg.ogl.Log.LOGGER;
 import static de.sg.ogl.resource.ResourceManager.readFileIntoString;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
 import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
@@ -47,7 +49,9 @@ public class Shader implements Resource {
     private int fragmentShaderId = 0;
 
     private final ArrayList<Uniform> foundUniforms = new ArrayList<>();
+
     private final HashMap<String, Integer> uniforms = new HashMap<>();
+    private final HashMap<String, Integer> uniformBlocks = new HashMap<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -201,6 +205,14 @@ public class Shader implements Resource {
     }
 
     //-------------------------------------------------
+    // Set uniform block
+    //-------------------------------------------------
+
+    public void setUniformBlockBindingPoint(String uniformBlockName, int bindingPoint) {
+        glUniformBlockBinding(id, uniformBlocks.get(uniformBlockName), bindingPoint);
+    }
+
+    //-------------------------------------------------
     // Create Program && Shader
     //-------------------------------------------------
 
@@ -264,6 +276,7 @@ public class Shader implements Resource {
         compileShader(shaderId, shaderCode);
         checkCompileStatus(shaderId);
         glAttachShader(id, shaderId);
+
         findStructs(shaderCode);
         findUniforms(shaderCode);
 
@@ -337,22 +350,61 @@ public class Shader implements Resource {
 
         var positions = findAllOccurances(shaderCode, uniformKeyword);
 
+        var uniformPositions = new ArrayList<Integer>();
+        var uniformBlockPositions = new ArrayList<Integer>();
+
         if (!positions.isEmpty()) {
-            LOGGER.debug("{} uniforms were found in the Shader.", positions.size());
+            for (var position : positions) {
+                var blockStart = shaderCode.indexOf("{", position);
+                var commandEnd = shaderCode.indexOf(";", position);
+
+                if (blockStart < commandEnd) {
+                    uniformBlockPositions.add(position);
+                } else {
+                    uniformPositions.add(position);
+                }
+            }
+        }
+
+        // uniforms
+        if (!uniformPositions.isEmpty()) {
+            LOGGER.debug("{} uniforms were found in the Shader.", uniformPositions.size());
 
             var i = 1;
-            for (var startPosition : positions) {
-                var end = shaderCode.indexOf(";", startPosition);
+            for (var position : uniformPositions) {
+                var commandEnd = shaderCode.indexOf(";", position);
 
-                var typeStartPosition = startPosition + uniformKeyword.length() + 1;
+                var typeStartPosition = position + uniformKeyword.length() + 1;
                 var typeEndPosition = shaderCode.indexOf(" ", typeStartPosition);
 
                 var uniform = new Uniform();
-                uniform.name = shaderCode.substring(typeEndPosition + 1, end);
+                uniform.isUniformBlock = false;
+                uniform.name = shaderCode.substring(typeEndPosition + 1, commandEnd);
                 uniform.type = shaderCode.substring(typeStartPosition, typeEndPosition);
                 foundUniforms.add(uniform);
 
                 LOGGER.debug("Uniform #{} with type: {} and name: {}", i, uniform.type, uniform.name);
+                i++;
+            }
+        }
+
+        // uniform blocks
+        if (!uniformBlockPositions.isEmpty()) {
+            LOGGER.debug("{} uniform blocks were found in the Shader.", uniformBlockPositions.size());
+
+            var i = 1;
+            for (var position : uniformBlockPositions) {
+                var blockStart = shaderCode.indexOf("{", position);
+                var nameStartPosition = position + uniformKeyword.length() + 1;
+
+                var name = shaderCode.substring(nameStartPosition, blockStart);
+
+                var uniform = new Uniform();
+                uniform.isUniformBlock = true;
+                uniform.name = name.trim().replace(System.lineSeparator(), "");
+                foundUniforms.add(uniform);
+
+                LOGGER.debug("Uniform block #{} with name: {}", i, uniform.name);
                 i++;
             }
         }
@@ -378,12 +430,21 @@ public class Shader implements Resource {
 
     private void addFoundUniforms() {
         for (var uniform : foundUniforms) {
-            var uniformId = glGetUniformLocation(id, uniform.name);
-            if (uniformId < 0) {
-                throw new SgOglRuntimeException("Invalid uniform name: " + uniform.name + ".");
-            }
+            if (uniform.isUniformBlock) {
+                var uniformBlockId = glGetUniformBlockIndex(id, uniform.name);
+                if (uniformBlockId < 0) {
+                    throw new SgOglRuntimeException("Invalid uniform block name: " + uniform.name + ".");
+                }
 
-            uniforms.put(uniform.name, uniformId);
+                uniformBlocks.put(uniform.name, uniformBlockId);
+            } else {
+                var uniformId = glGetUniformLocation(id, uniform.name);
+                if (uniformId < 0) {
+                    throw new SgOglRuntimeException("Invalid uniform name: " + uniform.name + ".");
+                }
+
+                uniforms.put(uniform.name, uniformId);
+            }
         }
     }
 }

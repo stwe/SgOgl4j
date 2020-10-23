@@ -78,7 +78,7 @@ public final class Vao {
         glBindVertexArray(vaoId);
     }
 
-    static public void unbind() {
+    public static void unbind() {
         glBindVertexArray(0);
     }
 
@@ -186,7 +186,7 @@ public final class Vao {
     // Helper
     //-------------------------------------------------
 
-    static private int createVao() {
+    private static int createVao() {
         var id = glGenVertexArrays();
         if (id == 0) {
             throw new SgOglRuntimeException("Vao creation has failed.");

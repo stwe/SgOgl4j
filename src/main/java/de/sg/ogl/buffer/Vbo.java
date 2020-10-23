@@ -19,7 +19,7 @@ public final class Vbo {
     // Live and let die
     //-------------------------------------------------
 
-    static public int createVbo() {
+    public static int createVbo() {
         var id = glGenBuffers();
         if (id == 0) {
             throw new SgOglRuntimeException("Vbo creation has failed.");
@@ -30,18 +30,18 @@ public final class Vbo {
         return id;
     }
 
-    static public int createEbo() {
+    public static int createEbo() {
         return createVbo();
     }
 
-    static public void deleteVbo(int vboId) {
+    public static void deleteVbo(int vboId) {
         if (vboId > 0) {
             glDeleteBuffers(vboId);
             LOGGER.debug("Vbo {} was deleted.", vboId);
         }
     }
 
-    static public void deleteEbo(int eboId) {
+    public static void deleteEbo(int eboId) {
         deleteVbo(eboId);
     }
 
@@ -49,20 +49,24 @@ public final class Vbo {
     // Bind / Unbind
     //-------------------------------------------------
 
-    static public void bindVbo(int vboId, int target) {
+    public static void bindVbo(int vboId, int target) {
         glBindBuffer(target, vboId);
     }
 
-    static public void bindVbo(int vboId) {
+    public static void bindVbo(int vboId) {
         bindVbo(vboId, GL_ARRAY_BUFFER);
     }
 
-    static public void bindEbo(int eboId) {
+    public static void bindEbo(int eboId) {
         bindVbo(eboId, GL_ELEMENT_ARRAY_BUFFER);
     }
 
-    static public void unbindVbo() {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    public static void unbindVbo(int target) {
+        glBindBuffer(target, 0);
+    }
+
+    public static void unbindVbo() {
+        unbindVbo(GL_ARRAY_BUFFER);
     }
 
     //-------------------------------------------------

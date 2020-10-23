@@ -9,6 +9,7 @@
 package de.sg.ogl.resource;
 
 public class Uniform {
+    public boolean isUniformBlock = false;
     public String type;
     public String name;
 }

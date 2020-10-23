@@ -9,7 +9,6 @@
 package de.sg.ogl.resource;
 
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,18 +31,10 @@ public class ResourceManager {
     }
 
     //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
-
-    public HashMap<String, Resource> getResources() {
-        return resources;
-    }
-
-    //-------------------------------------------------
     // Texture resources
     //-------------------------------------------------
 
-    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) throws FileNotFoundException {
+    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) {
         var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Texture.class);
 
         if (result.isPresent()) {
@@ -56,12 +47,12 @@ public class ResourceManager {
         return addTextureResource(path, loadVerticalFlipped);
     }
 
-    public Texture loadTextureResource(String path) throws FileNotFoundException {
+    public Texture loadTextureResource(String path) {
         return loadTextureResource(path, false);
     }
 
-    private Texture addTextureResource(String path, boolean loadVerticalFlipped) throws FileNotFoundException {
-        var texture = new Texture(loadResource(path), loadVerticalFlipped);
+    private Texture addTextureResource(String path, boolean loadVerticalFlipped) {
+        var texture = new Texture(path, loadVerticalFlipped);
         texture.load();
 
         resources.put(path, texture);
@@ -116,18 +107,6 @@ public class ResourceManager {
         }
 
         return result;
-    }
-
-    private String loadResource(String resource) throws FileNotFoundException {
-        return loadResourceByUrl(getClass().getResource(resource), resource);
-    }
-
-    private String loadResourceByUrl(URL url, String resource) throws FileNotFoundException {
-        if (url != null) {
-            return url.getPath().replaceFirst("^/(.:/)", "$1");
-        } else {
-            throw new FileNotFoundException("Resource " + resource + " not found.");
-        }
     }
 
     //-------------------------------------------------
