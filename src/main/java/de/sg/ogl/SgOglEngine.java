@@ -10,11 +10,14 @@ package de.sg.ogl;
 
 import de.sg.ogl.resource.ResourceManager;
 
+import java.io.File;
 import java.util.Objects;
 
 import static de.sg.ogl.Log.LOGGER;
 
 public class SgOglEngine implements Runnable {
+
+    public static final boolean RUNNING_FROM_JAR = isRunningFromJar();
 
     private final Window window;
     private final BaseApplication application;
@@ -26,6 +29,8 @@ public class SgOglEngine implements Runnable {
 
     public SgOglEngine(BaseApplication application) {
         LOGGER.debug("Creates SgOglEngine object.");
+
+        LOGGER.info("Running from Jar: {}", RUNNING_FROM_JAR ? "yes" : "no");
 
         this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
         this.application = Objects.requireNonNull(application, "application must not be null");
@@ -77,6 +82,19 @@ public class SgOglEngine implements Runnable {
         Input.init(window.getWindowHandle());
         OpenGL.init(Config.ENABLE_DEPTH_AND_STENCIL_TESTING);
         application.init();
+    }
+
+    private static String getJarName() {
+        return new File(SgOglEngine.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath())
+                .getName();
+    }
+
+    private static boolean isRunningFromJar()
+    {
+        return getJarName().contains(".jar");
     }
 
     //-------------------------------------------------

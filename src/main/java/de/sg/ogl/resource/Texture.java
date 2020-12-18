@@ -11,10 +11,14 @@ package de.sg.ogl.resource;
 import de.sg.ogl.SgOglRuntimeException;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static de.sg.ogl.Log.LOGGER;
+import static de.sg.ogl.SgOglEngine.RUNNING_FROM_JAR;
+import static org.lwjgl.opengl.ARBBindlessTexture.glGetTextureHandleARB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
@@ -24,7 +28,7 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements Resource {
 
-    private final String url;
+    private String path;
     private final boolean loadVerticalFlipped;
 
     private int id = 0;
@@ -37,14 +41,15 @@ public class Texture implements Resource {
     // Ctors.
     //-------------------------------------------------
 
-    public Texture(String url, boolean loadVerticalFlipped) {
+    public Texture(String path, boolean loadVerticalFlipped) throws URISyntaxException {
         LOGGER.debug("Creates Texture object.");
 
-        this.url = url;
+        initPath(path);
+
         this.loadVerticalFlipped = loadVerticalFlipped;
     }
 
-    public Texture(String path) {
+    public Texture(String path) throws URISyntaxException {
         this(path, false);
     }
 
@@ -52,8 +57,8 @@ public class Texture implements Resource {
     // Getter
     //-------------------------------------------------
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
     public boolean isLoadVerticalFlipped() {
@@ -97,9 +102,9 @@ public class Texture implements Resource {
             IntBuffer y = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            buf = stbi_load(url, x, y, channels, 0);
+            buf = stbi_load(path, x, y, channels, 0);
             if (buf == null) {
-                throw new SgOglRuntimeException("Failed to load texture file " + url
+                throw new SgOglRuntimeException("Failed to load texture file " + path
                         + System.lineSeparator() + stbi_failure_reason());
             }
 
@@ -115,7 +120,7 @@ public class Texture implements Resource {
         else if (nrChannels == STBI_rgb_alpha)
             format = GL_RGBA;
 
-        id = generateNewTextureHandle();
+        id = generateNewTextureId();
 
         bind(id);
 
@@ -124,7 +129,7 @@ public class Texture implements Resource {
 
         stbi_image_free(buf);
 
-        LOGGER.debug("Texture file {} was successfully loaded. The Id is {}.", url, id);
+        LOGGER.debug("Texture file {} was successfully loaded. The Id is {}.", path, id);
     }
 
     @Override
@@ -220,15 +225,42 @@ public class Texture implements Resource {
     }
 
     //-------------------------------------------------
-    // Texture Handle
+    // Texture Id/Handle
     //-------------------------------------------------
 
-    public static int generateNewTextureHandle() {
+    public static int generateNewTextureId() {
         var textureId = glGenTextures();
         if (textureId == 0) {
             throw new SgOglRuntimeException("Texture name creation has failed.");
         }
 
         return textureId;
+    }
+
+    public static long generateNewTextureHandle(int textureId) {
+        if (textureId <= 0) {
+            throw new SgOglRuntimeException("Invalid texture Id " + textureId + ".");
+        }
+
+        var textureHandle = glGetTextureHandleARB(textureId);
+        if (textureHandle == 0) {
+            throw new SgOglRuntimeException("Texture handle creation has failed.");
+        }
+
+        return textureHandle;
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private void initPath(String path) throws URISyntaxException {
+        var url = Texture.class.getProtectionDomain().getCodeSource().getLocation();
+        var file = new File(url.toURI().getPath());
+        this.path = file.getPath() + path;
+
+        if (RUNNING_FROM_JAR) {
+            this.path = file.getParentFile().getPath() + path;
+        }
     }
 }

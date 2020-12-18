@@ -55,8 +55,8 @@ public class SpriteRenderer {
         loadShader();
         createMesh();
 
-        water = engine.getResourceManager().loadTextureResource("E:\\Dev\\texture\\tiles\\water.png");
-        grass = engine.getResourceManager().loadTextureResource("E:\\Dev\\texture\\tiles\\grass.png");
+        water = engine.getResourceManager().loadTextureResource("/texture/tiles/water.png");
+        grass = engine.getResourceManager().loadTextureResource("/texture/tiles/grass.png");
 
         createMatricesUniformBuffer();
 
