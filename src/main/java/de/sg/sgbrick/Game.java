@@ -165,6 +165,11 @@ public class Game extends BaseApplication {
     }
 
     @Override
+    public void renderImGui() {
+
+    }
+
+    @Override
     public void cleanUp() {
         mesh.cleanUp();
     }

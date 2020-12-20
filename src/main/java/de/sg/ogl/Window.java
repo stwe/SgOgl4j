@@ -15,8 +15,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import imgui.*;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
-import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
@@ -31,11 +29,6 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class Window {
-
-    private final String IMGUI_GLSL_VERSION = "#version 130";
-
-    private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
-    private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     private final String title;
     private int width;
@@ -204,9 +197,6 @@ public final class Window {
             style.setWindowRounding(0.0f);
             style.setColor(ImGuiCol.WindowBg, ImGui.getColorU32(ImGuiCol.WindowBg, 1));
         }
-
-        imGuiGlfw.init(windowHandle, true);
-        imGuiGl3.init(IMGUI_GLSL_VERSION);
     }
 
     private void initProjectionMatrix() {
@@ -268,9 +258,7 @@ public final class Window {
     public void cleanUp() {
         LOGGER.debug("Clean up Window.");
 
-        // Clean up ImGui in reverse order.
-        imGuiGl3.dispose();
-        imGuiGlfw.dispose();
+        // Clean up ImGui.
         ImGui.destroyContext();
 
         // Frees callbacks associated with the window.

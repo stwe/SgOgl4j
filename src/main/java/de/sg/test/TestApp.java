@@ -50,6 +50,11 @@ public class TestApp extends BaseApplication {
     }
 
     @Override
+    public void renderImGui() {
+
+    }
+
+    @Override
     public void cleanUp() {
 
     }

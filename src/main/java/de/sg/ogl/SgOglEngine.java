@@ -9,15 +9,24 @@
 package de.sg.ogl;
 
 import de.sg.ogl.resource.ResourceManager;
+import imgui.ImGui;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 
 import java.io.File;
 import java.util.Objects;
 
 import static de.sg.ogl.Log.LOGGER;
+import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 
 public class SgOglEngine implements Runnable {
 
     public static final boolean RUNNING_FROM_JAR = isRunningFromJar();
+
+    private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
+    private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     private final Window window;
     private final BaseApplication application;
@@ -79,7 +88,12 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Initializing SgOglEngine.");
 
         window.init();
+
+        imGuiGlfw.init(window.getWindowHandle(), true);
+        imGuiGl3.init("#version 130");
+
         Input.init(window.getWindowHandle());
+
         application.init();
     }
 
@@ -110,8 +124,35 @@ public class SgOglEngine implements Runnable {
     }
 
     private void render() {
+        startFrame();
+        frame();
+        endFrame();
+    }
+
+    private void startFrame() {
         OpenGL.clear();
+    }
+
+    private void frame() {
         application.render();
+
+        imGuiGlfw.newFrame();
+        ImGui.newFrame();
+
+        application.renderImGui();
+        ImGui.render();
+    }
+
+    private void endFrame() {
+        imGuiGl3.renderDrawData(ImGui.getDrawData());
+
+        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+            final long backupWindowPtr = glfwGetCurrentContext();
+            ImGui.updatePlatformWindows();
+            ImGui.renderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backupWindowPtr);
+        }
+
         window.update();
     }
 
@@ -171,6 +212,10 @@ public class SgOglEngine implements Runnable {
 
         resourceManager.cleanUp();
         Input.cleanUp();
+
+        imGuiGl3.dispose();
+        imGuiGlfw.dispose();
+
         window.cleanUp();
         application.cleanUp();
     }

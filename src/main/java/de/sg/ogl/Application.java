@@ -13,5 +13,6 @@ public interface Application {
     void input();
     void update(float dt);
     void render();
+    void renderImGui();
     void cleanUp();
 }

@@ -29,6 +29,8 @@ public class Isomap extends BaseApplication {
     private final Vector2i tileSize = new Vector2i(40 ,20);
     private final Vector2i origin = new Vector2i(5 ,1); // -> (200, 20)
 
+    private ExampleUi exampleUi;
+
     private Texture click;
     private Texture empty;
     private Texture coll;
@@ -68,6 +70,8 @@ public class Isomap extends BaseApplication {
         pixels = createPixels();
 
         renderer = new SpriteRenderer(getEngine());
+
+        exampleUi = new ExampleUi(getEngine().getResourceManager());
 
         Arrays.fill(map, 0);
     }
@@ -134,6 +138,15 @@ public class Isomap extends BaseApplication {
         renderer.render(click.getId(), new Vector2f(selectedWorld.x, selectedWorld.y), 0.0f, new Vector2f(tileSize));
 
         renderer.finishRendering();
+    }
+
+    @Override
+    public void renderImGui() {
+        try {
+            exampleUi.render();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
