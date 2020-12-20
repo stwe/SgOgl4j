@@ -8,6 +8,13 @@
     <artifactId>sgogl-java</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -25,16 +32,32 @@
     <profiles>
         <profile>
             <id>Windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
             <properties>
                 <lwjgl.version>3.2.3</lwjgl.version>
                 <lwjgl.natives>natives-windows</lwjgl.natives>
+                <imgui.natives>imgui-java-natives-windows</imgui.natives>
+                <imgui.java.version>1.79-1.4.0</imgui.java.version>
             </properties>
         </profile>
         <profile>
             <id>Linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
             <properties>
                 <lwjgl.version>3.2.3</lwjgl.version>
                 <lwjgl.natives>natives-linux</lwjgl.natives>
+                <imgui.natives>imgui-java-natives-linux</imgui.natives>
+                <imgui.java.version>1.79-1.4.0</imgui.java.version>
             </properties>
         </profile>
     </profiles>
@@ -52,6 +75,22 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.imgui.java</groupId>
+            <artifactId>imgui-java-binding</artifactId>
+            <version>${imgui.java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.imgui.java</groupId>
+            <artifactId>imgui-java-lwjgl3</artifactId>
+            <version>${imgui.java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.imgui.java</groupId>
+            <artifactId>${imgui.natives}</artifactId>
+            <version>${imgui.java.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

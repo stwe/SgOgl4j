@@ -34,7 +34,6 @@ public abstract class BaseApplication implements Application {
         LOGGER.debug("Near: {}", Config.NEAR);
         LOGGER.debug("Far: {}", Config.FAR);
         LOGGER.debug("FPS: {}", Config.FPS);
-        LOGGER.debug("Enable depth and stencil testing: {}", Config.ENABLE_DEPTH_AND_STENCIL_TESTING);
     }
 
     //-------------------------------------------------

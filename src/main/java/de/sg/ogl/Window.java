@@ -12,10 +12,19 @@ import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 
+import imgui.*;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -23,9 +32,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class Window {
 
-    private static final float FOV = (float) Math.toRadians(60.0f);
-    private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 5000.f;
+    private final String IMGUI_GLSL_VERSION = "#version 130";
+
+    private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
+    private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     private final String title;
     private int width;
@@ -40,18 +50,18 @@ public final class Window {
     // Ctors.
     //-------------------------------------------------
 
-    public Window(String title, int width, int height, boolean vSync) {
+    public Window() {
         LOGGER.debug("Creates Window object.");
 
-        this.title = Objects.requireNonNull(title, "application must not be null");
-        this.width = width;
-        this.height = height;
+        this.title = Objects.requireNonNull(Config.TITLE, "title must not be null");
+        this.width = Config.WIDTH;
+        this.height = Config.HEIGHT;
 
         if (width <= 0 || height <= 0) {
             throw new SgOglRuntimeException("Invalid width or height of the window.");
         }
 
-        this.vSync = vSync;
+        this.vSync = Config.V_SYNC;
 
         projectionMatrix = new Matrix4f();
         orthographicProjectionMatrix = new Matrix4f();
@@ -98,7 +108,13 @@ public final class Window {
     //-------------------------------------------------
 
     public void init() {
-        LOGGER.debug("Initializing window.");
+        initGlfw();
+        initImGui();
+        initProjectionMatrix();
+    }
+
+    private void initGlfw() {
+        LOGGER.debug("Initializing Window.");
 
         // Setup an error callback.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -159,16 +175,60 @@ public final class Window {
 
         if (vSync) {
             // Enable v-sync.
-            glfwSwapInterval(1);
+            glfwSwapInterval(GLFW_TRUE);
             LOGGER.info("VSync is enabled.");
         }
 
         // Make the window visible.
         glfwShowWindow(windowHandle);
 
-        // Set/Update the projection matrix.
+        // Makes the OpenGL bindings available for use.
+        OpenGL.init();
+    }
+
+    private void initImGui() {
+        LOGGER.debug("Initializing ImGui.");
+
+        ImGui.createContext();
+
+        final ImGuiIO io = ImGui.getIO();
+
+        io.setIniFilename(null); // We don't want to save .ini file
+        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);  // Enable Keyboard Controls
+        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);      // Enable Docking
+        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);    // Enable Multi-Viewport / Platform Windows
+        io.setConfigViewportsNoTaskBarIcon(true);
+
+        if (io.hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+            final ImGuiStyle style = ImGui.getStyle();
+            style.setWindowRounding(0.0f);
+            style.setColor(ImGuiCol.WindowBg, ImGui.getColorU32(ImGuiCol.WindowBg, 1));
+        }
+
+        imGuiGlfw.init(windowHandle, true);
+        imGuiGl3.init(IMGUI_GLSL_VERSION);
+    }
+
+    private void initProjectionMatrix() {
         updateProjectionMatrix();
         updateOrthographicProjectionMatrix();
+    }
+
+    private byte[] loadFromResources(final String fileName) {
+        try (InputStream is = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(fileName));
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
+            final byte[] data = new byte[16384];
+
+            int nRead;
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+
+            return buffer.toByteArray();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     //-------------------------------------------------
@@ -185,7 +245,7 @@ public final class Window {
     }
 
     public void updateProjectionMatrix() {
-        projectionMatrix.setPerspective(FOV, (float) width / height, Z_NEAR, Z_FAR);
+        projectionMatrix.setPerspective(Config.FOV, (float) width / height, Config.NEAR, Config.FAR);
     }
 
     public void updateOrthographicProjectionMatrix() {
@@ -207,6 +267,11 @@ public final class Window {
 
     public void cleanUp() {
         LOGGER.debug("Clean up Window.");
+
+        // Clean up ImGui in reverse order.
+        imGuiGl3.dispose();
+        imGuiGlfw.dispose();
+        ImGui.destroyContext();
 
         // Frees callbacks associated with the window.
         glfwFreeCallbacks(windowHandle);

@@ -32,7 +32,7 @@ public class SgOglEngine implements Runnable {
 
         LOGGER.info("Running from Jar: {}", RUNNING_FROM_JAR ? "yes" : "no");
 
-        this.window = new Window(Config.TITLE, Config.WIDTH, Config.HEIGHT, Config.V_SYNC);
+        this.window = new Window();
         this.application = Objects.requireNonNull(application, "application must not be null");
         this.resourceManager = new ResourceManager();
 
@@ -80,7 +80,6 @@ public class SgOglEngine implements Runnable {
 
         window.init();
         Input.init(window.getWindowHandle());
-        OpenGL.init(Config.ENABLE_DEPTH_AND_STENCIL_TESTING);
         application.init();
     }
 

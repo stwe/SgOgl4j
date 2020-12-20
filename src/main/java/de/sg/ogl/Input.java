@@ -38,12 +38,7 @@ public class Input {
     // Ctors.
     //-------------------------------------------------
 
-    public Input() {
-        LOGGER.debug("Creates Input object.");
-
-        resetKeyboard();
-        resetMouse();
-    }
+    private Input() {}
 
     //-------------------------------------------------
     // Getter

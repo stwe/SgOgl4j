@@ -33,15 +33,11 @@ public final class OpenGL {
     // Init
     //-------------------------------------------------
 
-    public static void init(boolean enableDepthAndStencilTesting) {
+    public static void init() {
         LOGGER.debug("Initializing OpenGL.");
 
         GL.createCapabilities();
         printContextInitInfo();
-
-        if (enableDepthAndStencilTesting) {
-            enableDepthAndStencilTesting();
-        }
 
         // enabled by default on some drivers, but not all so always enable to make sure
         glEnable(GL_MULTISAMPLE);
