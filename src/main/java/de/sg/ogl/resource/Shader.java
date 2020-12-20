@@ -40,13 +40,13 @@ public class Shader implements Resource {
     private final String path;
     private final EnumSet<Options> options;
 
-    private int id = 0;
+    private int id;
 
-    private int vertexShaderId = 0;
-    private int tessellationControlShaderId = 0;
-    private int tessellationEvaluationShaderId = 0;
-    private int geometryShaderId = 0;
-    private int fragmentShaderId = 0;
+    private int vertexShaderId;
+    private int tessellationControlShaderId;
+    private int tessellationEvaluationShaderId;
+    private int geometryShaderId;
+    private int fragmentShaderId;
 
     private final ArrayList<Uniform> foundUniforms = new ArrayList<>();
 
@@ -57,14 +57,14 @@ public class Shader implements Resource {
     // Ctors.
     //-------------------------------------------------
 
-    public Shader(String path, EnumSet<Options> options) {
+    Shader(String path, EnumSet<Options> options) {
         LOGGER.debug("Creates Shader object.");
 
         this.path = path;
         this.options = options;
     }
 
-    public Shader(String path) {
+    Shader(String path) {
         this(path, EnumSet.of(Options.VERTEX_SHADER, Options.FRAGMENT_SHADER));
     }
 

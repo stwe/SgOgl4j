@@ -135,7 +135,7 @@ public class SpriteRenderer {
         );
 
         mesh = new Mesh();
-        mesh.getVao().addVerticesVbo(vertices, 6, bufferLayout);
+        mesh.getVao().addVbo(vertices, 6, bufferLayout);
     }
 
     private void createMatricesUniformBuffer() {

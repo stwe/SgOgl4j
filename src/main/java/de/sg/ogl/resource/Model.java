@@ -8,7 +8,21 @@
 
 package de.sg.ogl.resource;
 
+import static de.sg.ogl.Log.LOGGER;
+
 public class Model implements Resource {
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    Model() {
+        LOGGER.debug("Creates Model object.");
+    }
+
+    //-------------------------------------------------
+    // Implement Resource
+    //-------------------------------------------------
 
     @Override
     public void load() throws Exception {

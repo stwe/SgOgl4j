@@ -86,7 +86,7 @@ public final class Vao {
     // Add data
     //-------------------------------------------------
 
-    public void addVerticesVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
+    public void addVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
         // bind this Vao
         bind();
 
@@ -132,15 +132,17 @@ public final class Vao {
         unbindVbo();
         unbind();
 
-        // set draw count
-        setDrawCount(drawCount);
+        // set draw count - where 0 is a valid value
+        if (drawCount >= 0) {
+            setDrawCount(drawCount);
+        }
     }
 
-    public void addIndicesEbo(int[] indices) {
-        if (vbos.isEmpty()) {
-            LOGGER.warn("The index buffer should be created last.");
-        }
+    public void addVbo(float[] vertices, BufferLayout bufferLayout) {
+        addVbo(vertices, -1, bufferLayout);
+    }
 
+    public void addIndexBuffer(int[] indices) {
         // bind this Vao
         bind();
 
@@ -166,7 +168,7 @@ public final class Vao {
         // unbind Vao
         unbind();
 
-        // set draw count
+        // override draw count
         setDrawCount(indices.length);
     }
 
@@ -183,7 +185,7 @@ public final class Vao {
     }
 
     //-------------------------------------------------
-    // Helper
+    // Live and let die
     //-------------------------------------------------
 
     private static int createVao() {

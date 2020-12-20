@@ -9,9 +9,9 @@
 package de.sg.ogl;
 
 public class Pixel {
-    public int r = 0;
-    public int g = 0;
-    public int b = 0;
+    public int r;
+    public int g;
+    public int b;
     public int a = 255;
 
     public Pixel(int r, int g, int b) {

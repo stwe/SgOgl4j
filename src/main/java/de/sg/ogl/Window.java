@@ -142,6 +142,9 @@ public final class Window {
 
             // Get the resolution of the primary monitor.
             var vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            if (vidmode == null) {
+                throw new SgOglRuntimeException("Failed to get the current video mode.");
+            }
 
             // Center the window.
             glfwSetWindowPos(

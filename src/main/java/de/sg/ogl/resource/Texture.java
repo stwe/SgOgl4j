@@ -31,17 +31,17 @@ public class Texture implements Resource {
     private String path;
     private final boolean loadVerticalFlipped;
 
-    private int id = 0;
+    private int id;
     private int width;
     private int height;
     private int nrChannels;
-    private int format = 0;
+    private int format;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public Texture(String path, boolean loadVerticalFlipped) throws URISyntaxException {
+    Texture(String path, boolean loadVerticalFlipped) throws URISyntaxException {
         LOGGER.debug("Creates Texture object.");
 
         initPath(path);
@@ -49,7 +49,7 @@ public class Texture implements Resource {
         this.loadVerticalFlipped = loadVerticalFlipped;
     }
 
-    public Texture(String path) throws URISyntaxException {
+    Texture(String path) throws URISyntaxException {
         this(path, false);
     }
 
