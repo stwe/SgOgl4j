@@ -9,7 +9,7 @@
 package de.sg.ogl.resource;
 
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class ResourceManager {
     // Texture resources
     //-------------------------------------------------
 
-    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) throws URISyntaxException {
+    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) throws IOException {
         var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Texture.class);
 
         if (result.isPresent()) {
@@ -48,11 +48,11 @@ public class ResourceManager {
         return addTextureResource(path, loadVerticalFlipped);
     }
 
-    public Texture loadTextureResource(String path) throws URISyntaxException {
+    public Texture loadTextureResource(String path) throws IOException {
         return loadTextureResource(path, false);
     }
 
-    private Texture addTextureResource(String path, boolean loadVerticalFlipped) throws URISyntaxException {
+    private Texture addTextureResource(String path, boolean loadVerticalFlipped) throws IOException {
         var texture = new Texture(path, loadVerticalFlipped);
         texture.load();
 

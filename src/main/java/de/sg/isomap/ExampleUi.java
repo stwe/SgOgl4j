@@ -22,7 +22,7 @@ import imgui.type.ImBoolean;
 import imgui.ImColor;
 import imgui.type.ImString;
 
-import java.net.URISyntaxException;
+import java.io.IOException;
 
 @SuppressWarnings({"MagicNumber", "VisibilityModifier"})
 final class ExampleUi {
@@ -134,7 +134,7 @@ final class ExampleUi {
         }
     }
 
-    private void showWindowImage() throws URISyntaxException {
+    private void showWindowImage() throws IOException {
         if (dukeTexture == 0) {
             dukeTexture = resourceManager.loadTextureResource("/texture/tiles/grass.png").getId();
         }

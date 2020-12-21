@@ -9,15 +9,15 @@
 package de.sg.ogl.resource;
 
 import de.sg.ogl.SgOglRuntimeException;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
+import java.nio.channels.Channels;
 
 import static de.sg.ogl.Log.LOGGER;
-import static de.sg.ogl.SgOglEngine.RUNNING_FROM_JAR;
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.ARBBindlessTexture.glGetTextureHandleARB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
@@ -28,7 +28,7 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements Resource {
 
-    private String path;
+    private final String path;
     private final boolean loadVerticalFlipped;
 
     private int id;
@@ -41,15 +41,14 @@ public class Texture implements Resource {
     // Ctors.
     //-------------------------------------------------
 
-    Texture(String path, boolean loadVerticalFlipped) throws URISyntaxException {
+    Texture(String path, boolean loadVerticalFlipped) {
         LOGGER.debug("Creates Texture object.");
 
-        initPath(path);
-
+        this.path = path;
         this.loadVerticalFlipped = loadVerticalFlipped;
     }
 
-    Texture(String path) throws URISyntaxException {
+    Texture(String path) {
         this(path, false);
     }
 
@@ -90,20 +89,36 @@ public class Texture implements Resource {
     //-------------------------------------------------
 
     @Override
-    public void load() {
-        ByteBuffer buf;
+    public void load() throws IOException {
+        stbi_set_flip_vertically_on_load(loadVerticalFlipped);
 
-        if (loadVerticalFlipped) {
-            stbi_set_flip_vertically_on_load(true);
+        ByteBuffer buffer;
+        var source = Texture.class.getResourceAsStream(path);
+        var rbc = Channels.newChannel(source);
+        buffer = createByteBuffer(8 * 1024);
+
+        while (true) {
+            var bytes = rbc.read(buffer);
+
+            if (bytes == -1) {
+                break;
+            }
+
+            if (buffer.remaining() == 0) {
+                buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2);
+            }
         }
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer x = stack.mallocInt(1);
-            IntBuffer y = stack.mallocInt(1);
-            IntBuffer channels = stack.mallocInt(1);
+        buffer.flip();
 
-            buf = stbi_load(path, x, y, channels, 0);
-            if (buf == null) {
+        ByteBuffer imageBuffer;
+        try (var stack = MemoryStack.stackPush()) {
+            var x = stack.mallocInt(1);
+            var y = stack.mallocInt(1);
+            var channels = stack.mallocInt(1);
+
+            imageBuffer = stbi_load_from_memory(buffer, x, y, channels, 0);
+            if (imageBuffer == null) {
                 throw new SgOglRuntimeException("Failed to load texture file " + path
                         + System.lineSeparator() + stbi_failure_reason());
             }
@@ -124,12 +139,20 @@ public class Texture implements Resource {
 
         bind(id);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buf);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, imageBuffer);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        stbi_image_free(buf);
+        stbi_image_free(imageBuffer);
 
         LOGGER.debug("Texture file {} was successfully loaded. The Id is {}.", path, id);
+    }
+
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        var newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+
+        return newBuffer;
     }
 
     @Override
@@ -248,19 +271,5 @@ public class Texture implements Resource {
         }
 
         return textureHandle;
-    }
-
-    //-------------------------------------------------
-    // Helper
-    //-------------------------------------------------
-
-    private void initPath(String path) throws URISyntaxException {
-        var url = Texture.class.getProtectionDomain().getCodeSource().getLocation();
-        var file = new File(url.toURI().getPath());
-        this.path = file.getPath() + path;
-
-        if (RUNNING_FROM_JAR) {
-            this.path = file.getParentFile().getPath() + path;
-        }
     }
 }
