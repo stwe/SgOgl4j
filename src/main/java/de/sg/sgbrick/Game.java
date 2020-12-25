@@ -10,13 +10,12 @@ package de.sg.sgbrick;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
-import de.sg.ogl.buffer.BufferLayout;
-import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.Settings;
 import de.sg.ogl.ecs.Signature;
 import de.sg.ogl.resource.Mesh;
+import de.sg.ogl.resource.ResourceManager;
 import de.sg.ogl.resource.Texture;
 import de.sg.sgbrick.component.*;
 import de.sg.sgbrick.event.GameOverEvent;
@@ -30,8 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.POSITION_2D;
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.UV;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class Game extends BaseApplication {
@@ -179,26 +176,9 @@ public class Game extends BaseApplication {
     //-------------------------------------------------
 
     private void createMesh() {
-        float[] vertices = new float[] {
-                // pos      // tex
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f,
-
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f
-        };
-
-        BufferLayout bufferLayout = new BufferLayout(
-                new ArrayList<>(){{
-                    add(new VertexAttribute(POSITION_2D, "aPosition"));
-                    add(new VertexAttribute(UV, "aUv"));
-                }}
-        );
-
         mesh = new Mesh();
-        mesh.getVao().addVbo(vertices, 6, bufferLayout);
+        var quad2d = getEngine().getResourceManager().loadVerticesResource(ResourceManager.VerticesResourceId.QUAD_2D);
+        mesh.getVao().addVbo(quad2d.vertices, quad2d.drawCount, quad2d.defaultBufferLayout);
     }
 
     private void initEcs() throws Exception {

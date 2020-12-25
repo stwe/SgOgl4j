@@ -107,21 +107,8 @@ public final class Vao {
 
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
 
-            // specify how OpenGL should interpret the vertex data
-            var index = 0;
-            for (var attribute : bufferLayout.getVertexAttributes()) {
-                glEnableVertexAttribArray(index);
-                glVertexAttribPointer(
-                        index,
-                        attribute.getVertexAttributeType().getComponentCount(),
-                        attribute.getVertexAttributeType().getGlType(),
-                        attribute.normalize,
-                        bufferLayout.getStride(),
-                        attribute.offset
-                );
+            bufferLayout.createBufferLayout();
 
-                index++;
-            }
         } finally {
             if (verticesBuffer != null) {
                 MemoryUtil.memFree(verticesBuffer);
@@ -140,6 +127,10 @@ public final class Vao {
 
     public void addVbo(float[] vertices, BufferLayout bufferLayout) {
         addVbo(vertices, -1, bufferLayout);
+    }
+
+    public void addVbo(Vertex2D[] vertices, int drawCount, BufferLayout bufferLayout) {
+        addVbo(Vertex2D.toFloatArray(vertices), drawCount, bufferLayout);
     }
 
     public void addIndexBuffer(int[] indices) {

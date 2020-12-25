@@ -12,6 +12,9 @@ import de.sg.ogl.SgOglRuntimeException;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public final class Vbo {
 
@@ -67,6 +70,59 @@ public final class Vbo {
 
     public static void unbindVbo() {
         unbindVbo(GL_ARRAY_BUFFER);
+    }
+
+    //-------------------------------------------------
+    // Init
+    //-------------------------------------------------
+
+    public static void initEmpty(int vboId, int elementCount, int elementSizeInBytes, int usage) {
+        bindVbo(vboId);
+
+        glBufferData(GL_ARRAY_BUFFER, (long)elementCount * elementSizeInBytes, usage);
+
+        unbindVbo();
+    }
+
+    //-------------------------------------------------
+    // Attributes
+    //-------------------------------------------------
+
+    public static void addFloatAttribute(
+            int vboId,
+            int index,
+            int nrOfFloatComponents,
+            int nrOfAllFloats,
+            int startPoint,
+            boolean instancedRendering
+    ) {
+        bindVbo(vboId);
+
+        glEnableVertexAttribArray(index);
+        glVertexAttribPointer(
+                index,
+                nrOfFloatComponents,
+                GL_FLOAT,
+                false,
+                nrOfAllFloats * Float.BYTES,
+                (long) startPoint * Float.BYTES
+        );
+
+        if (instancedRendering) {
+            glVertexAttribDivisor(index, 1);
+        }
+
+        unbindVbo();
+    }
+
+    public static void addFloatAttribute(
+            int vboId,
+            int index,
+            int nrOfFloatComponents,
+            int nrOfAllFloats,
+            int startPoint
+    ) {
+        addFloatAttribute(vboId, index, nrOfFloatComponents, nrOfAllFloats, startPoint, false);
     }
 
     //-------------------------------------------------

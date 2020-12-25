@@ -70,6 +70,26 @@ public final class OpenGL {
         glDisable(GL_BLEND);
     }
 
+    public static void enableFaceCulling() {
+        // On a freshly created OpenGL Context, the default front face is GL_CCW.
+        // All the faces that are not front-faces are discarded.
+        glFrontFace(GL_CCW);
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
+    }
+
+    public static void disableFaceCulling() {
+        glDisable(GL_CULL_FACE);
+    }
+
+    public static void enableWireframeMode() {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    public static void disableWireframeMode() {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
     //-------------------------------------------------
     // OpenGL helper
     //-------------------------------------------------

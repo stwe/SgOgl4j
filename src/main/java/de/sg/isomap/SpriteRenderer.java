@@ -10,18 +10,13 @@ package de.sg.isomap;
 
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
-import de.sg.ogl.buffer.BufferLayout;
-import de.sg.ogl.buffer.VertexAttribute;
 import de.sg.ogl.resource.Mesh;
+import de.sg.ogl.resource.ResourceManager;
 import de.sg.ogl.resource.Shader;
 import de.sg.ogl.resource.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-
-import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.*;
 
 public class SpriteRenderer {
 
@@ -98,25 +93,8 @@ public class SpriteRenderer {
     }
 
     private void createMesh() {
-        float[] vertices = new float[] {
-                // pos      // tex
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f,
-
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f
-        };
-
-        BufferLayout bufferLayout = new BufferLayout(
-                new ArrayList<>(){{
-                    add(new VertexAttribute(POSITION_2D, "aPosition"));
-                    add(new VertexAttribute(UV, "aUv"));
-                }}
-        );
-
         mesh = new Mesh();
-        mesh.getVao().addVbo(vertices, 6, bufferLayout);
+        var quad2d = engine.getResourceManager().loadVerticesResource(ResourceManager.VerticesResourceId.QUAD_2D);
+        mesh.getVao().addVbo(quad2d.vertices, quad2d.drawCount, quad2d.defaultBufferLayout);
     }
 }

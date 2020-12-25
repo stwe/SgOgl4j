@@ -8,6 +8,10 @@
 
 package de.sg.ogl.resource;
 
+import de.sg.ogl.buffer.BufferLayout;
+import de.sg.ogl.buffer.Vertex2D;
+import org.joml.Vector2f;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,6 +25,26 @@ public class ResourceManager {
 
     private final HashMap<String, Resource> resources;
 
+    public enum VerticesResourceId {
+        QUAD_2D
+    }
+
+    public static class VerticesResource {
+        public VerticesResourceId id;
+        public float[] vertices;
+        public int drawCount;
+        public BufferLayout defaultBufferLayout;
+
+        public VerticesResource(VerticesResourceId id, float[] vertices, int drawCount, BufferLayout bufferLayout) {
+            this.id = id;
+            this.vertices = vertices;
+            this.drawCount = drawCount;
+            this.defaultBufferLayout = bufferLayout;
+        }
+    }
+
+    private final HashMap<VerticesResourceId, VerticesResource> verticesResources;
+
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
@@ -29,6 +53,9 @@ public class ResourceManager {
         LOGGER.debug("Creates ResourceManager object.");
 
         resources = new HashMap<>();
+        verticesResources = new HashMap<>();
+
+        addQuadVertices2DResource();
     }
 
     //-------------------------------------------------
@@ -85,6 +112,38 @@ public class ResourceManager {
         resources.put(path, shader);
 
         return shader;
+    }
+
+    //-------------------------------------------------
+    // Static vertices
+    //-------------------------------------------------
+
+    public VerticesResource loadVerticesResource(VerticesResourceId verticesResourceId) {
+        return verticesResources.get(verticesResourceId);
+    }
+
+    private void addQuadVertices2DResource() {
+        LOGGER.debug("Add vertices for a 2D quad.");
+
+        var vertices = new Vertex2D[] {
+                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
+                new Vertex2D(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f)),
+
+                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f))
+        };
+
+        verticesResources.put(
+                VerticesResourceId.QUAD_2D,
+                new VerticesResource(
+                        VerticesResourceId.QUAD_2D,
+                        Vertex2D.toFloatArray(vertices),
+                        vertices.length,
+                        Vertex2D.BUFFER_LAYOUT_2D
+                )
+        );
     }
 
     //-------------------------------------------------

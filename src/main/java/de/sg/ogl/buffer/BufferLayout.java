@@ -11,13 +11,15 @@ package de.sg.ogl.buffer;
 import java.util.ArrayList;
 
 import static de.sg.ogl.Log.LOGGER;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public final class BufferLayout {
 
     private final ArrayList<VertexAttribute> vertexAttributes;
 
-    private int stride = 0;
-    private int componentCount = 0;
+    private int stride;
+    private int componentCount;
 
     //-------------------------------------------------
     // Ctors.
@@ -46,9 +48,31 @@ public final class BufferLayout {
         return componentCount;
     }
 
+
     //-------------------------------------------------
     // Init
     //-------------------------------------------------
+
+    /**
+     * Specify how OpenGL should interpret the vertex data.
+     * A Vbo must be bound before!
+     */
+    public void createBufferLayout() {
+        var index = 0;
+        for (var attribute : vertexAttributes) {
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(
+                    index,
+                    attribute.getVertexAttributeType().getComponentCount(),
+                    attribute.getVertexAttributeType().getGlType(),
+                    attribute.normalize,
+                    stride,
+                    attribute.offset
+            );
+
+            index++;
+        }
+    }
 
     private void init() {
         LOGGER.debug("Initialize Buffer layout.");
