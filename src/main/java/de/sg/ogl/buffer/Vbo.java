@@ -85,6 +85,22 @@ public final class Vbo {
     }
 
     //-------------------------------------------------
+    // Store data
+    //-------------------------------------------------
+
+    public static void storeData(int vboId, int offset, float[] data) {
+        bindVbo(vboId);
+
+        glBufferSubData(GL_ARRAY_BUFFER, offset, data);
+
+        unbindVbo();
+    }
+
+    public static void storeData(int vboId, float[] data) {
+        storeData(vboId, 0, data);
+    }
+
+    //-------------------------------------------------
     // Attributes
     //-------------------------------------------------
 

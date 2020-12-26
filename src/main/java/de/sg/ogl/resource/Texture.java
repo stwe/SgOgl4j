@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.ARBBindlessTexture.glGetTextureHandleARB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
@@ -185,6 +186,11 @@ public class Texture implements Resource {
     }
 
     public static void bindForReading(int id, int textureUnit, int target) {
+        // make sure that the OpenGL constants are used here
+        if (textureUnit < GL_TEXTURE0) {
+            throw new SgOglRuntimeException("Invalid texture unit value.");
+        }
+
         glActiveTexture(textureUnit);
         bind(id, target);
     }

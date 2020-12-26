@@ -10,7 +10,12 @@ package de.sg.test;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
+import de.sg.ogl.gui.GuiButton;
+import de.sg.ogl.gui.GuiPanel;
+import de.sg.ogl.gui.SpriteBatch;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -19,14 +24,48 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends BaseApplication {
 
-    private SpriteRenderer renderer;
+    private SpriteBatch spriteBatch;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        renderer = new SpriteRenderer(getEngine());
+        spriteBatch = new SpriteBatch(getEngine());
+
+        var alm = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/alm.jpg");
+        var water = getEngine().getResourceManager().loadTextureResource("/texture/tiles/water.png");
+
+        // panel
+        var panel = new GuiPanel();
+        panel.setTextureId(alm.getId());
+
+        // button0
+        GuiButton button0 = new GuiButton(
+                new Vector4f(10.0f, 10.0f, 40.0f, 20.0f),
+                new Vector2f(32.0f, -50.0f),
+                "New Label",
+                panel
+        );
+        button0.setColor(new Vector3f(0.0f, 1.0f, 1.0f));
+        button0.setTextureId(water.getId());
+
+        // button1
+        GuiButton button1 = new GuiButton(
+                new Vector4f(10.0f, 10.0f, 40.0f, 20.0f),
+                new Vector2f(32.0f, -20.0f),
+                "New Label",
+                panel
+        );
+        button1.setColor(new Vector3f(1.0f, 1.0f, 0.0f));
+        button1.setTextureId(water.getId());
+
+        panel.addGuiObject(button0);
+        panel.addGuiObject(button1);
+
+        panel.addToRenderer(spriteBatch);
+
+        spriteBatch.end();
     }
 
     @Override
@@ -43,10 +82,7 @@ public class TestApp extends BaseApplication {
 
     @Override
     public void render() {
-        renderer.prepareRendering();
-        renderer.render(new Vector2f(100.0f, 100.0f), new Vector2f(64.0f, 64.0f), 1);
-        renderer.render(new Vector2f(200.0f, 200.0f), new Vector2f(64.0f, 64.0f), 0);
-        renderer.finishRendering();
+        spriteBatch.render();
     }
 
     @Override

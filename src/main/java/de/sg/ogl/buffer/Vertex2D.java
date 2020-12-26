@@ -17,11 +17,29 @@ import static de.sg.ogl.buffer.VertexAttribute.VertexAttributeType.*;
 
 public class Vertex2D {
 
+    public static final BufferLayout BUFFER_LAYOUT_2D = new BufferLayout(
+            new ArrayList<>(){{
+                add(new VertexAttribute(POSITION_2D, "aPosition"));
+                add(new VertexAttribute(COLOR, "aColor"));
+                add(new VertexAttribute(UV, "aUv"));
+            }}
+    );
+
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f);
+
+    //-------------------------------------------------
+    // Public member
+    //-------------------------------------------------
 
     public Vector2f position;
     public Vector3f color;
     public Vector2f uv;
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public Vertex2D() {}
 
     public Vertex2D(Vector2f position, Vector3f color, Vector2f uv) {
         this.position = position;
@@ -33,16 +51,12 @@ public class Vertex2D {
         this(position, DEFAULT_COLOR, uv);
     }
 
-    public static final BufferLayout BUFFER_LAYOUT_2D = new BufferLayout(
-            new ArrayList<>(){{
-                add(new VertexAttribute(POSITION_2D, "aPosition"));
-                add(new VertexAttribute(COLOR, "aColor"));
-                add(new VertexAttribute(UV, "aUv"));
-            }}
-    );
+    //-------------------------------------------------
+    // Cast
+    //-------------------------------------------------
 
     public static float[] toFloatArray(Vertex2D[] vertices) {
-        float[] floats = new float[vertices.length * BUFFER_LAYOUT_2D.getComponentCount()];
+        var floats = new float[vertices.length * BUFFER_LAYOUT_2D.getComponentCount()];
         var i = 0;
         for (var vertex : vertices) {
             floats[i] = vertex.position.x;

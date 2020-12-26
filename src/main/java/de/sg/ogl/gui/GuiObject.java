@@ -23,6 +23,6 @@ public abstract class GuiObject {
     protected Vector2f position;
 
     public abstract void update();
-    public abstract void render();
+    public abstract void addToRenderer(SpriteBatch spriteBatch);
     public abstract void onNotify(GuiObject guiObject, GuiEvent guiEvent);
 }

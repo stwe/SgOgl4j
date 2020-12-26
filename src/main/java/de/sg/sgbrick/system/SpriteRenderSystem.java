@@ -23,6 +23,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+
 public class SpriteRenderSystem implements System {
 
     private final SgOglEngine engine;
@@ -106,7 +108,7 @@ public class SpriteRenderSystem implements System {
     }
 
     private void renderMesh(int textureId, Vector2f position, float rotation, Vector2f size, Vector3f color) {
-        Texture.bindForReading(textureId, 0);
+        Texture.bindForReading(textureId, GL_TEXTURE0);
 
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix

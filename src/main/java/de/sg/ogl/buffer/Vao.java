@@ -167,12 +167,16 @@ public final class Vao {
     // Draw
     //-------------------------------------------------
 
-    public void drawPrimitives(int drawMode) {
+    public void drawPrimitives(int drawMode, int first) {
         if (hasIndexBuffer()) {
             glDrawElements(drawMode, drawCount, GL_UNSIGNED_INT, 0);
         } else {
-            glDrawArrays(drawMode, 0, drawCount);
+            glDrawArrays(drawMode, first, drawCount);
         }
+    }
+
+    public void drawPrimitives(int drawMode) {
+        drawPrimitives(drawMode, 0);
     }
 
     //-------------------------------------------------

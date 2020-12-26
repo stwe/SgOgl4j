@@ -9,6 +9,7 @@
 package de.sg.ogl.gui;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -19,24 +20,38 @@ enum GuiAnchorPos {
 
 public class GuiPanel {
 
-    private Vector4f bounds;
-    private Vector2f offset;
+    private static final float DEFAULT_BOUNDS_X = 0.0f;
+    private static final float DEFAULT_BOUNDS_Y = 0.0f;
+    private static final float DEFAULT_WIDTH = 128.0f;
+    private static final float DEFAULT_HEIGHT = 256.0f;
 
-    private Vector2f position;
-    private float width;
-    private float height;
+    private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    private ArrayList<GuiObject> guiObjects = new ArrayList<>();
+    private final Vector4f bounds;
+    private final Vector2f offset;
 
-    GuiPanel() {
+    private final Vector2f position;
+    private final float width;
+    private final float height;
+
+    private int textureId;
+    private Vector3f color = DEFAULT_COLOR;
+
+    private final ArrayList<GuiObject> guiObjects = new ArrayList<>();
+
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
+    public GuiPanel() {
         this(
-                new Vector4f(0.0f, 0.0f, 200.0f, 480.0f),
-                new Vector2f(0.0f),
-                new Vector2f(0.0f)
+            new Vector4f(DEFAULT_BOUNDS_X, DEFAULT_BOUNDS_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT),
+            new Vector2f(0.0f),
+            new Vector2f(0.0f)
         );
     }
 
-    GuiPanel(Vector4f bounds, Vector2f offset, Vector2f anchor) {
+    public GuiPanel(Vector4f bounds, Vector2f offset, Vector2f anchor) {
         this.bounds = bounds;
         this.offset = offset;
 
@@ -45,25 +60,9 @@ public class GuiPanel {
         this.height = this.bounds.w;
     }
 
-    void addGuiObject(GuiObject guiObject) {
-        guiObjects.add(guiObject);
-    }
-
-    void input() {}
-
-    void update() {
-        for (var guiObject : guiObjects) {
-            guiObject.update();
-        }
-    }
-
-    void render() {
-        // render this
-
-        for (var guiObject : guiObjects) {
-            guiObject.render();
-        }
-    }
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
 
     public Vector4f getBounds() {
         return bounds;
@@ -75,5 +74,61 @@ public class GuiPanel {
 
     public ArrayList<GuiObject> getGuiObjects() {
         return guiObjects;
+    }
+
+    public int getTextureId() {
+        return textureId;
+    }
+
+    public Vector3f getColor() {
+        return color;
+    }
+
+    //-------------------------------------------------
+    // Setter
+    //-------------------------------------------------
+
+    public void setTextureId(int textureId) {
+        this.textureId = textureId;
+    }
+
+    public void setColor(Vector3f color) {
+        this.color = color;
+    }
+
+    //-------------------------------------------------
+    // Add gui objects
+    //-------------------------------------------------
+
+    public void addGuiObject(GuiObject guiObject) {
+        guiObjects.add(guiObject);
+    }
+
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
+
+    public void input() {}
+
+    public void update() {
+        for (var guiObject : guiObjects) {
+            guiObject.update();
+        }
+    }
+
+    //-------------------------------------------------
+    // Renderer
+    //-------------------------------------------------
+
+    public void addToRenderer(SpriteBatch spriteBatch) {
+        spriteBatch.addToRenderer(
+                new Vector4f(position.x, position.y, width, height),
+                textureId,
+                color
+        );
+
+        for (var guiObject : guiObjects) {
+            guiObject.addToRenderer(spriteBatch);
+        }
     }
 }
