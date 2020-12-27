@@ -8,8 +8,10 @@
 
 package de.sg.ogl.gui;
 
+import de.sg.ogl.Input;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
+import de.sg.ogl.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -79,6 +81,29 @@ public class Gui {
         }
 
         spriteBatch.end();
+    }
+
+    public void input() {
+        if (Input.isMouseInWindow()) {
+            for (var panel : guiPanels) {
+                // mouse in panel?
+                if (Aabb.pointVsAabb(Input.getCurrentMouseXY(), panel.getAabb())) {
+                    // mouse clicked?
+                    if (Input.isMouseButtonPressed(0)) {
+                        panel.onNotify(panel, GuiObject.GuiEvent.CLICKED);
+                    } else {
+                        // mouse only in panel
+                        panel.onNotify(panel, GuiObject.GuiEvent.HOVER);
+                    }
+
+                } else {
+                    // released?
+                    if (panel.getStatus() == GuiPanel.Status.HOVER) {
+                        panel.onNotify(panel, GuiObject.GuiEvent.RELEASED);
+                    }
+                }
+            }
+        }
     }
 
     public void render() {

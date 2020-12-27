@@ -16,6 +16,9 @@ public class GuiButton extends GuiObject {
 
     private static final Vector3f DEFAULT_COLOR = new Vector3f(0.0f, 0.0f, 1.0f);
 
+    private Vector4f bounds;
+    private Vector2f position;
+
     private final String label;
     private final GuiPanel guiPanel;
 
@@ -33,8 +36,8 @@ public class GuiButton extends GuiObject {
         if (guiPanel.getGuiObjects().isEmpty()) {
             //this.position.y += guiPanel.getBounds().w - this.bounds.w;
         } else {
-            var last = guiPanel.getGuiObjects().get(guiPanel.getGuiObjects().size() - 1);
-            this.position.y = last.position.y + last.bounds.w + 10.0f;
+            //var last = guiPanel.getGuiObjects().get(guiPanel.getGuiObjects().size() - 1);
+            //this.position.y = last.position.y + last.bounds.w + 10.0f;
         }
 
         this.label = label;
@@ -68,6 +71,11 @@ public class GuiButton extends GuiObject {
     //-------------------------------------------------
     // Implement GuiObject
     //-------------------------------------------------
+
+    @Override
+    public void input() {
+
+    }
 
     @Override
     public void update() {

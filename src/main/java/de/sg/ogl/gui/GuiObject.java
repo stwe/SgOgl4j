@@ -8,20 +8,15 @@
 
 package de.sg.ogl.gui;
 
-import org.joml.Vector2f;
-import org.joml.Vector4f;
-
-enum GuiEvent {
-    HOVER_OVER,
-    RELEASED,
-    CLICKED
-}
-
 public abstract class GuiObject {
 
-    protected Vector4f bounds;
-    protected Vector2f position;
+    enum GuiEvent {
+        HOVER,
+        CLICKED,
+        RELEASED
+    }
 
+    public abstract void input();
     public abstract void update();
     public abstract void addToRenderer(SpriteBatch spriteBatch);
     public abstract void onNotify(GuiObject guiObject, GuiEvent guiEvent);

@@ -35,8 +35,9 @@ public class TestApp extends BaseApplication {
         // gui
         gui = new Gui(getEngine());
 
-        // panel
+        // panels
         gui.addPanel(GuiPanel.AnchorPosition.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
+        gui.addPanel(GuiPanel.AnchorPosition.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, panelTexture.getId());
 
         // init gui renderer
         gui.initRender();
@@ -47,6 +48,8 @@ public class TestApp extends BaseApplication {
         if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
+
+        gui.input();
     }
 
     @Override

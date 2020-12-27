@@ -8,17 +8,23 @@
 
 package de.sg.ogl.gui;
 
+import de.sg.ogl.Log;
+import de.sg.ogl.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
-public class GuiPanel {
+public class GuiPanel extends GuiObject {
 
-    /**
-     * The anchor position of the Panel.
-     */
+    public enum Status {
+        DEFAULT,
+        HOVER,
+        CLICKED,
+        RELEASED
+    }
+
     public enum AnchorPosition {
         TOP_LEFT,     // (0.0f, 0.0f)
         BOTTOM_LEFT,  // (0.0f, windowHeight - height)
@@ -58,6 +64,16 @@ public class GuiPanel {
     private Vector3f color = DEFAULT_COLOR;
 
     /**
+     * For the collision check.
+     */
+    private final Aabb aabb;
+
+    /**
+     * The current status of the Panel.
+     */
+    private Status status = Status.DEFAULT;
+
+    /**
      * The Panel is a container for other gui elements (Button, Slider).
      */
     private final ArrayList<GuiObject> guiObjects = new ArrayList<>();
@@ -71,6 +87,8 @@ public class GuiPanel {
 
         this.width = width;
         this.height = height;
+
+        aabb = new Aabb(position, new Vector2f(width, height));
     }
 
     //-------------------------------------------------
@@ -95,6 +113,14 @@ public class GuiPanel {
 
     public Vector3f getColor() {
         return color;
+    }
+
+    public Aabb getAabb() {
+        return aabb;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public ArrayList<GuiObject> getGuiObjects() {
@@ -122,30 +148,61 @@ public class GuiPanel {
     }
 
     //-------------------------------------------------
-    // Logic
+    // Events
     //-------------------------------------------------
 
+    private void onHover() {
+        if (status != Status.HOVER) {
+            Log.LOGGER.debug("set hover status");
+            status = Status.HOVER;
+        }
+    }
+
+    private void onClick() {
+        if (status != Status.CLICKED) {
+            Log.LOGGER.debug("set clicked status");
+            status = Status.CLICKED;
+        }
+    }
+
+    private void onRelease() {
+        Log.LOGGER.debug("set released status");
+        status = Status.RELEASED;
+    }
+
+    //-------------------------------------------------
+    // Implement GuiObject
+    //-------------------------------------------------
+
+    @Override
     public void input() {}
 
+    @Override
     public void update() {
         for (var guiObject : guiObjects) {
             guiObject.update();
         }
     }
 
-    //-------------------------------------------------
-    // Renderer
-    //-------------------------------------------------
-
+    @Override
     public void addToRenderer(SpriteBatch spriteBatch) {
         spriteBatch.addToRenderer(
-                new Vector4f(position.x, position.y, width, height),
-                textureId,
-                color
+            new Vector4f(position.x, position.y, width, height),
+            textureId,
+            color
         );
 
         for (var guiObject : guiObjects) {
             guiObject.addToRenderer(spriteBatch);
+        }
+    }
+
+    @Override
+    public void onNotify(GuiObject guiObject, GuiEvent guiEvent) {
+        switch (guiEvent) {
+            case HOVER: onHover(); break;
+            case CLICKED: onClick(); break;
+            case RELEASED: onRelease(); break;
         }
     }
 }

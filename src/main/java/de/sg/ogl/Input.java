@@ -9,6 +9,7 @@
 package de.sg.ogl;
 
 import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
 
 import java.util.Arrays;
@@ -76,6 +77,10 @@ public class Input {
 
     public static double getCurrentMouseY() {
         return currentMouseY;
+    }
+
+    public static Vector2f getCurrentMouseXY() {
+        return new Vector2f((float)currentMouseX, (float)currentMouseY);
     }
 
     public static double getScrollX() {
