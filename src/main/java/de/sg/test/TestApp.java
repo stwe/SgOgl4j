@@ -33,12 +33,12 @@ public class TestApp extends BaseApplication {
     public void init() throws Exception {
         spriteBatch = new SpriteBatch(getEngine());
 
-        var alm = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/alm.jpg");
-        var water = getEngine().getResourceManager().loadTextureResource("/texture/tiles/water.png");
+        var panelTexture = getEngine().getResourceManager().loadTextureResource("/texture/gui.png");
+        var buttonTexture = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/paddle.png");
 
         // panel
         var panel = new GuiPanel();
-        panel.setTextureId(alm.getId());
+        panel.setTextureId(panelTexture.getId());
 
         // button0
         GuiButton button0 = new GuiButton(
@@ -48,7 +48,7 @@ public class TestApp extends BaseApplication {
                 panel
         );
         button0.setColor(new Vector3f(0.0f, 1.0f, 1.0f));
-        button0.setTextureId(water.getId());
+        button0.setTextureId(buttonTexture.getId());
 
         // button1
         GuiButton button1 = new GuiButton(
@@ -58,7 +58,7 @@ public class TestApp extends BaseApplication {
                 panel
         );
         button1.setColor(new Vector3f(1.0f, 1.0f, 0.0f));
-        button1.setTextureId(water.getId());
+        button1.setTextureId(buttonTexture.getId());
 
         panel.addGuiObject(button0);
         panel.addGuiObject(button1);

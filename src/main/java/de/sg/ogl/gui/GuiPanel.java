@@ -28,7 +28,6 @@ public class GuiPanel {
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
     private final Vector4f bounds;
-    private final Vector2f offset;
 
     private final Vector2f position;
     private final float width;
@@ -51,9 +50,9 @@ public class GuiPanel {
         );
     }
 
-    public GuiPanel(Vector4f bounds, Vector2f offset, Vector2f anchor) {
+    // IGUIPanel(glm::vec4(0, 0, 150, 500), *GetAnchorPos(GUIAnchorPos::BottomRight, glm::vec4(0, 0, 150, 500)), glm::vec2(0,0));
+    public GuiPanel(Vector4f bounds, Vector2f anchor, Vector2f offset) {
         this.bounds = bounds;
-        this.offset = offset;
 
         this.position = new Vector2f(anchor).add(offset);
         this.width = this.bounds.z;
