@@ -31,7 +31,7 @@ public class GuiButton extends GuiObject {
         this.position = new Vector2f(guiPanel.getPosition()).add(position);
 
         if (guiPanel.getGuiObjects().isEmpty()) {
-            this.position.y += guiPanel.getBounds().w - this.bounds.w;
+            //this.position.y += guiPanel.getBounds().w - this.bounds.w;
         } else {
             var last = guiPanel.getGuiObjects().get(guiPanel.getGuiObjects().size() - 1);
             this.position.y = last.position.y + last.bounds.w + 10.0f;

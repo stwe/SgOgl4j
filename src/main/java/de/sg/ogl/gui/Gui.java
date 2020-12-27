@@ -9,8 +9,9 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.SgOglEngine;
+import de.sg.ogl.SgOglRuntimeException;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
@@ -18,48 +19,98 @@ public class Gui {
 
     private final SgOglEngine engine;
 
-    private final Vector2f topLeft;
-    private final Vector2f bottomLeft;
-    private final Vector2f topRight;
-    private final Vector2f bottomRight;
-    private final Vector2f center;
+    private final SpriteBatch spriteBatch;
+    private final ArrayList<GuiPanel> guiPanels = new ArrayList<>();
 
-    private final ArrayList<GuiPanel> guiPanels;
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
 
-    public Gui(SgOglEngine engine) {
+    public Gui(SgOglEngine engine) throws Exception {
         this.engine = engine;
-
-        var windowWidth = (float)this.engine.getWindow().getWidth();
-        var windowHeight = (float)this.engine.getWindow().getHeight();
-
-        topLeft = new Vector2f(0.0f, 0.0f);
-        bottomLeft = new Vector2f(0.0f, windowHeight);
-        topRight = new Vector2f(windowWidth, 0.0f);
-        bottomRight = new Vector2f(windowWidth, windowHeight);
-        center = new Vector2f(windowWidth * 0.5f, windowHeight * 0.5f);
-
-        guiPanels = new ArrayList<>();
+        spriteBatch = new SpriteBatch(engine);
     }
 
-    public void addGuiPanel(GuiPanel guiPanel) {
-        guiPanels.add(guiPanel);
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public ArrayList<GuiPanel> getGuiPanels() {
+        return guiPanels;
     }
 
-    public Vector2f getAnchorPosition(GuiAnchorPos anchorPos, Vector4f bounds) {
-        switch(anchorPos) {
-            case TOP_LEFT:
-                topLeft.y += bounds.w;
-                return topLeft;
-            case BOTTOM_LEFT:
-                return bottomLeft;
-            case TOP_RIGHT:
-                return topRight;
-            case BOTTOM_RIGHT:
-                return bottomRight;
-            case CENTER:
-                return center;
+    //-------------------------------------------------
+    // Add
+    //-------------------------------------------------
+
+    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height) {
+        var panel = new GuiPanel(
+                getAnchorScreenPosition(anchorPosition, width, height),
+                offset,
+                width, height
+        );
+
+        guiPanels.add(panel);
+
+        return panel;
+    }
+
+    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, int textureId) {
+        var panel = addPanel(anchorPosition, offset, width, height);
+        panel.setTextureId(textureId);
+
+        return panel;
+    }
+
+    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, Vector3f color) {
+        var panel = addPanel(anchorPosition, offset, width, height);
+        panel.setColor(color);
+
+        return panel;
+    }
+
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
+
+    public void initRender() {
+        for (var panel : guiPanels) {
+            panel.addToRenderer(spriteBatch);
         }
 
-        return null;
+        spriteBatch.end();
+    }
+
+    public void render() {
+        spriteBatch.render();
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private Vector2f getAnchorScreenPosition(GuiPanel.AnchorPosition anchorPosition, float width, float height) {
+        Vector2f position;
+        switch(anchorPosition) {
+            case TOP_LEFT:
+                position = new Vector2f(engine.getWindow().getTopLeft());
+                break;
+            case BOTTOM_LEFT:
+                position = new Vector2f(engine.getWindow().getBottomLeft().x, engine.getWindow().getBottomLeft().y - height);
+                break;
+            case BOTTOM_RIGHT:
+                position = new Vector2f(engine.getWindow().getBottomRight().x - width, engine.getWindow().getBottomRight().y - height);
+                break;
+            case TOP_RIGHT:
+                position = new Vector2f(engine.getWindow().getTopRight().x - width, engine.getWindow().getTopRight().y);
+                break;
+            case CENTER:
+                position = new Vector2f(engine.getWindow().getCenter().x - width * 0.5f, engine.getWindow().getCenter().y - height * 0.5f);
+                break;
+            default:
+                throw new SgOglRuntimeException("Invalid anchor position type: " + anchorPosition);
+        }
+
+        return position;
     }
 }

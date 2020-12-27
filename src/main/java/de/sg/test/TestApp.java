@@ -10,12 +10,9 @@ package de.sg.test;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
-import de.sg.ogl.gui.GuiButton;
+import de.sg.ogl.gui.Gui;
 import de.sg.ogl.gui.GuiPanel;
-import de.sg.ogl.gui.SpriteBatch;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -24,48 +21,25 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends BaseApplication {
 
-    private SpriteBatch spriteBatch;
+    private Gui gui;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        spriteBatch = new SpriteBatch(getEngine());
 
+        // panel texture
         var panelTexture = getEngine().getResourceManager().loadTextureResource("/texture/gui.png");
-        var buttonTexture = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/paddle.png");
+
+        // gui
+        gui = new Gui(getEngine());
 
         // panel
-        var panel = new GuiPanel();
-        panel.setTextureId(panelTexture.getId());
+        gui.addPanel(GuiPanel.AnchorPosition.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
 
-        // button0
-        GuiButton button0 = new GuiButton(
-                new Vector4f(10.0f, 10.0f, 40.0f, 20.0f),
-                new Vector2f(32.0f, -50.0f),
-                "New Label",
-                panel
-        );
-        button0.setColor(new Vector3f(0.0f, 1.0f, 1.0f));
-        button0.setTextureId(buttonTexture.getId());
-
-        // button1
-        GuiButton button1 = new GuiButton(
-                new Vector4f(10.0f, 10.0f, 40.0f, 20.0f),
-                new Vector2f(32.0f, -20.0f),
-                "New Label",
-                panel
-        );
-        button1.setColor(new Vector3f(1.0f, 1.0f, 0.0f));
-        button1.setTextureId(buttonTexture.getId());
-
-        panel.addGuiObject(button0);
-        panel.addGuiObject(button1);
-
-        panel.addToRenderer(spriteBatch);
-
-        spriteBatch.end();
+        // init gui renderer
+        gui.initRender();
     }
 
     @Override
@@ -82,7 +56,7 @@ public class TestApp extends BaseApplication {
 
     @Override
     public void render() {
-        spriteBatch.render();
+        gui.render();
     }
 
     @Override

@@ -14,65 +14,79 @@ import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
-enum GuiAnchorPos {
-    TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT, CENTER
-}
-
 public class GuiPanel {
 
-    private static final float DEFAULT_BOUNDS_X = 0.0f;
-    private static final float DEFAULT_BOUNDS_Y = 0.0f;
-    private static final float DEFAULT_WIDTH = 128.0f;
-    private static final float DEFAULT_HEIGHT = 256.0f;
+    /**
+     * The anchor position of the Panel.
+     */
+    public enum AnchorPosition {
+        TOP_LEFT,     // (0.0f, 0.0f)
+        BOTTOM_LEFT,  // (0.0f, windowHeight - height)
+        BOTTOM_RIGHT, // (windowWidth - width, windowHeight - height)
+        TOP_RIGHT,    // (windowWidth - width, 0.0f)
+        CENTER        // ((windowWidth * 0.5f) - (width * 0.5f), (windowHeight * 0.5f) - (height * 0.5f))
+    }
 
+    /**
+     * The default color of each Panel (white).
+     */
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    private final Vector4f bounds;
-
+    /**
+     * The position of the Panel.
+     */
     private final Vector2f position;
+
+    /**
+     * The width of the Panel.
+     */
     private final float width;
+
+    /**
+     * The height of the Panel.
+     */
     private final float height;
 
+    /**
+     * The texture for the Panel.
+     */
     private int textureId;
+
+    /**
+     * The color for the Panel.
+     */
     private Vector3f color = DEFAULT_COLOR;
 
+    /**
+     * The Panel is a container for other gui elements (Button, Slider).
+     */
     private final ArrayList<GuiObject> guiObjects = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public GuiPanel() {
-        this(
-            new Vector4f(DEFAULT_BOUNDS_X, DEFAULT_BOUNDS_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-            new Vector2f(0.0f),
-            new Vector2f(0.0f)
-        );
-    }
-
-    // IGUIPanel(glm::vec4(0, 0, 150, 500), *GetAnchorPos(GUIAnchorPos::BottomRight, glm::vec4(0, 0, 150, 500)), glm::vec2(0,0));
-    public GuiPanel(Vector4f bounds, Vector2f anchor, Vector2f offset) {
-        this.bounds = bounds;
-
+    public GuiPanel(Vector2f anchor, Vector2f offset, float width, float height) {
         this.position = new Vector2f(anchor).add(offset);
-        this.width = this.bounds.z;
-        this.height = this.bounds.w;
+
+        this.width = width;
+        this.height = height;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Vector4f getBounds() {
-        return bounds;
-    }
-
     public Vector2f getPosition() {
         return position;
     }
 
-    public ArrayList<GuiObject> getGuiObjects() {
-        return guiObjects;
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     public int getTextureId() {
@@ -81,6 +95,10 @@ public class GuiPanel {
 
     public Vector3f getColor() {
         return color;
+    }
+
+    public ArrayList<GuiObject> getGuiObjects() {
+        return guiObjects;
     }
 
     //-------------------------------------------------

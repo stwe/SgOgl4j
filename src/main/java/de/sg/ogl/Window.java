@@ -16,13 +16,10 @@ import imgui.*;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -35,6 +32,12 @@ public final class Window {
     private int height;
     private long windowHandle;
     private final boolean vSync;
+
+    private Vector2f topLeft = new Vector2f();
+    private Vector2f bottomLeft = new Vector2f();
+    private Vector2f bottomRight = new Vector2f();
+    private Vector2f topRight = new Vector2f();
+    private Vector2f center = new Vector2f();
 
     private final Matrix4f projectionMatrix;
     private final Matrix4f orthographicProjectionMatrix;
@@ -78,6 +81,26 @@ public final class Window {
 
     public long getWindowHandle() {
         return windowHandle;
+    }
+
+    public Vector2f getTopLeft() {
+        return topLeft;
+    }
+
+    public Vector2f getBottomLeft() {
+        return bottomLeft;
+    }
+
+    public Vector2f getBottomRight() {
+        return bottomRight;
+    }
+
+    public Vector2f getTopRight() {
+        return topRight;
+    }
+
+    public Vector2f getCenter() {
+        return center;
     }
 
     public Matrix4f getProjectionMatrix() {
@@ -204,23 +227,6 @@ public final class Window {
         updateOrthographicProjectionMatrix();
     }
 
-    private byte[] loadFromResources(final String fileName) {
-        try (InputStream is = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(fileName));
-             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-
-            final byte[] data = new byte[16384];
-
-            int nRead;
-            while ((nRead = is.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, nRead);
-            }
-
-            return buffer.toByteArray();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     //-------------------------------------------------
     // Helper
     //-------------------------------------------------
@@ -236,6 +242,7 @@ public final class Window {
 
     public void updateProjectionMatrix() {
         projectionMatrix.setPerspective(Config.FOV, (float) width / height, Config.NEAR, Config.FAR);
+        updateAnchors();
     }
 
     public void updateOrthographicProjectionMatrix() {
@@ -249,6 +256,18 @@ public final class Window {
         */
 
         orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, 1.0f, -1.0f);
+        updateAnchors();
+    }
+
+    private void updateAnchors() {
+        var windowWidth = (float) width;
+        var windowHeight = (float) height;
+
+        topLeft = new Vector2f(0.0f, 0.0f);
+        bottomLeft = new Vector2f(0.0f, windowHeight);
+        topRight = new Vector2f(windowWidth, 0.0f);
+        bottomRight = new Vector2f(windowWidth, windowHeight);
+        center = new Vector2f(windowWidth * 0.5f, windowHeight * 0.5f);
     }
 
     //-------------------------------------------------
