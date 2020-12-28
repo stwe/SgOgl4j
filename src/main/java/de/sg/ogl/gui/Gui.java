@@ -9,6 +9,7 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Input;
+import de.sg.ogl.Log;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.physics.Aabb;
@@ -16,6 +17,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Gui {
 
@@ -42,7 +45,7 @@ public class Gui {
     }
 
     //-------------------------------------------------
-    // Add
+    // Add Panel
     //-------------------------------------------------
 
     public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height) {
@@ -59,20 +62,20 @@ public class Gui {
 
     public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, int textureId) {
         var panel = addPanel(anchorPosition, offset, width, height);
-        panel.setTextureId(textureId);
+        panel.textureId = textureId;
 
         return panel;
     }
 
     public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, Vector3f color) {
         var panel = addPanel(anchorPosition, offset, width, height);
-        panel.setColor(color);
+        panel.color = color;
 
         return panel;
     }
 
     //-------------------------------------------------
-    // Logic
+    // Init
     //-------------------------------------------------
 
     public void initRender() {
@@ -83,25 +86,30 @@ public class Gui {
         spriteBatch.end();
     }
 
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
+
     public void input() {
         if (Input.isMouseInWindow()) {
             for (var panel : guiPanels) {
-                // mouse in panel?
-                if (Aabb.pointVsAabb(Input.getCurrentMouseXY(), panel.getAabb())) {
-                    // mouse clicked?
-                    if (Input.isMouseButtonPressed(0)) {
-                        panel.onNotify(panel, GuiObject.GuiEvent.CLICKED);
+                if (isMouseIn(panel)) {
+                    if (Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                        panel.onNotify(GuiObject.GuiEvent.CLICKED);
                     } else {
-                        // mouse only in panel
-                        panel.onNotify(panel, GuiObject.GuiEvent.HOVER);
+                        panel.onNotify(GuiObject.GuiEvent.HOVER);
+                    }
+
+                    for (var child : panel.getGuiObjects()) {
+                        if (isMouseIn(child)) {
+                            Log.LOGGER.debug("Button");
+                        }
                     }
 
                 } else {
-                    // released?
-                    if (panel.getStatus() == GuiPanel.Status.HOVER) {
-                        panel.onNotify(panel, GuiObject.GuiEvent.RELEASED);
-                    }
+                    panel.onNotify(GuiObject.GuiEvent.RELEASED);
                 }
+
             }
         }
     }
@@ -113,6 +121,10 @@ public class Gui {
     //-------------------------------------------------
     // Helper
     //-------------------------------------------------
+
+    private boolean isMouseIn(GuiObject guiObject) {
+        return Aabb.pointVsAabb(Input.getCurrentMouseXY(), guiObject.aabb);
+    }
 
     private Vector2f getAnchorScreenPosition(GuiPanel.AnchorPosition anchorPosition, float width, float height) {
         Vector2f position;

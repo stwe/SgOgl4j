@@ -8,64 +8,59 @@
 
 package de.sg.ogl.gui;
 
+import de.sg.ogl.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class GuiButton extends GuiObject {
 
-    private static final Vector3f DEFAULT_COLOR = new Vector3f(0.0f, 0.0f, 1.0f);
+    /**
+     * The default color of each Button (green).
+     */
+    private static final Vector3f DEFAULT_COLOR = new Vector3f(0.0f, 1.0f, 0.0f);
 
-    private Vector4f bounds;
-    private Vector2f position;
-
+    /**
+     * The label of the Button.
+     */
     private final String label;
-    private final GuiPanel guiPanel;
 
-    private int textureId;
-    private Vector3f color = DEFAULT_COLOR;
+    /**
+     * The parent Panel.
+     */
+    private final GuiPanel parentGuiPanel;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public GuiButton(Vector4f bounds, Vector2f position, String label, GuiPanel guiPanel) {
-        this.bounds = bounds;
-        this.position = new Vector2f(guiPanel.getPosition()).add(position);
+    public GuiButton(Vector2f position, float width, float height, String label, GuiPanel parentGuiPanel) {
+        this.position = new Vector2f(parentGuiPanel.position).add(position);
 
-        if (guiPanel.getGuiObjects().isEmpty()) {
-            //this.position.y += guiPanel.getBounds().w - this.bounds.w;
+        this.width = width;
+        this.height = height;
+
+        this.color = DEFAULT_COLOR;
+
+        if (parentGuiPanel.getGuiObjects().isEmpty()) {
+            this.position.y += 10.0f;
         } else {
-            //var last = guiPanel.getGuiObjects().get(guiPanel.getGuiObjects().size() - 1);
-            //this.position.y = last.position.y + last.bounds.w + 10.0f;
+            var last = parentGuiPanel.getLastGuiObject();
+            this.position.y = last.position.y + last.height + 10.0f;
         }
 
+        this.aabb = new Aabb(this.position, new Vector2f(this.width, this.height));
+
         this.label = label;
-        this.guiPanel = guiPanel;
+        this.parentGuiPanel = parentGuiPanel;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public int getTextureId() {
-        return textureId;
-    }
-
-    public Vector3f getColor() {
-        return color;
-    }
-
-    //-------------------------------------------------
-    // Setter
-    //-------------------------------------------------
-
-    public void setTextureId(int textureId) {
-        this.textureId = textureId;
-    }
-
-    public void setColor(Vector3f color) {
-        this.color = color;
+    public String getLabel() {
+        return label;
     }
 
     //-------------------------------------------------
@@ -73,26 +68,20 @@ public class GuiButton extends GuiObject {
     //-------------------------------------------------
 
     @Override
-    public void input() {
-
-    }
+    public void input() {}
 
     @Override
-    public void update() {
-
-    }
+    public void update() {}
 
     @Override
     public void addToRenderer(SpriteBatch spriteBatch) {
         spriteBatch.addToRenderer(
-                new Vector4f(position.x, position.y, bounds.z, bounds.w),
+                new Vector4f(position.x, position.y, width, height),
                 textureId,
                 color
         );
     }
 
     @Override
-    public void onNotify(GuiObject guiObject, GuiEvent guiEvent) {
-
-    }
+    public void onNotify(GuiEvent guiEvent) {}
 }

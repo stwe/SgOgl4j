@@ -39,36 +39,6 @@ public class GuiPanel extends GuiObject {
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
     /**
-     * The position of the Panel.
-     */
-    private final Vector2f position;
-
-    /**
-     * The width of the Panel.
-     */
-    private final float width;
-
-    /**
-     * The height of the Panel.
-     */
-    private final float height;
-
-    /**
-     * The texture for the Panel.
-     */
-    private int textureId;
-
-    /**
-     * The color for the Panel.
-     */
-    private Vector3f color = DEFAULT_COLOR;
-
-    /**
-     * For the collision check.
-     */
-    private final Aabb aabb;
-
-    /**
      * The current status of the Panel.
      */
     private Status status = Status.DEFAULT;
@@ -88,36 +58,14 @@ public class GuiPanel extends GuiObject {
         this.width = width;
         this.height = height;
 
-        aabb = new Aabb(position, new Vector2f(width, height));
+        this.color = DEFAULT_COLOR;
+
+        this.aabb = new Aabb(this.position, new Vector2f(this.width, this.height));
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
-
-    public Vector2f getPosition() {
-        return position;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public int getTextureId() {
-        return textureId;
-    }
-
-    public Vector3f getColor() {
-        return color;
-    }
-
-    public Aabb getAabb() {
-        return aabb;
-    }
 
     public Status getStatus() {
         return status;
@@ -125,18 +73,6 @@ public class GuiPanel extends GuiObject {
 
     public ArrayList<GuiObject> getGuiObjects() {
         return guiObjects;
-    }
-
-    //-------------------------------------------------
-    // Setter
-    //-------------------------------------------------
-
-    public void setTextureId(int textureId) {
-        this.textureId = textureId;
-    }
-
-    public void setColor(Vector3f color) {
-        this.color = color;
     }
 
     //-------------------------------------------------
@@ -148,26 +84,36 @@ public class GuiPanel extends GuiObject {
     }
 
     //-------------------------------------------------
-    // Events
+    // Helper
+    //-------------------------------------------------
+
+    public GuiObject getLastGuiObject() {
+        return guiObjects.get(guiObjects.size() - 1);
+    }
+
+    //-------------------------------------------------
+    // Handle events
     //-------------------------------------------------
 
     private void onHover() {
         if (status != Status.HOVER) {
-            Log.LOGGER.debug("set hover status");
+            Log.LOGGER.debug("set panel hover status");
             status = Status.HOVER;
         }
     }
 
     private void onClick() {
         if (status != Status.CLICKED) {
-            Log.LOGGER.debug("set clicked status");
+            Log.LOGGER.debug("set panel clicked status");
             status = Status.CLICKED;
         }
     }
 
     private void onRelease() {
-        Log.LOGGER.debug("set released status");
-        status = Status.RELEASED;
+        if (status == Status.HOVER) {
+            Log.LOGGER.debug("set panel released status");
+            status = Status.RELEASED;
+        }
     }
 
     //-------------------------------------------------
@@ -198,7 +144,7 @@ public class GuiPanel extends GuiObject {
     }
 
     @Override
-    public void onNotify(GuiObject guiObject, GuiEvent guiEvent) {
+    public void onNotify(GuiEvent guiEvent) {
         switch (guiEvent) {
             case HOVER: onHover(); break;
             case CLICKED: onClick(); break;

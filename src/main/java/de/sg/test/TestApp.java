@@ -11,6 +11,7 @@ package de.sg.test;
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiPanel;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
@@ -29,15 +30,26 @@ public class TestApp extends BaseApplication {
     @Override
     public void init() throws Exception {
 
-        // panel texture
         var panelTexture = getEngine().getResourceManager().loadTextureResource("/texture/gui.png");
+        var buttonTexture = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/paddle.png");
 
         // gui
         gui = new Gui(getEngine());
 
         // panels
-        gui.addPanel(GuiPanel.AnchorPosition.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
-        gui.addPanel(GuiPanel.AnchorPosition.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, panelTexture.getId());
+        var panel0 = gui.addPanel(GuiPanel.AnchorPosition.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
+        var panel1 = gui.addPanel(GuiPanel.AnchorPosition.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, panelTexture.getId());
+
+        // todo 1) anchor, 2) add Button via panel.addButton
+
+        // buttons
+        var button0 = new GuiButton(new Vector2f(10.0f, 10.0f), 64.0f, 20.0f, "test", panel0);
+        button0.setTextureId(buttonTexture.getId());
+        panel0.addGuiObject(button0);
+
+        var button1 = new GuiButton(new Vector2f(10.0f, 10.0f), 64.0f, 20.0f, "test", panel0);
+        button1.setTextureId(buttonTexture.getId());
+        panel0.addGuiObject(button1);
 
         // init gui renderer
         gui.initRender();
