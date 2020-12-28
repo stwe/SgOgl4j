@@ -14,7 +14,15 @@ import org.joml.Vector3f;
 
 public abstract class GuiObject {
 
-    enum GuiEvent {
+    public enum Anchor {
+        TOP_LEFT,     // (0.0f, 0.0f)
+        BOTTOM_LEFT,  // (0.0f, windowHeight - height)
+        BOTTOM_RIGHT, // (windowWidth - width, windowHeight - height)
+        TOP_RIGHT,    // (windowWidth - width, 0.0f)
+        CENTER        // ((windowWidth * 0.5f) - (width * 0.5f), (windowHeight * 0.5f) - (height * 0.5f))
+    }
+
+    public enum Event {
         HOVER,
         CLICKED,
         RELEASED
@@ -40,5 +48,5 @@ public abstract class GuiObject {
     public abstract void input();
     public abstract void update();
     public abstract void addToRenderer(SpriteBatch spriteBatch);
-    public abstract void onNotify(GuiEvent guiEvent);
+    public abstract void onNotify(Event event);
 }

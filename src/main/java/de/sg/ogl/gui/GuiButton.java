@@ -83,5 +83,5 @@ public class GuiButton extends GuiObject {
     }
 
     @Override
-    public void onNotify(GuiEvent guiEvent) {}
+    public void onNotify(Event event) {}
 }

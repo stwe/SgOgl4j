@@ -48,9 +48,9 @@ public class Gui {
     // Add Panel
     //-------------------------------------------------
 
-    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height) {
+    public GuiPanel addPanel(GuiObject.Anchor anchor, Vector2f offset, float width, float height) {
         var panel = new GuiPanel(
-                getAnchorScreenPosition(anchorPosition, width, height),
+                getAnchorScreenPosition(anchor, width, height),
                 offset,
                 width, height
         );
@@ -60,15 +60,15 @@ public class Gui {
         return panel;
     }
 
-    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, int textureId) {
-        var panel = addPanel(anchorPosition, offset, width, height);
+    public GuiPanel addPanel(GuiObject.Anchor anchor, Vector2f offset, float width, float height, int textureId) {
+        var panel = addPanel(anchor, offset, width, height);
         panel.textureId = textureId;
 
         return panel;
     }
 
-    public GuiPanel addPanel(GuiPanel.AnchorPosition anchorPosition, Vector2f offset, float width, float height, Vector3f color) {
-        var panel = addPanel(anchorPosition, offset, width, height);
+    public GuiPanel addPanel(GuiObject.Anchor anchor, Vector2f offset, float width, float height, Vector3f color) {
+        var panel = addPanel(anchor, offset, width, height);
         panel.color = color;
 
         return panel;
@@ -95,9 +95,9 @@ public class Gui {
             for (var panel : guiPanels) {
                 if (isMouseIn(panel)) {
                     if (Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-                        panel.onNotify(GuiObject.GuiEvent.CLICKED);
+                        panel.onNotify(GuiObject.Event.CLICKED);
                     } else {
-                        panel.onNotify(GuiObject.GuiEvent.HOVER);
+                        panel.onNotify(GuiObject.Event.HOVER);
                     }
 
                     for (var child : panel.getGuiObjects()) {
@@ -107,7 +107,7 @@ public class Gui {
                     }
 
                 } else {
-                    panel.onNotify(GuiObject.GuiEvent.RELEASED);
+                    panel.onNotify(GuiObject.Event.RELEASED);
                 }
 
             }
@@ -126,9 +126,9 @@ public class Gui {
         return Aabb.pointVsAabb(Input.getCurrentMouseXY(), guiObject.aabb);
     }
 
-    private Vector2f getAnchorScreenPosition(GuiPanel.AnchorPosition anchorPosition, float width, float height) {
+    private Vector2f getAnchorScreenPosition(GuiObject.Anchor anchor, float width, float height) {
         Vector2f position;
-        switch(anchorPosition) {
+        switch(anchor) {
             case TOP_LEFT:
                 position = new Vector2f(engine.getWindow().getTopLeft());
                 break;
@@ -145,7 +145,7 @@ public class Gui {
                 position = new Vector2f(engine.getWindow().getCenter().x - width * 0.5f, engine.getWindow().getCenter().y - height * 0.5f);
                 break;
             default:
-                throw new SgOglRuntimeException("Invalid anchor position type: " + anchorPosition);
+                throw new SgOglRuntimeException("Invalid anchor position type: " + anchor);
         }
 
         return position;

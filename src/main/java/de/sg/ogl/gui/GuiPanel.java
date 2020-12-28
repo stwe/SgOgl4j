@@ -25,14 +25,6 @@ public class GuiPanel extends GuiObject {
         RELEASED
     }
 
-    public enum AnchorPosition {
-        TOP_LEFT,     // (0.0f, 0.0f)
-        BOTTOM_LEFT,  // (0.0f, windowHeight - height)
-        BOTTOM_RIGHT, // (windowWidth - width, windowHeight - height)
-        TOP_RIGHT,    // (windowWidth - width, 0.0f)
-        CENTER        // ((windowWidth * 0.5f) - (width * 0.5f), (windowHeight * 0.5f) - (height * 0.5f))
-    }
-
     /**
      * The default color of each Panel (white).
      */
@@ -144,8 +136,8 @@ public class GuiPanel extends GuiObject {
     }
 
     @Override
-    public void onNotify(GuiEvent guiEvent) {
-        switch (guiEvent) {
+    public void onNotify(Event event) {
+        switch (event) {
             case HOVER: onHover(); break;
             case CLICKED: onClick(); break;
             case RELEASED: onRelease(); break;
