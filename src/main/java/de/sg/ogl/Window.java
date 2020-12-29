@@ -242,7 +242,7 @@ public final class Window {
 
     public void updateProjectionMatrix() {
         projectionMatrix.setPerspective(Config.FOV, (float) width / height, Config.NEAR, Config.FAR);
-        updateAnchors();
+        updateCornerPoints();
     }
 
     public void updateOrthographicProjectionMatrix() {
@@ -256,10 +256,10 @@ public final class Window {
         */
 
         orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, 1.0f, -1.0f);
-        updateAnchors();
+        updateCornerPoints();
     }
 
-    private void updateAnchors() {
+    private void updateCornerPoints() {
         var windowWidth = (float) width;
         var windowHeight = (float) height;
 

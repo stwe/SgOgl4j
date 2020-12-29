@@ -53,6 +53,8 @@ public class GuiPanel extends GuiObject {
         this.color = DEFAULT_COLOR;
 
         this.aabb = new Aabb(this.position, new Vector2f(this.width, this.height));
+
+        updateCornerPoints();
     }
 
     //-------------------------------------------------
@@ -68,19 +70,34 @@ public class GuiPanel extends GuiObject {
     }
 
     //-------------------------------------------------
-    // Add gui objects
+    // Add Button
     //-------------------------------------------------
 
-    public void addGuiObject(GuiObject guiObject) {
-        guiObjects.add(guiObject);
+    public GuiButton addButton(Anchor anchor, Vector2f offset, float width, float height, String label) {
+        var button = new GuiButton(
+                getGuiObjectScreenPosition(anchor, width, height),
+                offset,
+                width, height,
+                label
+        );
+
+        guiObjects.add(button);
+
+        return button;
     }
 
-    //-------------------------------------------------
-    // Helper
-    //-------------------------------------------------
+    public GuiButton addButton(Anchor anchor, Vector2f offset, float width, float height, String label, int textureId) {
+        var button = addButton(anchor, offset, width, height, label);
+        button.setTextureId(textureId);
 
-    public GuiObject getLastGuiObject() {
-        return guiObjects.get(guiObjects.size() - 1);
+        return button;
+    }
+
+    public GuiButton addButton(Anchor anchor, Vector2f offset, float width, float height, String label, Vector3f color) {
+        var button = addButton(anchor, offset, width, height, label);
+        button.setColor(color);
+
+        return button;
     }
 
     //-------------------------------------------------

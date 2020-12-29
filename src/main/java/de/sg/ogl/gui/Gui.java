@@ -50,7 +50,7 @@ public class Gui {
 
     public GuiPanel addPanel(GuiObject.Anchor anchor, Vector2f offset, float width, float height) {
         var panel = new GuiPanel(
-                getAnchorScreenPosition(anchor, width, height),
+                getPanelScreenPosition(anchor, width, height),
                 offset,
                 width, height
         );
@@ -122,11 +122,11 @@ public class Gui {
     // Helper
     //-------------------------------------------------
 
-    private boolean isMouseIn(GuiObject guiObject) {
+    private static boolean isMouseIn(GuiObject guiObject) {
         return Aabb.pointVsAabb(Input.getCurrentMouseXY(), guiObject.aabb);
     }
 
-    private Vector2f getAnchorScreenPosition(GuiObject.Anchor anchor, float width, float height) {
+    private Vector2f getPanelScreenPosition(GuiObject.Anchor anchor, float width, float height) {
         Vector2f position;
         switch(anchor) {
             case TOP_LEFT:

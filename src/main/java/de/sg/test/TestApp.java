@@ -11,7 +11,6 @@ package de.sg.test;
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.gui.Gui;
-import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiObject;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
@@ -40,16 +39,22 @@ public class TestApp extends BaseApplication {
         var panel0 = gui.addPanel(GuiObject.Anchor.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
         var panel1 = gui.addPanel(GuiObject.Anchor.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, panelTexture.getId());
 
-        // todo 1) anchor, 2) add Button via panel.addButton
-
         // buttons
-        var button0 = new GuiButton(new Vector2f(10.0f, 10.0f), 64.0f, 20.0f, "test", panel0);
-        button0.setTextureId(buttonTexture.getId());
-        panel0.addGuiObject(button0);
+        var button0 = panel0.addButton(
+                GuiObject.Anchor.TOP_RIGHT,
+                new Vector2f(0.0f, 0.0f),
+                64.0f, 20.0f,
+                "test0",
+                buttonTexture.getId()
+        );
 
-        var button1 = new GuiButton(new Vector2f(10.0f, 10.0f), 64.0f, 20.0f, "test", panel0);
-        button1.setTextureId(buttonTexture.getId());
-        panel0.addGuiObject(button1);
+        var button1 = panel0.addButton(
+                GuiObject.Anchor.BOTTOM_LEFT,
+                new Vector2f(0.0f, 0.0f),
+                64.0f, 20.0f,
+                "test1",
+                buttonTexture.getId()
+        );
 
         // init gui renderer
         gui.initRender();

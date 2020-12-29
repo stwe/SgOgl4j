@@ -25,34 +25,21 @@ public class GuiButton extends GuiObject {
      */
     private final String label;
 
-    /**
-     * The parent Panel.
-     */
-    private final GuiPanel parentGuiPanel;
-
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public GuiButton(Vector2f position, float width, float height, String label, GuiPanel parentGuiPanel) {
-        this.position = new Vector2f(parentGuiPanel.position).add(position);
+    public GuiButton(Vector2f anchor, Vector2f offset, float width, float height, String label) {
+        this.position = new Vector2f(anchor).add(offset);
 
         this.width = width;
         this.height = height;
 
         this.color = DEFAULT_COLOR;
 
-        if (parentGuiPanel.getGuiObjects().isEmpty()) {
-            this.position.y += 10.0f;
-        } else {
-            var last = parentGuiPanel.getLastGuiObject();
-            this.position.y = last.position.y + last.height + 10.0f;
-        }
-
         this.aabb = new Aabb(this.position, new Vector2f(this.width, this.height));
 
         this.label = label;
-        this.parentGuiPanel = parentGuiPanel;
     }
 
     //-------------------------------------------------
