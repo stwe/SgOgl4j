@@ -29,12 +29,6 @@ public abstract class GuiObject {
     protected Vector2f topRight = new Vector2f();
     protected Vector2f center = new Vector2f();
 
-    public enum Event {
-        HOVER,
-        CLICKED,
-        RELEASED
-    }
-
     protected Vector2f position;
     protected float width;
     protected float height;
@@ -90,5 +84,4 @@ public abstract class GuiObject {
     public abstract void input();
     public abstract void update();
     public abstract void addToRenderer(SpriteBatch spriteBatch);
-    public abstract void onNotify(Event event);
 }

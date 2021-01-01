@@ -36,8 +36,8 @@ public class TestApp extends BaseApplication {
         gui = new Gui(getEngine());
 
         // panels
-        var panel0 = gui.addPanel(GuiObject.Anchor.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, panelTexture.getId());
-        var panel1 = gui.addPanel(GuiObject.Anchor.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, panelTexture.getId());
+        var panel0 = gui.addPanel(GuiObject.Anchor.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f, "Panel0", panelTexture.getId());
+        var panel1 = gui.addPanel(GuiObject.Anchor.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, "Panel1", panelTexture.getId());
 
         // buttons
         var button0 = panel0.addButton(

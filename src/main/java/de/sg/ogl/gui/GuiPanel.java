@@ -8,22 +8,17 @@
 
 package de.sg.ogl.gui;
 
-import de.sg.ogl.Log;
+import de.sg.ogl.event.GuiPanelEvent;
+import de.sg.ogl.event.GuiPanelListener;
 import de.sg.ogl.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class GuiPanel extends GuiObject {
-
-    public enum Status {
-        DEFAULT,
-        HOVER,
-        CLICKED,
-        RELEASED
-    }
 
     /**
      * The default color of each Panel (white).
@@ -31,14 +26,19 @@ public class GuiPanel extends GuiObject {
     private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
     /**
-     * The current status of the Panel.
-     */
-    private Status status = Status.DEFAULT;
-
-    /**
      * The Panel is a container for other gui elements (Button, Slider).
      */
     private final ArrayList<GuiObject> guiObjects = new ArrayList<>();
+
+    /**
+     * Callback functions.
+     */
+    private final Vector<GuiPanelListener> guiPanelListeners = new Vector<>();
+
+    /**
+     * The title of the Panel.
+     */
+    private String title;
 
     //-------------------------------------------------
     // Ctors.
@@ -57,16 +57,78 @@ public class GuiPanel extends GuiObject {
         updateCornerPoints();
     }
 
+    public GuiPanel(Vector2f anchor, Vector2f offset, float width, float height, String title) {
+        this(anchor, offset, width, height);
+        setTitle(title);
+    }
+
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public Status getStatus() {
-        return status;
-    }
-
     public ArrayList<GuiObject> getGuiObjects() {
         return guiObjects;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    //-------------------------------------------------
+    // Setter
+    //-------------------------------------------------
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    //-------------------------------------------------
+    // Listener
+    //-------------------------------------------------
+
+    public void addListener(GuiPanelListener listener) {
+        if (guiPanelListeners.contains(listener)) {
+            return;
+        }
+
+        guiPanelListeners.add(listener);
+    }
+
+    public void removeListener(GuiPanelListener listener) {
+        guiPanelListeners.remove(listener);
+    }
+
+    public void onClick() {
+        fireOnClick();
+    }
+
+    public void onHover() {
+        fireOnHover();
+    }
+
+    public void onRelease() {
+        fireOnRelease();
+    }
+
+    private void fireOnClick() {
+        var event = new GuiPanelEvent(this);
+        for (var listener : guiPanelListeners) {
+            listener.onClick(event);
+        }
+    }
+
+    private void fireOnHover() {
+        var event = new GuiPanelEvent(this);
+        for (var listener : guiPanelListeners) {
+            listener.onHover(event);
+        }
+    }
+
+    private void fireOnRelease() {
+        var event = new GuiPanelEvent(this);
+        for (var listener : guiPanelListeners) {
+            listener.onRelease(event);
+        }
     }
 
     //-------------------------------------------------
@@ -101,31 +163,6 @@ public class GuiPanel extends GuiObject {
     }
 
     //-------------------------------------------------
-    // Handle events
-    //-------------------------------------------------
-
-    private void onHover() {
-        if (status != Status.HOVER) {
-            Log.LOGGER.debug("set panel hover status");
-            status = Status.HOVER;
-        }
-    }
-
-    private void onClick() {
-        if (status != Status.CLICKED) {
-            Log.LOGGER.debug("set panel clicked status");
-            status = Status.CLICKED;
-        }
-    }
-
-    private void onRelease() {
-        if (status == Status.HOVER) {
-            Log.LOGGER.debug("set panel released status");
-            status = Status.RELEASED;
-        }
-    }
-
-    //-------------------------------------------------
     // Implement GuiObject
     //-------------------------------------------------
 
@@ -149,15 +186,6 @@ public class GuiPanel extends GuiObject {
 
         for (var guiObject : guiObjects) {
             guiObject.addToRenderer(spriteBatch);
-        }
-    }
-
-    @Override
-    public void onNotify(Event event) {
-        switch (event) {
-            case HOVER: onHover(); break;
-            case CLICKED: onClick(); break;
-            case RELEASED: onRelease(); break;
         }
     }
 }

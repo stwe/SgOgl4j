@@ -68,7 +68,4 @@ public class GuiButton extends GuiObject {
                 color
         );
     }
-
-    @Override
-    public void onNotify(Event event) {}
 }
