@@ -29,6 +29,17 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <profiles>
         <profile>
             <id>Windows</id>
@@ -173,4 +184,20 @@
         </dependency>
     </dependencies>
 
+    <name>SgOgl4j</name>
+    <description>A GameEngine library for OpenGL developed for educational purposes.</description>
+    <url>https://github.com/stwe/SgOgl4j</url>
+    <licenses>
+        <license>
+            <name>MIT</name>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/stwe/SgOgl4j</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>stwe</name>
+        </developer>
+    </developers>
 </project>
