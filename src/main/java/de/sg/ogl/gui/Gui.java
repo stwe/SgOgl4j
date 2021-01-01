@@ -60,13 +60,13 @@ public class Gui {
             @Override
             public void onHover(GuiPanelEvent event) {
                 var source = (GuiPanel)event.getSource();
-                Log.LOGGER.debug("On Hover: " + source.getTitle());
+                //Log.LOGGER.debug("On Hover: " + source.getTitle());
             }
 
             @Override
             public void onRelease(GuiPanelEvent event) {
                 var source = (GuiPanel)event.getSource();
-                Log.LOGGER.debug("On Release: " + source.getTitle());
+                //Log.LOGGER.debug("On Release: " + source.getTitle());
             }
         });
 
@@ -117,7 +117,13 @@ public class Gui {
 
                     for (var child : panel.getGuiObjects()) {
                         if (isMouseIn(child)) {
-                            //Log.LOGGER.debug("Button");
+                            if (child instanceof GuiButton) {
+                                if (Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                                    ((GuiButton) child).onClick();
+                                } else {
+                                    ((GuiButton) child).onHover();
+                                }
+                            }
                         }
                     }
                 } else {

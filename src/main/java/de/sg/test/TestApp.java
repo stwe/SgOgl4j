@@ -10,7 +10,11 @@ package de.sg.test;
 
 import de.sg.ogl.BaseApplication;
 import de.sg.ogl.Input;
+import de.sg.ogl.Log;
+import de.sg.ogl.event.GuiButtonAdapter;
+import de.sg.ogl.event.GuiButtonEvent;
 import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiObject;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
@@ -44,17 +48,41 @@ public class TestApp extends BaseApplication {
                 GuiObject.Anchor.TOP_RIGHT,
                 new Vector2f(0.0f, 0.0f),
                 64.0f, 20.0f,
-                "test0",
+                "button0",
                 buttonTexture.getId()
         );
+
+        button0.addListener(new GuiButtonAdapter() {
+            @Override
+            public void onClick(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                Log.LOGGER.debug("On Click: " + source.getLabel());
+            }
+
+            @Override
+            public void onHover(GuiButtonEvent event) {
+            }
+        });
 
         var button1 = panel0.addButton(
                 GuiObject.Anchor.BOTTOM_LEFT,
                 new Vector2f(0.0f, 0.0f),
                 64.0f, 20.0f,
-                "test1",
+                "button1",
                 buttonTexture.getId()
         );
+
+        button1.addListener(new GuiButtonAdapter() {
+            @Override
+            public void onClick(GuiButtonEvent event) {
+            }
+
+            @Override
+            public void onHover(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                Log.LOGGER.debug("On Hover: " + source.getLabel());
+            }
+        });
 
         // init gui renderer
         gui.initRender();
