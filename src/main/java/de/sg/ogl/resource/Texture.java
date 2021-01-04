@@ -22,15 +22,14 @@ import static org.lwjgl.opengl.ARBBindlessTexture.glGetTextureHandleARB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements Resource {
 
-    private final String path;
-    private final boolean loadVerticalFlipped;
+    private String path;
+    private boolean loadVerticalFlipped;
 
     private int id;
     private int width;
@@ -51,6 +50,10 @@ public class Texture implements Resource {
 
     Texture(String path) {
         this(path, false);
+    }
+
+    Texture() {
+        id = generateNewTextureId();
     }
 
     //-------------------------------------------------
@@ -83,6 +86,59 @@ public class Texture implements Resource {
 
     public int getFormat() {
         return format;
+    }
+
+    //-------------------------------------------------
+    // Setter
+    //-------------------------------------------------
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setNrChannels(int nrChannels) {
+        this.nrChannels = nrChannels;
+    }
+
+    public void setFormat(int format) {
+        this.format = format;
+    }
+
+    //-------------------------------------------------
+    // Create
+    //-------------------------------------------------
+
+    public static Texture createTexture(int width, int height, ByteBuffer data) {
+        var texture = new Texture();
+
+        texture.setWidth(width);
+        texture.setHeight(height);
+        texture.setNrChannels(4);
+        texture.setFormat(GL_RGBA);
+
+        bind(texture.getId());
+
+        useNoFilter();
+        useClampToBorderWrapping();
+
+        // todo
+
+        //texture.uploadData(GL_RGBA8, width, height, GL_RGBA, data);
+        /*
+        public void uploadData(int internalFormat, int width, int height, int format, ByteBuffer data) {
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        }
+        */
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, texture.getFormat(), GL_UNSIGNED_BYTE, data);
+
+        unbind();
+
+        return texture;
     }
 
     //-------------------------------------------------
@@ -251,6 +307,20 @@ public class Texture implements Resource {
 
     public static void useClampToEdgeWrapping() {
         useClampToEdgeWrapping(GL_TEXTURE_2D);
+    }
+
+    public static void useClampToBorderWrapping(int target) {
+        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    }
+
+    public static void useClampToBorderWrapping() {
+        useClampToBorderWrapping(GL_TEXTURE_2D);
+    }
+
+    public static void setBorderColor(float r, float g, float b) {
+        float[] color = { r, g, b, 1.0f };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
     }
 
     //-------------------------------------------------

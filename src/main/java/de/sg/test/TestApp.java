@@ -16,16 +16,20 @@ import de.sg.ogl.event.GuiButtonEvent;
 import de.sg.ogl.gui.Gui;
 import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiObject;
+import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 
+import static java.awt.Font.MONOSPACED;
+import static java.awt.Font.PLAIN;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends BaseApplication {
 
     private Gui gui;
+    private TextRenderer textRenderer;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
@@ -86,6 +90,9 @@ public class TestApp extends BaseApplication {
 
         // init gui renderer
         gui.initRender();
+
+        // create && init TextRenderer
+        textRenderer = new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 10));
     }
 
     @Override
@@ -105,6 +112,13 @@ public class TestApp extends BaseApplication {
     @Override
     public void render() {
         gui.render();
+        textRenderer.render(
+                "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.\n" +
+                        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.\n" +
+                        "Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n" +
+                        "Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                0.0f, 0.0f
+        );
     }
 
     @Override
