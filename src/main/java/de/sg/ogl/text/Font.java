@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -125,37 +126,48 @@ public class Font {
     // Font texture
     //-------------------------------------------------
 
-    private BufferedImage createCharImage(java.awt.Font font, char c, boolean antialiased) {
-        // creating a temporary image
-        // create a Graphics2D object from the image and pull the font metrics from it.
+    private Optional<FontMetrics> getCharFontMetrics(java.awt.Font awtFont, char c, boolean antialiased) {
         var image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        var g = image.createGraphics();
+        var graphics2D = image.createGraphics();
+
         if (antialiased) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        }
-        g.setFont(font);
-        var metrics = g.getFontMetrics();
-        g.dispose();
-
-        var charWidth = metrics.charWidth(c);
-        var charHeight = metrics.getHeight();
-
-        if (charWidth == 0) {
-            return null;
+            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
-        // Create image for holding the char
-        image = new BufferedImage(charWidth, charHeight, BufferedImage.TYPE_INT_ARGB);
-        g = image.createGraphics();
+        graphics2D.setFont(awtFont);
+        var fontMetrics = graphics2D.getFontMetrics();
+        graphics2D.dispose();
+
+        if (fontMetrics == null) {
+            return Optional.empty();
+        }
+
+        if (fontMetrics.charWidth(c) == 0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(fontMetrics);
+    }
+
+    private Optional<BufferedImage> createCharImage(java.awt.Font awtFont, char c, boolean antialiased) {
+
+        var fontMetrics = getCharFontMetrics(awtFont, c, antialiased);
+        if (fontMetrics.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var image = new BufferedImage(fontMetrics.get().charWidth(c), fontMetrics.get().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        var graphics2D = image.createGraphics();
         if (antialiased) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        g.setFont(font);
-        g.setPaint(java.awt.Color.WHITE);
-        g.drawString(String.valueOf(c), 0, metrics.getAscent());
-        g.dispose();
 
-        return image;
+        graphics2D.setFont(awtFont);
+        graphics2D.setPaint(java.awt.Color.WHITE);
+        graphics2D.drawString(String.valueOf(c), 0, fontMetrics.get().getAscent());
+        graphics2D.dispose();
+
+        return Optional.of(image);
     }
 
     private Texture createFontTexture(java.awt.Font awtFont, boolean antialiased) {
@@ -169,21 +181,21 @@ public class Font {
                 continue;
             }
 
-            var ch = createCharImage(awtFont, (char) i, antialiased);
-            if (ch == null) {
-                // If char image is null that font does not contain the char
+            var c = (char) i;
+            var charImage = createCharImage(awtFont, c, antialiased);
+            if (charImage.isEmpty()) {
+                LOGGER.warn("The font {} does not contain the char {}.", awtFont, c);
                 continue;
             }
 
-            imageWidth += ch.getWidth();
-            imageHeight = Math.max(imageHeight, ch.getHeight());
+            imageWidth += charImage.get().getWidth();
+            imageHeight = Math.max(imageHeight, charImage.get().getHeight());
         }
 
         fontHeight = imageHeight;
 
-        // now that we have the font height and the sum of the width of each char we can create a image with that width and height
         var image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-        var g = image.createGraphics();
+        var graphics2D = image.createGraphics();
 
         // create glyphs
         var x = 0;
@@ -192,20 +204,20 @@ public class Font {
             if (i == 127) {
                 continue;
             }
+
             var c = (char) i;
             var charImage = createCharImage(awtFont, c, antialiased);
-            if (charImage == null) {
+            if (charImage.isEmpty()) {
                 continue;
             }
 
-            int charWidth = charImage.getWidth();
-            int charHeight = charImage.getHeight();
+            var charWidth = charImage.get().getWidth();
+            var charHeight = charImage.get().getHeight();
 
-            // Create glyph and draw char on image
-            var ch = new FontGlyph(charWidth, charHeight, x, image.getHeight() - charHeight, 0f);
-            g.drawImage(charImage, x, 0, null);
-            x += ch.width;
-            glyphs.put(c, ch);
+            var glyph = new FontGlyph(charWidth, charHeight, x, image.getHeight() - charHeight, 0f);
+            graphics2D.drawImage(charImage.get(), x, 0, null);
+            x += glyph.width;
+            glyphs.put(c, glyph);
         }
 
         // Flip image Horizontal to get the origin to bottom left
