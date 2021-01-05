@@ -56,7 +56,7 @@ public class TextRenderer {
 
     public void render(CharSequence text, float x, float y) {
         Objects.requireNonNull(text, "text must not be null");
-        font.renderText(this, text, x, y);
+        font.render(this, text, x, y);
     }
 
     void begin() {

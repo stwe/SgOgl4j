@@ -32,68 +32,13 @@ public class Font {
     }
 
     //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
-
-    public int getWidth(CharSequence text) {
-        var width = 0;
-        var lineWidth = 0;
-
-        for (var i = 0; i < text.length(); i++) {
-            var c = text.charAt(i);
-            if (c == '\n') {
-                /* Line end, set width to maximum from line width and stored
-                 * width */
-                width = Math.max(width, lineWidth);
-                lineWidth = 0;
-                continue;
-            }
-            if (c == '\r') {
-                /* Carriage return, just skip it */
-                continue;
-            }
-
-            var g = glyphs.get(c);
-            lineWidth += g.width;
-        }
-
-        width = Math.max(width, lineWidth);
-
-        return width;
-    }
-
-    public int getHeight(CharSequence text) {
-        var height = 0;
-        var lineHeight = 0;
-
-        for (var i = 0; i < text.length(); i++) {
-            var c = text.charAt(i);
-            if (c == '\n') {
-                /* Line end, add line height to stored height */
-                height += lineHeight;
-                lineHeight = 0;
-                continue;
-            }
-            if (c == '\r') {
-                /* Carriage return, just skip it */
-                continue;
-            }
-
-            var g = glyphs.get(c);
-            lineHeight = Math.max(lineHeight, g.height);
-        }
-
-        height += lineHeight;
-
-        return height;
-    }
-
-    //-------------------------------------------------
     // Render
     //-------------------------------------------------
 
-    public void renderText(TextRenderer textRenderer, CharSequence text, float x, float y) {
-        int textHeight = getHeight(text);
+    void render(TextRenderer textRenderer, CharSequence text, float x, float y) {
+        Objects.requireNonNull(textRenderer, "textRenderer must not be null");
+
+        int textHeight = getHeight(Objects.requireNonNull(text, "text must not be null"));
 
         float drawX = x;
         float drawY = y;
@@ -103,23 +48,42 @@ public class Font {
 
         Texture.bindForReading(texture.getId(), GL_TEXTURE0);
         textRenderer.begin();
+
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
+
             if (ch == '\n') {
-                /* Line feed, set x and y to draw at the next line */
+                // line feed, set x and y to draw at the next line
                 drawY -= fontHeight;
                 drawX = x;
                 continue;
             }
+
             if (ch == '\r') {
-                /* Carriage return, just skip it */
+                // carriage return, just skip it
                 continue;
             }
-            FontGlyph g = glyphs.get(ch);
-            textRenderer.drawTextureRegion(texture, drawX, drawY, g.x, g.y, g.width, g.height);
-            drawX += g.width;
+
+            var glyph = glyphs.get(ch);
+            textRenderer.drawTextureRegion(texture, drawX, drawY, glyph.x, glyph.y, glyph.width, glyph.height);
+            drawX += glyph.width;
         }
+
         textRenderer.end();
+        Texture.unbind();
+
+        /*
+        textRenderer.end():
+            - vao bind
+            - shader bind
+            - update uniforms
+            - bind vbo && upload vertex data
+            - enable alpha blending
+            - glDrawArrays
+            - disable blending
+            - shader unbind
+            - vao unbind
+        */
     }
 
     //-------------------------------------------------
@@ -150,7 +114,6 @@ public class Font {
     }
 
     private Optional<BufferedImage> createCharImage(java.awt.Font awtFont, char c, boolean antialiased) {
-
         var fontMetrics = getCharFontMetrics(awtFont, c, antialiased);
         if (fontMetrics.isEmpty()) {
             return Optional.empty();
@@ -197,9 +160,7 @@ public class Font {
         var image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
         var graphics2D = image.createGraphics();
 
-        // create glyphs
         var x = 0;
-
         for (var i = 32; i < 256; i++) {
             if (i == 127) {
                 continue;
@@ -220,42 +181,72 @@ public class Font {
             glyphs.put(c, glyph);
         }
 
-        // Flip image Horizontal to get the origin to bottom left
+        // flip image horizontal to get the origin to bottom left
         var transform = AffineTransform.getScaleInstance(1f, -1f);
         transform.translate(0, -image.getHeight());
         var operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         image = operation.filter(image, null);
 
-        // Get charWidth and charHeight of image
+        // get charWidth and charHeight of image
         var width = image.getWidth();
         var height = image.getHeight();
 
-        // Get pixel data of image
+        // get pixel data of image
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
 
-        // Put pixel data into a ByteBuffer
+        // put pixel data into a ByteBuffer
         var buffer = MemoryUtil.memAlloc(width * height * 4);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                /* Pixel as RGBA: 0xAARRGGBB */
+                // Pixel as RGBA: 0xAARRGGBB
                 int pixel = pixels[i * width + j];
-                /* Red component 0xAARRGGBB >> 16 = 0x0000AARR */
+                // Red component 0xAARRGGBB >> 16 = 0x0000AARR
                 buffer.put((byte) ((pixel >> 16) & 0xFF));
-                /* Green component 0xAARRGGBB >> 8 = 0x00AARRGG */
+                // Green component 0xAARRGGBB >> 8 = 0x00AARRGG
                 buffer.put((byte) ((pixel >> 8) & 0xFF));
-                /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
+                // Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB
                 buffer.put((byte) (pixel & 0xFF));
-                /* Alpha component 0xAARRGGBB >> 24 = 0x000000AA */
+                // Alpha component 0xAARRGGBB >> 24 = 0x000000AA
                 buffer.put((byte) ((pixel >> 24) & 0xFF));
             }
         }
         buffer.flip();
 
-        // Create texture
         var fontTexture = Texture.createTexture(width, height, buffer);
         MemoryUtil.memFree(buffer);
 
         return fontTexture;
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private int getHeight(CharSequence text) {
+        var height = 0;
+        var lineHeight = 0;
+
+        for (var i = 0; i < text.length(); i++) {
+            var c = text.charAt(i);
+
+            if (c == '\n') {
+                // line end, add line height to stored height
+                height += lineHeight;
+                lineHeight = 0;
+                continue;
+            }
+
+            if (c == '\r') {
+                // carriage return, just skip it
+                continue;
+            }
+
+            lineHeight = Math.max(lineHeight, glyphs.get(c).height);
+        }
+
+        height += lineHeight;
+
+        return height;
     }
 }
