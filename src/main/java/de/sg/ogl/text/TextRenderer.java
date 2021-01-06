@@ -7,7 +7,6 @@ import de.sg.ogl.buffer.Vao;
 import de.sg.ogl.buffer.Vbo;
 import de.sg.ogl.resource.Shader;
 import de.sg.ogl.resource.Texture;
-import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -48,6 +47,22 @@ public class TextRenderer {
         drawing = false;
 
         initVao();
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    public int getTextWidth(CharSequence text) {
+        Objects.requireNonNull(text, "text must not be null");
+
+        return font.getTextWidth(text);
+    }
+
+    public int getTextHeight(CharSequence text) {
+        Objects.requireNonNull(text, "text must not be null");
+
+        return font.getTextHeight(text);
     }
 
     //-------------------------------------------------
@@ -142,12 +157,8 @@ public class TextRenderer {
     }
 
     private void updateUniforms() {
-        var width = engine.getWindow().getWidth();
-        var height = engine.getWindow().getHeight();
-
-        Matrix4f projection = new Matrix4f().setOrtho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
-
-        shader.setUniform("projection", projection);
+        shader.setUniform("projection", engine.getWindow().getOrthographicProjectionMatrix());
+        shader.setUniform("diffuseMap", 0);
     }
 
     //-------------------------------------------------

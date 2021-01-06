@@ -112,12 +112,15 @@ public class TestApp extends BaseApplication {
     @Override
     public void render() {
         gui.render();
+
+        var lorem = "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.\n" +
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.\n" +
+                "Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n" +
+                "Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
         textRenderer.render(
-                "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.\n" +
-                        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.\n" +
-                        "Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n" +
-                        "Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                0.0f, 0.0f
+                lorem,
+                400.0f - textRenderer.getTextWidth(lorem) / 2.0f, 300.0f - textRenderer.getTextHeight(lorem) / 2.0f
         );
     }
 

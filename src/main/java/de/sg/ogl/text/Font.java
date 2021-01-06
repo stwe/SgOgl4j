@@ -4,8 +4,6 @@ import de.sg.ogl.resource.Texture;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,19 +30,74 @@ public class Font {
     }
 
     //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    public int getTextWidth(CharSequence text) {
+        Objects.requireNonNull(text, "text must not be null");
+
+        int width = 0;
+        int lineWidth = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '\n') {
+                width = Math.max(width, lineWidth);
+                lineWidth = 0;
+
+                continue;
+            }
+
+            if (c == '\r') {
+                continue;
+            }
+
+            lineWidth += glyphs.get(c).width;
+        }
+
+        width = Math.max(width, lineWidth);
+
+        return width;
+    }
+
+    public int getTextHeight(CharSequence text) {
+        Objects.requireNonNull(text, "text must not be null");
+
+        var height = 0;
+        var lineHeight = 0;
+
+        for (var i = 0; i < text.length(); i++) {
+            var c = text.charAt(i);
+
+            if (c == '\n') {
+                height += lineHeight;
+                lineHeight = 0;
+
+                continue;
+            }
+
+            if (c == '\r') {
+                continue;
+            }
+
+            lineHeight = Math.max(lineHeight, glyphs.get(c).height);
+        }
+
+        height += lineHeight;
+
+        return height;
+    }
+
+    //-------------------------------------------------
     // Render
     //-------------------------------------------------
 
     void render(TextRenderer textRenderer, CharSequence text, float x, float y) {
         Objects.requireNonNull(textRenderer, "textRenderer must not be null");
 
-        int textHeight = getHeight(Objects.requireNonNull(text, "text must not be null"));
-
         float drawX = x;
         float drawY = y;
-        if (textHeight > fontHeight) {
-            drawY += textHeight - fontHeight;
-        }
 
         Texture.bindForReading(texture.getId(), GL_TEXTURE0);
         textRenderer.begin();
@@ -54,7 +107,7 @@ public class Font {
 
             if (ch == '\n') {
                 // line feed, set x and y to draw at the next line
-                drawY -= fontHeight;
+                drawY += fontHeight;
                 drawX = x;
                 continue;
             }
@@ -181,13 +234,6 @@ public class Font {
             glyphs.put(c, glyph);
         }
 
-        // flip image horizontal to get the origin to bottom left
-        var transform = AffineTransform.getScaleInstance(1f, -1f);
-        transform.translate(0, -image.getHeight());
-        var operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        image = operation.filter(image, null);
-
-        // get charWidth and charHeight of image
         var width = image.getWidth();
         var height = image.getHeight();
 
@@ -217,36 +263,5 @@ public class Font {
         MemoryUtil.memFree(buffer);
 
         return fontTexture;
-    }
-
-    //-------------------------------------------------
-    // Helper
-    //-------------------------------------------------
-
-    private int getHeight(CharSequence text) {
-        var height = 0;
-        var lineHeight = 0;
-
-        for (var i = 0; i < text.length(); i++) {
-            var c = text.charAt(i);
-
-            if (c == '\n') {
-                // line end, add line height to stored height
-                height += lineHeight;
-                lineHeight = 0;
-                continue;
-            }
-
-            if (c == '\r') {
-                // carriage return, just skip it
-                continue;
-            }
-
-            lineHeight = Math.max(lineHeight, glyphs.get(c).height);
-        }
-
-        height += lineHeight;
-
-        return height;
     }
 }
