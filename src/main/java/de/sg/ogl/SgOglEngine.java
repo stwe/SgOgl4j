@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -163,7 +163,7 @@ public class SgOglEngine implements Runnable {
     private void loop() {
         LOGGER.debug("Starting the main loop.");
 
-        OpenGL.setClearColor(0.3f, 0.4f, 0.5f, 1.0f);
+        OpenGL.setClearColor(Color.CORNFLOWER_BLUE);
         renderingLoop();
     }
 

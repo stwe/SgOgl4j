@@ -1,5 +1,14 @@
+/*
+ * This file is part of the SgOgl4j project.
+ *
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
+ *
+ * License: MIT
+ */
+
 package de.sg.ogl.text;
 
+import de.sg.ogl.Color;
 import de.sg.ogl.resource.Texture;
 import org.lwjgl.system.MemoryUtil;
 
@@ -93,8 +102,10 @@ public class Font {
     // Render
     //-------------------------------------------------
 
-    void render(TextRenderer textRenderer, CharSequence text, float x, float y) {
+    void render(TextRenderer textRenderer, CharSequence text, float x, float y, Color color) {
         Objects.requireNonNull(textRenderer, "textRenderer must not be null");
+        Objects.requireNonNull(text, "text must not be null");
+        Objects.requireNonNull(color, "color must not be null");
 
         float drawX = x;
         float drawY = y;
@@ -118,7 +129,7 @@ public class Font {
             }
 
             var glyph = glyphs.get(ch);
-            textRenderer.drawTextureRegion(texture, drawX, drawY, glyph.x, glyph.y, glyph.width, glyph.height);
+            textRenderer.drawTextureRegion(texture, drawX, drawY, glyph.x, glyph.y, glyph.width, glyph.height, color);
             drawX += glyph.width;
         }
 

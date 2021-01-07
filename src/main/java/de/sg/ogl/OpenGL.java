@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -49,6 +49,10 @@ public final class OpenGL {
 
     public static void setClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
+    }
+
+    public static void setClearColor(Color color) {
+        setClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     public static void clear() {

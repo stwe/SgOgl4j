@@ -9,6 +9,7 @@
 package de.sg.test;
 
 import de.sg.ogl.BaseApplication;
+import de.sg.ogl.Color;
 import de.sg.ogl.Input;
 import de.sg.ogl.Log;
 import de.sg.ogl.event.GuiButtonAdapter;
@@ -120,7 +121,8 @@ public class TestApp extends BaseApplication {
 
         textRenderer.render(
                 lorem,
-                400.0f - textRenderer.getTextWidth(lorem) / 2.0f, 300.0f - textRenderer.getTextHeight(lorem) / 2.0f
+                400.0f - textRenderer.getTextWidth(lorem) / 2.0f, 300.0f - textRenderer.getTextHeight(lorem) / 2.0f,
+                Color.GREEN
         );
     }
 

@@ -1,5 +1,14 @@
+/*
+ * This file is part of the SgOgl4j project.
+ *
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
+ *
+ * License: MIT
+ */
+
 package de.sg.ogl.text;
 
+import de.sg.ogl.Color;
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
@@ -69,9 +78,11 @@ public class TextRenderer {
     // Render
     //-------------------------------------------------
 
-    public void render(CharSequence text, float x, float y) {
+    public void render(CharSequence text, float x, float y, Color color) {
         Objects.requireNonNull(text, "text must not be null");
-        font.render(this, text, x, y);
+        Objects.requireNonNull(color, "color must not be null");
+
+        font.render(this, text, x, y, color);
     }
 
     void begin() {
@@ -92,8 +103,9 @@ public class TextRenderer {
         flush();
     }
 
-    void drawTextureRegion(Texture texture, float x, float y, float regX, float regY, float regWidth, float regHeight) {
+    void drawTextureRegion(Texture texture, float x, float y, float regX, float regY, float regWidth, float regHeight, Color color) {
         Objects.requireNonNull(texture, "texture must not be null");
+        Objects.requireNonNull(color, "color must not be null");
 
         // Vertex positions
         float x1 = x;
@@ -112,10 +124,10 @@ public class TextRenderer {
             flush();
         }
 
-        float r = 1.0f;
-        float g = 1.0f;
-        float b = 1.0f;
-        float a = 1.0f;
+        float r = color.getRed();
+        float g = color.getGreen();
+        float b = color.getBlue();
+        float a = color.getAlpha();
 
         vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1);
         vertices.put(x1).put(y2).put(r).put(g).put(b).put(a).put(s1).put(t2);
