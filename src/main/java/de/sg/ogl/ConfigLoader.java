@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -22,7 +22,10 @@ public class ConfigLoader {
     // Load
     //-------------------------------------------------
 
-    public static void load(Class<?> configClass, String path) throws IOException, IllegalAccessException {
+    static void load(Class<?> configClass, String path) throws IOException, IllegalAccessException {
+        Objects.requireNonNull(configClass, "configClass must not be null");
+        Objects.requireNonNull(path, "path must not be null");
+
         InputStream in = ConfigLoader.class.getResourceAsStream(path);
         if (in == null) {
             throw new FileNotFoundException("Config file " + path + " not found.");

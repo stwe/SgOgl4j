@@ -8,7 +8,7 @@
 
 package de.sg.sgbrick;
 
-import de.sg.ogl.BaseApplication;
+import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Manager;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class Game extends BaseApplication {
+public class Game extends SgOglApplication {
 
     //-------------------------------------------------
     // Const

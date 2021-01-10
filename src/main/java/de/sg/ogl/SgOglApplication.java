@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import static de.sg.ogl.Log.LOGGER;
 
-public abstract class BaseApplication implements Application {
+public abstract class SgOglApplication implements Application {
 
     private SgOglEngine engine;
 
@@ -21,8 +21,8 @@ public abstract class BaseApplication implements Application {
     // Ctors.
     //-------------------------------------------------
 
-    public BaseApplication() throws IOException, IllegalAccessException {
-        LOGGER.debug("Creates BaseApplication object and load config.");
+    public SgOglApplication() throws IOException, IllegalAccessException {
+        LOGGER.debug("Creates SgOglApplication object and load config.");
 
         ConfigLoader.load(Config.class, "/config.properties");
         LOGGER.debug("Configuration loaded successfully.");
@@ -48,9 +48,13 @@ public abstract class BaseApplication implements Application {
     // Setter
     //-------------------------------------------------
 
-    public void setEngineUnlessAlreadySet(SgOglEngine engine) {
+    public void setEngine(SgOglEngine engine) {
         this.engine = this.engine == null ? Objects.requireNonNull(engine, "engine must not be null") : throw_();
     }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
 
     private SgOglEngine throw_() {
         throw new SgOglRuntimeException("Engine is already set.");

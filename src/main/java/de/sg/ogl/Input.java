@@ -148,6 +148,7 @@ public class Input {
         };
 
         GLFW.glfwSetKeyCallback(windowHandle, keyboard);
+
         GLFW.glfwSetCursorPosCallback(windowHandle, mouseMove);
         GLFW.glfwSetMouseButtonCallback(windowHandle, mouseButtons);
         GLFW.glfwSetScrollCallback(windowHandle, mouseScroll);

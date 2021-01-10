@@ -27,20 +27,24 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class Window {
 
+    private static final int MIN_WIDTH = 640;
+    private static final int MIN_HEIGHT = 480;
+
     private final String title;
     private int width;
     private int height;
-    private long windowHandle;
     private final boolean vSync;
+
+    private final Matrix4f projectionMatrix;
+    private final Matrix4f orthographicProjectionMatrix;
+
+    private long windowHandle;
 
     private Vector2f topLeft = new Vector2f();
     private Vector2f bottomLeft = new Vector2f();
     private Vector2f bottomRight = new Vector2f();
     private Vector2f topRight = new Vector2f();
     private Vector2f center = new Vector2f();
-
-    private final Matrix4f projectionMatrix;
-    private final Matrix4f orthographicProjectionMatrix;
 
     //-------------------------------------------------
     // Ctors.
@@ -52,12 +56,13 @@ public final class Window {
         this.title = Objects.requireNonNull(Config.TITLE, "title must not be null");
         this.width = Config.WIDTH;
         this.height = Config.HEIGHT;
-
-        if (width <= 0 || height <= 0) {
-            throw new SgOglRuntimeException("Invalid width or height of the window.");
-        }
-
         this.vSync = Config.V_SYNC;
+
+        if (width < MIN_WIDTH || height < MIN_HEIGHT) {
+            this.width = MIN_WIDTH;
+            this.height = MIN_HEIGHT;
+            LOGGER.warn("Invalid width or height value given. The default values are now used.");
+        }
 
         projectionMatrix = new Matrix4f();
         orthographicProjectionMatrix = new Matrix4f();
@@ -77,6 +82,14 @@ public final class Window {
 
     public int getHeight() {
         return height;
+    }
+
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
+    public Matrix4f getOrthographicProjectionMatrix() {
+        return orthographicProjectionMatrix;
     }
 
     public long getWindowHandle() {
@@ -103,14 +116,6 @@ public final class Window {
         return center;
     }
 
-    public Matrix4f getProjectionMatrix() {
-        return projectionMatrix;
-    }
-
-    public Matrix4f getOrthographicProjectionMatrix() {
-        return orthographicProjectionMatrix;
-    }
-
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
@@ -127,6 +132,9 @@ public final class Window {
         initGlfw();
         initImGui();
         initProjectionMatrix();
+
+        // At the moment, the size of the window can no be changed during runtime.
+        updateCornerPoints();
     }
 
     private void initGlfw() {
@@ -144,7 +152,10 @@ public final class Window {
         // Configure GLFW.
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+        // At the moment, the size of the window can no be changed during runtime.
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -166,8 +177,8 @@ public final class Window {
 
         // Get the thread stack and push a new frame.
         try (MemoryStack stack = stackPush()) {
-            var pWidth = stack.mallocInt(1); // int*
-            var pHeight = stack.mallocInt(1); // int*
+            var pWidth = stack.mallocInt(1);
+            var pHeight = stack.mallocInt(1);
 
             // Get the window size passed to glfwCreateWindow.
             glfwGetWindowSize(windowHandle, pWidth, pHeight);
@@ -207,7 +218,7 @@ public final class Window {
 
         ImGui.createContext();
 
-        final ImGuiIO io = ImGui.getIO();
+        final var io = ImGui.getIO();
 
         io.setIniFilename(null); // We don't want to save .ini file
         io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);  // Enable Keyboard Controls
@@ -216,7 +227,7 @@ public final class Window {
         io.setConfigViewportsNoTaskBarIcon(true);
 
         if (io.hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-            final ImGuiStyle style = ImGui.getStyle();
+            final var style = ImGui.getStyle();
             style.setWindowRounding(0.0f);
             style.setColor(ImGuiCol.WindowBg, ImGui.getColorU32(ImGuiCol.WindowBg, 1));
         }
@@ -242,7 +253,6 @@ public final class Window {
 
     public void updateProjectionMatrix() {
         projectionMatrix.setPerspective(Config.FOV, (float) width / height, Config.NEAR, Config.FAR);
-        updateCornerPoints();
     }
 
     public void updateOrthographicProjectionMatrix() {
@@ -256,7 +266,6 @@ public final class Window {
         */
 
         orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, 1.0f, -1.0f);
-        updateCornerPoints();
     }
 
     private void updateCornerPoints() {

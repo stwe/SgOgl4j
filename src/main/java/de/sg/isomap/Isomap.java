@@ -8,7 +8,7 @@
 
 package de.sg.isomap;
 
-import de.sg.ogl.BaseApplication;
+import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.Input;
 import de.sg.ogl.Pixel;
 import de.sg.ogl.resource.Texture;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Isomap extends BaseApplication {
+public class Isomap extends SgOglApplication {
 
     private final Vector2i worldSize = new Vector2i(14, 10);
     private final Vector2i tileSize = new Vector2i(40 ,20);

@@ -8,6 +8,8 @@
 
 package de.sg.ogl;
 
+import de.sg.ogl.input.KeyListener;
+import de.sg.ogl.input.MouseListener;
 import de.sg.ogl.resource.ResourceManager;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
@@ -29,23 +31,24 @@ public class SgOglEngine implements Runnable {
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     private final Window window;
-    private final BaseApplication application;
     private final ResourceManager resourceManager;
+
+    private final SgOglApplication application;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public SgOglEngine(BaseApplication application) {
+    public SgOglEngine(SgOglApplication application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
         LOGGER.info("Running from Jar: {}", RUNNING_FROM_JAR ? "yes" : "no");
 
         this.window = new Window();
-        this.application = Objects.requireNonNull(application, "application must not be null");
         this.resourceManager = new ResourceManager();
 
-        this.application.setEngineUnlessAlreadySet(this);
+        this.application = Objects.requireNonNull(application, "application must not be null");
+        this.application.setEngine(this);
     }
 
     //-------------------------------------------------
@@ -74,7 +77,7 @@ public class SgOglEngine implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cleanUp();
+            this.cleanUp();
         }
 
         LOGGER.debug("Goodbye ...");
@@ -92,7 +95,8 @@ public class SgOglEngine implements Runnable {
         imGuiGlfw.init(window.getWindowHandle(), true);
         imGuiGl3.init("#version 130");
 
-        Input.init(window.getWindowHandle());
+        MouseListener.init(window.getWindowHandle());
+        KeyListener.init(window.getWindowHandle());
 
         application.init();
     }
@@ -119,7 +123,8 @@ public class SgOglEngine implements Runnable {
     }
 
     private void update(float dt) {
-        Input.update(dt);
+        MouseListener.update();
+        KeyListener.update();
         application.update(dt);
     }
 
@@ -211,7 +216,6 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Clean up SgOglEngine.");
 
         resourceManager.cleanUp();
-        Input.cleanUp();
 
         imGuiGl3.dispose();
         imGuiGlfw.dispose();
