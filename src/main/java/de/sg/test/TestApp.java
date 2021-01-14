@@ -16,27 +16,31 @@ import de.sg.ogl.event.GuiButtonEvent;
 import de.sg.ogl.gui.Gui;
 import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiObject;
-import de.sg.ogl.input.KeyListener;
+import de.sg.ogl.input.EventQueue;
+import de.sg.ogl.input.KeyInput;
+import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 
 import static java.awt.Font.MONOSPACED;
 import static java.awt.Font.PLAIN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends SgOglApplication {
 
     private Gui gui;
     private TextRenderer textRenderer;
+    private EventQueue eventQueue;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
+        eventQueue = new EventQueue(getEngine().getWindow().getWindowHandle());
 
         var panelTexture = getEngine().getResourceManager().loadTextureResource("/texture/gui.png");
         var buttonTexture = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/paddle.png");
@@ -98,16 +102,26 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void input() {
-        if (KeyListener.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
-        }
-
         gui.input();
     }
 
     @Override
     public void update(float dt) {
+        eventQueue.update();
 
+        if (MouseInput.isMouseInWindow()) {
+            if (MouseInput.isMouseButtonDoubleClicked(0)) {
+                Log.LOGGER.debug("double");
+            }
+        }
+
+        if (KeyInput.isKeyRepeated(GLFW_KEY_ESCAPE)) {
+            //glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
+            Log.LOGGER.debug("Esc repeated");
+        }
+
+        MouseInput.update(); // reset
+        KeyInput.update();
     }
 
     @Override

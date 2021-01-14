@@ -8,8 +8,6 @@
 
 package de.sg.ogl;
 
-import de.sg.ogl.input.KeyListener;
-import de.sg.ogl.input.MouseListener;
 import de.sg.ogl.resource.ResourceManager;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
@@ -95,9 +93,6 @@ public class SgOglEngine implements Runnable {
         imGuiGlfw.init(window.getWindowHandle(), true);
         imGuiGl3.init("#version 130");
 
-        MouseListener.init(window.getWindowHandle());
-        KeyListener.init(window.getWindowHandle());
-
         application.init();
     }
 
@@ -123,8 +118,6 @@ public class SgOglEngine implements Runnable {
     }
 
     private void update(float dt) {
-        MouseListener.update();
-        KeyListener.update();
         application.update(dt);
     }
 
