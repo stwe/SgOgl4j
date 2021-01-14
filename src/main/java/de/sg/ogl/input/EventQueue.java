@@ -11,12 +11,14 @@ package de.sg.ogl.input;
 import org.lwjgl.glfw.*;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
+import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class EventQueue {
 
-    private final LinkedList<EventCategory> events = new LinkedList<>();
+    private final LinkedList<VisitableEvent> events = new LinkedList<>();
     private final CoreVisitor coreVisitor = new CoreVisitor();
 
     //-------------------------------------------------
@@ -24,6 +26,8 @@ public class EventQueue {
     //-------------------------------------------------
 
     public EventQueue(long windowHandle) {
+        LOGGER.debug("Creates EventQueue object.");
+
         initCallbacks(windowHandle);
     }
 
@@ -32,23 +36,16 @@ public class EventQueue {
     //-------------------------------------------------
 
     public void update() {
-        // peek at the element at the head of a Queue
-        var oldest = events.peek(); // empty -> return null
-
-        // removes the element at the head of the Queue
-        if (oldest != null) {
-            oldest.accept(coreVisitor);
-            events.remove();
-            //Log.LOGGER.debug("events: {}", events.size());
-        }
+        var event = retrieveOldestEvent();
+        event.ifPresent(this::visitAndRemoveOldestEvent);
     }
 
     //-------------------------------------------------
     // Add
     //-------------------------------------------------
 
-    private void addEvent(EventCategory eventCategory) {
-        events.add(eventCategory);
+    private void addEvent(VisitableEvent event) {
+        events.add(event);
     }
 
     //-------------------------------------------------
@@ -56,10 +53,12 @@ public class EventQueue {
     //-------------------------------------------------
 
     private void initCallbacks(long windowHandle) {
+        LOGGER.debug("Setting the Glfw callback functions.");
+
         var keyboard = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                var event = new KeyboardCategory();
+                var event = new KeyboardEvent();
 
                 if (action == GLFW_PRESS)
                 {
@@ -87,7 +86,8 @@ public class EventQueue {
         var mouseMove = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                var event = new UseDeviceCategory();
+                var event = new UseDeviceEvent();
+
                 event.eventType = EventType.CURSOR_MOVED;
                 event.windowHandle = window;
                 event.xPos = xpos;
@@ -100,7 +100,7 @@ public class EventQueue {
         var mouseButtons = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                var event = new MouseCategory();
+                var event = new MouseEvent();
 
                 if (action == GLFW_PRESS) {
                     event.eventType = EventType.BUTTON_PRESSED;
@@ -120,7 +120,8 @@ public class EventQueue {
         var mouseScroll = new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double offsetx, double offsety) {
-                var event = new UseDeviceCategory();
+                var event = new UseDeviceEvent();
+
                 event.eventType = EventType.SCROLLED;
                 event.windowHandle = window;
                 event.xPos = offsetx;
@@ -133,7 +134,8 @@ public class EventQueue {
         var cursorEnter = new GLFWCursorEnterCallback() {
             @Override
             public void invoke(long window, boolean entered) {
-                var event = new SwitchCategory();
+                var event = new SwitchEvent();
+
                 event.eventType = entered ? EventType.CURSOR_ENTERED : EventType.CURSOR_LEFT;
                 event.windowHandle = window;
                 event.value = entered;
@@ -147,5 +149,18 @@ public class EventQueue {
         GLFW.glfwSetMouseButtonCallback(windowHandle, mouseButtons);
         GLFW.glfwSetScrollCallback(windowHandle, mouseScroll);
         GLFW.glfwSetCursorEnterCallback(windowHandle, cursorEnter);
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private Optional<VisitableEvent> retrieveOldestEvent() {
+        return Optional.ofNullable(events.peek());
+    }
+
+    private void visitAndRemoveOldestEvent(VisitableEvent event) {
+        event.accept(coreVisitor);
+        events.remove();
     }
 }

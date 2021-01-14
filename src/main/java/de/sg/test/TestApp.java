@@ -115,9 +115,8 @@ public class TestApp extends SgOglApplication {
             }
         }
 
-        if (KeyInput.isKeyRepeated(GLFW_KEY_ESCAPE)) {
-            //glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
-            Log.LOGGER.debug("Esc repeated");
+        if (KeyInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
+            glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
 
         MouseInput.update(); // reset

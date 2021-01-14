@@ -9,10 +9,10 @@
 package de.sg.ogl.input;
 
 public interface Visitor {
-    void visitPositionCategory(PositionCategory positionCategory);
-    void visitSizeCategory(SizeCategory sizeCategory);
-    void visitSwitchCategory(SwitchCategory switchCategory);
-    void visitUseDeviceCategory(UseDeviceCategory useDeviceCategory);
-    void visitMouseCategory(MouseCategory mouseCategory);
-    void visitKeyboardCategory(KeyboardCategory keyboardCategory);
+    void visitPositionEvent(PositionEvent positionEvent);
+    void visitSizeEvent(SizeEvent sizeEvent);
+    void visitSwitchEvent(SwitchEvent switchEvent);
+    void visitUseDeviceEvent(UseDeviceEvent useDeviceEvent);
+    void visitMouseEvent(MouseEvent mouseEvent);
+    void visitKeyboardEvent(KeyboardEvent keyboardEvent);
 }

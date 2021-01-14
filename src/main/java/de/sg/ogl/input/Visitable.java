@@ -8,6 +8,6 @@
 
 package de.sg.ogl.input;
 
-public interface EventCategory {
+public interface Visitable {
     void accept(Visitor visitor);
 }

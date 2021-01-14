@@ -8,76 +8,70 @@
 
 package de.sg.ogl.input;
 
-class PositionCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class PositionEvent extends VisitableEvent {
     long windowHandle;
-    int xPos = 0;
-    int yPos = 0;
+    int xPos;
+    int yPos;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitPositionCategory(this);
+        visitor.visitPositionEvent(this);
     }
 }
 
-class SizeCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class SizeEvent extends VisitableEvent {
     long windowHandle;
-    int width = 0;
-    int height = 0;
+    int width;
+    int height;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitSizeCategory(this);
+        visitor.visitSizeEvent(this);
     }
 }
 
-class SwitchCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class SwitchEvent extends VisitableEvent{
     long windowHandle;
     boolean value = false;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitSwitchCategory(this);
+        visitor.visitSwitchEvent(this);
     }
 }
 
-class UseDeviceCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class UseDeviceEvent extends VisitableEvent {
     long windowHandle;
-    double xPos = 0.0;
-    double yPos = 0.0;
+    double xPos;
+    double yPos;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitUseDeviceCategory(this);
+        visitor.visitUseDeviceEvent(this);
     }
 }
 
-class MouseCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class MouseEvent extends VisitableEvent {
     long windowHandle;
-    int button = 0;
+    int button;
     int action = -1;
-    int mods = 0;
+    int mods;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitMouseCategory(this);
+        visitor.visitMouseEvent(this);
     }
 }
 
-class KeyboardCategory implements EventCategory {
-    EventType eventType = EventType.NONE;
+class KeyboardEvent extends VisitableEvent {
     long windowHandle;
-    int key = 0;
-    int scancode = 0;
+    int key;
+    int scancode;
     int action = -1;
-    int mods = 0;
+    int mods;
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitKeyboardCategory(this);
+        visitor.visitKeyboardEvent(this);
     }
 }

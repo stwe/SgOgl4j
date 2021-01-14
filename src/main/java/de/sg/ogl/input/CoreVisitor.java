@@ -13,42 +13,42 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 public class CoreVisitor implements Visitor {
 
     @Override
-    public void visitPositionCategory(PositionCategory positionCategory) {
-        //Log.LOGGER.debug("PositionCategory");
+    public void visitPositionEvent(PositionEvent positionEvent) {
+        //Log.LOGGER.debug("PositionEvent");
     }
 
     @Override
-    public void visitSizeCategory(SizeCategory sizeCategory) {
-        //Log.LOGGER.debug("SizeCategory");
+    public void visitSizeEvent(SizeEvent sizeEvent) {
+        //Log.LOGGER.debug("SizeEvent");
     }
 
     @Override
-    public void visitSwitchCategory(SwitchCategory switchCategory) {
-        MouseInput.setMouseInWindow(switchCategory.value);
+    public void visitSwitchEvent(SwitchEvent switchEvent) {
+        MouseInput.setMouseInWindow(switchEvent.value);
     }
 
     @Override
-    public void visitUseDeviceCategory(UseDeviceCategory useDeviceCategory) {
-        if (useDeviceCategory.eventType == EventType.SCROLLED) {
-            MouseInput.setScrollX(useDeviceCategory.xPos);
-            MouseInput.setScrollY(useDeviceCategory.yPos);
+    public void visitUseDeviceEvent(UseDeviceEvent useDeviceEvent) {
+        if (useDeviceEvent.eventType == EventType.SCROLLED) {
+            MouseInput.setScrollX(useDeviceEvent.xPos);
+            MouseInput.setScrollY(useDeviceEvent.yPos);
         }
 
-        if (useDeviceCategory.eventType == EventType.CURSOR_MOVED) {
-            MouseInput.setX(useDeviceCategory.xPos);
-            MouseInput.setY(useDeviceCategory.yPos);
+        if (useDeviceEvent.eventType == EventType.CURSOR_MOVED) {
+            MouseInput.setX(useDeviceEvent.xPos);
+            MouseInput.setY(useDeviceEvent.yPos);
         }
     }
 
     @Override
-    public void visitMouseCategory(MouseCategory mouseCategory) {
-        MouseInput.setMouseButton(mouseCategory.button, mouseCategory.action != GLFW_RELEASE);
-        MouseInput.setMouseButtonState(mouseCategory.button, mouseCategory.action);
+    public void visitMouseEvent(MouseEvent mouseEvent) {
+        MouseInput.setMouseButton(mouseEvent.button, mouseEvent.action != GLFW_RELEASE);
+        MouseInput.setMouseButtonState(mouseEvent.button, mouseEvent.action);
     }
 
     @Override
-    public void visitKeyboardCategory(KeyboardCategory keyboardCategory) {
-        KeyInput.setKey(keyboardCategory.key, keyboardCategory.action != GLFW_RELEASE);
-        KeyInput.setKeyState(keyboardCategory.key, keyboardCategory.action);
+    public void visitKeyboardEvent(KeyboardEvent keyboardEvent) {
+        KeyInput.setKey(keyboardEvent.key, keyboardEvent.action != GLFW_RELEASE);
+        KeyInput.setKeyState(keyboardEvent.key, keyboardEvent.action);
     }
 }
