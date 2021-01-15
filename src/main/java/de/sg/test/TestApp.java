@@ -16,7 +16,6 @@ import de.sg.ogl.event.GuiButtonEvent;
 import de.sg.ogl.gui.Gui;
 import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.gui.GuiObject;
-import de.sg.ogl.input.EventQueue;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.text.TextRenderer;
@@ -33,15 +32,12 @@ public class TestApp extends SgOglApplication {
 
     private Gui gui;
     private TextRenderer textRenderer;
-    private EventQueue eventQueue;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        eventQueue = new EventQueue(getEngine().getWindow().getWindowHandle());
-
         var panelTexture = getEngine().getResourceManager().loadTextureResource("/texture/gui.png");
         var buttonTexture = getEngine().getResourceManager().loadTextureResource("/texture/sgbrick/paddle.png");
 
@@ -107,8 +103,6 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void update(float dt) {
-        eventQueue.update();
-
         if (MouseInput.isMouseInWindow()) {
             if (MouseInput.isMouseButtonDoubleClicked(0)) {
                 Log.LOGGER.debug("double");
@@ -118,9 +112,6 @@ public class TestApp extends SgOglApplication {
         if (KeyInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
-
-        MouseInput.update(); // reset
-        KeyInput.update();
     }
 
     @Override

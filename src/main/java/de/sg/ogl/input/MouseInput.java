@@ -55,6 +55,10 @@ public class MouseInput {
     // Logic
     //-------------------------------------------------
 
+    public static void input() {
+        update();
+    }
+
     public static void update() {
         get().previousMouseX = get().currentMouseX;
         get().previousMouseY = get().currentMouseY;

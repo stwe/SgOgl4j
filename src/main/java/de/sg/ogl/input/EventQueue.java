@@ -25,15 +25,17 @@ public class EventQueue {
     // Ctors.
     //-------------------------------------------------
 
-    public EventQueue(long windowHandle) {
+    public EventQueue() {
         LOGGER.debug("Creates EventQueue object.");
-
-        initCallbacks(windowHandle);
     }
 
     //-------------------------------------------------
     // Logic
     //-------------------------------------------------
+
+    public void input() {
+        update();
+    }
 
     public void update() {
         var event = retrieveOldestEvent();
@@ -52,7 +54,7 @@ public class EventQueue {
     // Init
     //-------------------------------------------------
 
-    private void initCallbacks(long windowHandle) {
+    public void init(long windowHandle) {
         LOGGER.debug("Setting the Glfw callback functions.");
 
         var keyboard = new GLFWKeyCallback() {

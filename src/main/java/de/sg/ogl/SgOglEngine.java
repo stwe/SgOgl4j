@@ -8,6 +8,9 @@
 
 package de.sg.ogl;
 
+import de.sg.ogl.input.EventQueue;
+import de.sg.ogl.input.KeyInput;
+import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.resource.ResourceManager;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
@@ -29,6 +32,7 @@ public class SgOglEngine implements Runnable {
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     private final Window window;
+    private final EventQueue eventQueue;
     private final ResourceManager resourceManager;
 
     private final SgOglApplication application;
@@ -43,6 +47,7 @@ public class SgOglEngine implements Runnable {
         LOGGER.info("Running from Jar: {}", RUNNING_FROM_JAR ? "yes" : "no");
 
         this.window = new Window();
+        this.eventQueue = new EventQueue();
         this.resourceManager = new ResourceManager();
 
         this.application = Objects.requireNonNull(application, "application must not be null");
@@ -89,6 +94,7 @@ public class SgOglEngine implements Runnable {
         LOGGER.debug("Initializing SgOglEngine.");
 
         window.init();
+        eventQueue.init(window.getWindowHandle());
 
         imGuiGlfw.init(window.getWindowHandle(), true);
         imGuiGl3.init("#version 130");
@@ -118,7 +124,12 @@ public class SgOglEngine implements Runnable {
     }
 
     private void update(float dt) {
+        eventQueue.update();
+
         application.update(dt);
+
+        MouseInput.update();
+        KeyInput.update();
     }
 
     private void render() {
