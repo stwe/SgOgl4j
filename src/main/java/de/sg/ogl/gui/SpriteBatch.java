@@ -48,7 +48,7 @@ public class SpriteBatch {
         LOGGER.debug("Creates SpriteBatch object.");
 
         this.engine = engine;
-        this.shader = engine.getResourceManager().loadShaderResource("batch");
+        this.shader = engine.getResourceManager().loadResource(Shader.class, "batch");
 
         initVao();
     }

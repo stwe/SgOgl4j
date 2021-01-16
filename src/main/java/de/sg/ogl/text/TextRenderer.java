@@ -48,7 +48,7 @@ public class TextRenderer {
         LOGGER.debug("Creates TextRenderer object.");
 
         this.engine = Objects.requireNonNull(engine, "engine must not be null");
-        this.shader = this.engine.getResourceManager().loadShaderResource(SHADER_NAME);
+        this.shader = this.engine.getResourceManager().loadResource(Shader.class, SHADER_NAME);
         this.font = new Font(Objects.requireNonNull(awtFont, "awtFont must not be null"), true);
 
         vertices = MemoryUtil.memAllocFloat(NR_OF_FLOATS);

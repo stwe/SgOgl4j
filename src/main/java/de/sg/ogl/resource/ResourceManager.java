@@ -1,21 +1,19 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
 
 package de.sg.ogl.resource;
 
-import de.sg.ogl.buffer.BufferLayout;
-import de.sg.ogl.buffer.Vertex2D;
-import org.joml.Vector2f;
+import de.sg.ogl.SgOglRuntimeException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -23,27 +21,7 @@ import static de.sg.ogl.Log.LOGGER;
 
 public class ResourceManager {
 
-    private final HashMap<String, Resource> resources;
-
-    public enum VerticesResourceId {
-        QUAD_2D
-    }
-
-    public static class VerticesResource {
-        public VerticesResourceId id;
-        public float[] vertices;
-        public int drawCount;
-        public BufferLayout defaultBufferLayout;
-
-        public VerticesResource(VerticesResourceId id, float[] vertices, int drawCount, BufferLayout bufferLayout) {
-            this.id = id;
-            this.vertices = vertices;
-            this.drawCount = drawCount;
-            this.defaultBufferLayout = bufferLayout;
-        }
-    }
-
-    private final HashMap<VerticesResourceId, VerticesResource> verticesResources;
+    private final HashMap<String, Resource> resources = new HashMap<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -51,110 +29,79 @@ public class ResourceManager {
 
     public ResourceManager() {
         LOGGER.debug("Creates ResourceManager object.");
-
-        resources = new HashMap<>();
-        verticesResources = new HashMap<>();
-
-        addQuadVertices2DResource();
     }
 
     //-------------------------------------------------
-    // Texture resources
+    // Load
     //-------------------------------------------------
 
-    public Texture loadTextureResource(String path, boolean loadVerticalFlipped) throws IOException {
-        var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Texture.class);
-
-        if (result.isPresent()) {
-            LOGGER.debug("The texture {} was already loaded.", path);
-            return result.get();
+    public <T extends Resource> T loadResource(Class<T> resourceType, String path, Object... args) throws Exception {
+        var resource = Optional.ofNullable(resourceType.cast(resources.get(path)));
+        if (resource.isPresent()) {
+            LOGGER.debug("The resource {} was already loaded.", path);
+            return resource.get();
         }
 
-        LOGGER.debug("The texture {} must be loaded.", path);
+        LOGGER.debug("The resource {} must be loaded.", path);
 
-        return addTextureResource(path, loadVerticalFlipped);
+        switch (resourceType.getSimpleName()) {
+            case "Texture" :
+                addTexture(path, args);
+                break;
+            case "Shader" :
+                addShader(path, args);
+                break;
+            default:
+                throw new SgOglRuntimeException("Invalid resource type: " + resourceType.getSimpleName());
+        }
+
+        return resourceType.cast(resources.get(path));
     }
 
-    public Texture loadTextureResource(String path) throws IOException {
-        return loadTextureResource(path, false);
-    }
+    //-------------------------------------------------
+    // Add
+    //-------------------------------------------------
 
-    private Texture addTextureResource(String path, boolean loadVerticalFlipped) throws IOException {
-        var texture = new Texture(path, loadVerticalFlipped);
+    private void addTexture(String path, Object... args) throws IOException {
+        Texture texture;
+
+        if (args.length > 0) {
+            if (!(args[0] instanceof Boolean)) {
+                throw new SgOglRuntimeException("Invalid argument given.");
+            }
+            texture = new Texture(path, (boolean)args[0]);
+        } else {
+            texture = new Texture(path);
+        }
+
         texture.load();
 
         resources.put(path, texture);
-
-        return texture;
     }
 
-    //-------------------------------------------------
-    // Shader resources
-    //-------------------------------------------------
+    @SuppressWarnings("unchecked")
+    private void addShader(String path, Object... args) throws IOException {
+        Shader shader;
 
-    public Shader loadShaderResource(String path) throws Exception {
-        var result = getResourceByPath(Objects.requireNonNull(path, "path must not be null"), Shader.class);
-
-        if (result.isPresent()) {
-            LOGGER.debug("The shader {} was already loaded.", path);
-            return result.get();
+        if (args.length > 0) {
+            if (!(args[0] instanceof EnumSet)) {
+                throw new SgOglRuntimeException("Invalid argument given.");
+            }
+            shader = new Shader(path, (EnumSet<Shader.Options>)args[0]);
+        } else {
+            shader = new Shader(path);
         }
 
-        LOGGER.debug("The shader {} must be loaded.", path);
-
-        return addShaderResource(path);
-    }
-
-    private Shader addShaderResource(String path) throws Exception {
-        var shader = new Shader(path);
         shader.load();
 
         resources.put(path, shader);
-
-        return shader;
-    }
-
-    //-------------------------------------------------
-    // Static vertices
-    //-------------------------------------------------
-
-    public VerticesResource loadVerticesResource(VerticesResourceId verticesResourceId) {
-        return verticesResources.get(verticesResourceId);
-    }
-
-    private void addQuadVertices2DResource() {
-        LOGGER.debug("Add vertices for a 2D quad.");
-
-        var vertices = new Vertex2D[] {
-                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
-                new Vertex2D(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f)),
-
-                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f))
-        };
-
-        verticesResources.put(
-                VerticesResourceId.QUAD_2D,
-                new VerticesResource(
-                        VerticesResourceId.QUAD_2D,
-                        Vertex2D.toFloatArray(vertices),
-                        vertices.length,
-                        Vertex2D.BUFFER_LAYOUT_2D
-                )
-        );
     }
 
     //-------------------------------------------------
     // Util
     //-------------------------------------------------
 
-    private <T> Optional<T> getResourceByPath(String path, Class<T> type) {
-        return Optional.ofNullable(type.cast(resources.get(path)));
-    }
-
-    static public String readFileIntoString(String path) throws FileNotFoundException {
+    static String readFileIntoString(String path) throws FileNotFoundException {
         String result;
 
         var in = ResourceManager.class.getResourceAsStream(path);
