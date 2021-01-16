@@ -8,13 +8,13 @@
 
 package de.sg.sgbrick.system;
 
-import de.sg.ogl.Input;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Listener;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
+import de.sg.ogl.input.KeyInput;
 import de.sg.sgbrick.event.GameOverEvent;
 import de.sg.sgbrick.event.UpdatePlayerEvent;
 import de.sg.sgbrick.component.BallComponent;
@@ -101,7 +101,7 @@ public class UpdateBallSystem extends Listener<UpdatePlayerEvent> implements Sys
         var ballComp = manager.getComponent(ball.id, BallComponent.class).orElseThrow();
 
         // release the ball from the paddle
-        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
             ballComp.setStuck(false);
         }
 

@@ -98,11 +98,6 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void input() {
-        gui.input();
-    }
-
-    @Override
-    public void update(float dt) {
         if (MouseInput.isMouseInWindow()) {
             if (MouseInput.isMouseButtonDoubleClicked(0)) {
                 Log.LOGGER.debug("double");
@@ -112,6 +107,13 @@ public class TestApp extends SgOglApplication {
         if (KeyInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
+
+        gui.input();
+    }
+
+    @Override
+    public void update(float dt) {
+
     }
 
     @Override

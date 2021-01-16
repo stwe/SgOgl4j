@@ -8,7 +8,8 @@
 
 package de.sg.ogl.camera;
 
-import de.sg.ogl.Input;
+import de.sg.ogl.input.KeyInput;
+import de.sg.ogl.input.MouseInput;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -117,34 +118,34 @@ public class FirstPersonCamera {
     }
 
     public void update(float dt) {
-        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_W)) {
             processKeyboard(Direction.FORWARD, dt);
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_S)) {
             processKeyboard(Direction.BACKWARD, dt);
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_A)) {
             processKeyboard(Direction.LEFT, dt);
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_D)) {
             processKeyboard(Direction.RIGHT, dt);
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_O)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_O)) {
             processKeyboard(Direction.UP, dt);
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_U)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_U)) {
             processKeyboard(Direction.DOWN, dt);
         }
 
         updateFront();
         updateRightAndUp();
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_I)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_I)) {
             LOGGER.info("Camera x: {}  y: {}  z: {}", position.x, position.y, position.z);
             LOGGER.info("Camera yaw: {}  pitch: {}", yaw, pitch);
         }
@@ -189,9 +190,9 @@ public class FirstPersonCamera {
     }
 
     private void processMouse() {
-        if (Input.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
-            yaw += Input.getDisplVec().x * mouseSensitivity;
-            pitch += Input.getDisplVec().y * mouseSensitivity;
+        if (MouseInput.isMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
+            yaw += MouseInput.getDx() * mouseSensitivity;
+            pitch += MouseInput.getDy() * mouseSensitivity;
         }
     }
 

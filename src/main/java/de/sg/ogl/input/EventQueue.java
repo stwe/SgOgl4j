@@ -10,15 +10,18 @@ package de.sg.ogl.input;
 
 import org.lwjgl.glfw.*;
 
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class EventQueue {
 
-    private final LinkedList<VisitableEvent> events = new LinkedList<>();
+    private final Queue<VisitableEvent> mouseMotionEvents = new ArrayDeque<>();
+    private final Queue<VisitableEvent> mouseButtonEvents = new ArrayDeque<>();
+    private final Queue<VisitableEvent> keyInputEvents = new ArrayDeque<>();
+
     private final CoreVisitor coreVisitor = new CoreVisitor();
 
     //-------------------------------------------------
@@ -34,20 +37,17 @@ public class EventQueue {
     //-------------------------------------------------
 
     public void input() {
-        update();
-    }
+        while (!keyInputEvents.isEmpty()) {
+            keyInputEvents.poll().accept(coreVisitor);
+        }
 
-    public void update() {
-        var event = retrieveOldestEvent();
-        event.ifPresent(this::visitAndRemoveOldestEvent);
-    }
+        while (!mouseMotionEvents.isEmpty()) {
+            mouseMotionEvents.poll().accept(coreVisitor);
+        }
 
-    //-------------------------------------------------
-    // Add
-    //-------------------------------------------------
-
-    private void addEvent(VisitableEvent event) {
-        events.add(event);
+        while (!mouseButtonEvents.isEmpty()) {
+            mouseButtonEvents.poll().accept(coreVisitor);
+        }
     }
 
     //-------------------------------------------------
@@ -81,7 +81,7 @@ public class EventQueue {
                 event.action = action;
                 event.mods = mods;
 
-                addEvent(event);
+                keyInputEvents.add(event);
             }
         };
 
@@ -95,7 +95,7 @@ public class EventQueue {
                 event.xPos = xpos;
                 event.yPos = ypos;
 
-                addEvent(event);
+                mouseMotionEvents.add(event);
             }
         };
 
@@ -115,7 +115,7 @@ public class EventQueue {
                 event.action = action;
                 event.mods = mods;
 
-                addEvent(event);
+                mouseButtonEvents.add(event);
             }
         };
 
@@ -129,7 +129,7 @@ public class EventQueue {
                 event.xPos = offsetx;
                 event.yPos = offsety;
 
-                addEvent(event);
+                mouseMotionEvents.add(event);
             }
         };
 
@@ -142,7 +142,7 @@ public class EventQueue {
                 event.windowHandle = window;
                 event.value = entered;
 
-                addEvent(event);
+                mouseMotionEvents.add(event);
             }
         };
 
@@ -151,18 +151,5 @@ public class EventQueue {
         GLFW.glfwSetMouseButtonCallback(windowHandle, mouseButtons);
         GLFW.glfwSetScrollCallback(windowHandle, mouseScroll);
         GLFW.glfwSetCursorEnterCallback(windowHandle, cursorEnter);
-    }
-
-    //-------------------------------------------------
-    // Helper
-    //-------------------------------------------------
-
-    private Optional<VisitableEvent> retrieveOldestEvent() {
-        return Optional.ofNullable(events.peek());
-    }
-
-    private void visitAndRemoveOldestEvent(VisitableEvent event) {
-        event.accept(coreVisitor);
-        events.remove();
     }
 }

@@ -8,12 +8,12 @@
 
 package de.sg.ogl.gui;
 
-import de.sg.ogl.Input;
 import de.sg.ogl.Log;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.event.GuiPanelAdapter;
 import de.sg.ogl.event.GuiPanelEvent;
+import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.physics.Aabb;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -106,10 +106,10 @@ public class Gui {
     //-------------------------------------------------
 
     public void input() {
-        if (Input.isMouseInWindow()) {
+        if (MouseInput.isMouseInWindow()) {
             for (var panel : guiPanels) {
                 if (isMouseIn(panel)) {
-                    if (Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
                         panel.onClick();
                     } else {
                         panel.onHover();
@@ -118,7 +118,7 @@ public class Gui {
                     for (var child : panel.getGuiObjects()) {
                         if (isMouseIn(child)) {
                             if (child instanceof GuiButton) {
-                                if (Input.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                                if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
                                     ((GuiButton) child).onClick();
                                 } else {
                                     ((GuiButton) child).onHover();
@@ -142,7 +142,7 @@ public class Gui {
     //-------------------------------------------------
 
     private static boolean isMouseIn(GuiObject guiObject) {
-        return Aabb.pointVsAabb(Input.getCurrentMouseXY(), guiObject.aabb);
+        return Aabb.pointVsAabb(MouseInput.getXY(), guiObject.aabb);
     }
 
     private Vector2f getPanelScreenPosition(GuiObject.Anchor anchor, float width, float height) {

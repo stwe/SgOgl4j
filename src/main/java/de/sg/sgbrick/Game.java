@@ -9,11 +9,11 @@
 package de.sg.sgbrick;
 
 import de.sg.ogl.SgOglApplication;
-import de.sg.ogl.Input;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.Settings;
 import de.sg.ogl.ecs.Signature;
+import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Mesh;
 import de.sg.ogl.resource.ResourceManager;
 import de.sg.ogl.resource.Texture;
@@ -140,7 +140,7 @@ public class Game extends SgOglApplication {
 
     @Override
     public void input() {
-        if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
     }

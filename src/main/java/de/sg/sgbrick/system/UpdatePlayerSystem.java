@@ -8,12 +8,12 @@
 
 package de.sg.sgbrick.system;
 
-import de.sg.ogl.Input;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.SgOglRuntimeException;
 import de.sg.ogl.ecs.Dispatcher;
 import de.sg.ogl.ecs.Manager;
 import de.sg.ogl.ecs.System;
+import de.sg.ogl.input.KeyInput;
 import de.sg.sgbrick.event.UpdatePlayerEvent;
 import de.sg.sgbrick.component.AabbComponent;
 import de.sg.sgbrick.component.PhysicsComponent;
@@ -65,7 +65,7 @@ public class UpdatePlayerSystem implements System {
         var velocity = physicsComp.getVelocity().x * dt;
 
         // move paddle left
-        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
             if (transformComp.getPosition().x >= 0.0f) {
                 transformComp.getPosition().x -= velocity;
 
@@ -80,7 +80,7 @@ public class UpdatePlayerSystem implements System {
         }
 
         // move paddle right
-        if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
             if (transformComp.getPosition().x <= engine.getWindow().getWidth() - transformComp.getSize().x) {
                 transformComp.getPosition().x += velocity;
 

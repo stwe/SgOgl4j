@@ -44,10 +44,6 @@ public class KeyInput {
     //-------------------------------------------------
 
     public static void input() {
-        update();
-    }
-
-    public static void update() {
         Arrays.fill(get().KEYS, false);
         Arrays.fill(get().KEY_STATES, -1);
     }

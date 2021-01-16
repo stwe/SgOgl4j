@@ -8,6 +8,7 @@
 
 package de.sg.ogl.input;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
@@ -56,10 +57,6 @@ public class MouseInput {
     //-------------------------------------------------
 
     public static void input() {
-        update();
-    }
-
-    public static void update() {
         get().previousMouseX = get().currentMouseX;
         get().previousMouseY = get().currentMouseY;
 
@@ -85,6 +82,10 @@ public class MouseInput {
 
     public static float getY() {
         return (float)get().currentMouseY;
+    }
+
+    public static Vector2f getXY() {
+        return new Vector2f(getX(), getY());
     }
 
     public static float getDx() {

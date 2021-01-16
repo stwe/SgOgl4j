@@ -8,7 +8,7 @@
 
 package de.sg.ogl.camera;
 
-import de.sg.ogl.Input;
+import de.sg.ogl.input.KeyInput;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -79,23 +79,23 @@ public class OrthographicCamera {
     //-------------------------------------------------
 
     public void update(float dt) {
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_W) || Input.isKeyPressed(GLFW_KEY_UP)) {
+        if (KeyInput.isKeyPressed(GLFW.GLFW_KEY_W) || KeyInput.isKeyPressed(GLFW_KEY_UP)) {
             processKeyboard(Direction.UP, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_S) || Input.isKeyPressed(GLFW_KEY_DOWN)) {
+        if (KeyInput.isKeyPressed(GLFW.GLFW_KEY_S) || KeyInput.isKeyPressed(GLFW_KEY_DOWN)) {
             processKeyboard(Direction.DOWN, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_A) || Input.isKeyPressed(GLFW_KEY_LEFT)) {
+        if (KeyInput.isKeyPressed(GLFW.GLFW_KEY_A) || KeyInput.isKeyPressed(GLFW_KEY_LEFT)) {
             processKeyboard(Direction.LEFT, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_D) || Input.isKeyPressed(GLFW_KEY_RIGHT)) {
+        if (KeyInput.isKeyPressed(GLFW.GLFW_KEY_D) || KeyInput.isKeyPressed(GLFW_KEY_RIGHT)) {
             processKeyboard(Direction.RIGHT, dt);
         }
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_I)) {
+        if (KeyInput.isKeyPressed(GLFW.GLFW_KEY_I)) {
             LOGGER.info("Camera x: {},  y: {}", position.x, position.y);
         }
     }

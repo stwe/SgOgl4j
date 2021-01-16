@@ -120,16 +120,16 @@ public class SgOglEngine implements Runnable {
     //-------------------------------------------------
 
     private void input() {
+        eventQueue.input();
+
         application.input();
+
+        MouseInput.input();
+        KeyInput.input();
     }
 
     private void update(float dt) {
-        eventQueue.update();
-
         application.update(dt);
-
-        MouseInput.update();
-        KeyInput.update();
     }
 
     private void render() {

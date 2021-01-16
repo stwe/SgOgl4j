@@ -9,8 +9,9 @@
 package de.sg.isomap;
 
 import de.sg.ogl.SgOglApplication;
-import de.sg.ogl.Input;
 import de.sg.ogl.Pixel;
+import de.sg.ogl.input.KeyInput;
+import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -45,6 +46,8 @@ public class Isomap extends SgOglApplication {
 
     private final int[] map = new int[worldSize.x * worldSize.y];
 
+    private Vector2i selected = new Vector2i();
+
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
@@ -78,7 +81,32 @@ public class Isomap extends SgOglApplication {
 
     @Override
     public void input() {
-        if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+        var mx = (int)MouseInput.getX();
+        var my = (int)MouseInput.getY();
+
+        var cell = new Vector2i(mx / tileSize.x, my / tileSize.y);
+        var offset = new Vector2i( mx % tileSize.x, my % tileSize.y);
+        var pixel = pixels[offset.y * tileSize.x + offset.x];
+
+        selected = getSelected(cell);
+        if (pixel.equals(Pixel.RED)) selected.x += -1;
+        if (pixel.equals(Pixel.BLUE)) selected.y += -1;
+        if (pixel.equals(Pixel.GREEN)) selected.y += 1;
+        if (pixel.equals(Pixel.YELLOW)) selected.x += 1;
+
+        if (MouseInput.isMouseButtonReleased(0)) {
+            if (selected.x >= 0 && selected.x < worldSize.x && selected.y >= 0 && selected.y < worldSize.y) {
+                map[selected.y * worldSize.x + selected.x]++;
+
+                if (map[selected.y * worldSize.x + selected.x] > 4) {
+                    map[selected.y * worldSize.x + selected.x] = 0;
+                }
+
+                System.out.println("Texture: " + map[selected.y * worldSize.x + selected.x]);
+            }
+        }
+
+        if (KeyInput.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
     }
@@ -91,33 +119,6 @@ public class Isomap extends SgOglApplication {
     @Override
     public void render() {
         renderer.prepareRendering();
-
-        var mx = (int)Input.getCurrentMouseX();
-        var my = (int)Input.getCurrentMouseY();
-
-        var cell = new Vector2i(mx / tileSize.x, my / tileSize.y);
-        var offset = new Vector2i( mx % tileSize.x, my % tileSize.y);
-        var pixel = pixels[offset.y * tileSize.x + offset.x];
-
-        var selected = getSelected(cell);
-        if (pixel.equals(Pixel.RED)) selected.x += -1;
-        if (pixel.equals(Pixel.BLUE)) selected.y += -1;
-        if (pixel.equals(Pixel.GREEN)) selected.y += 1;
-        if (pixel.equals(Pixel.YELLOW)) selected.x += 1;
-
-        if (Input.isMouseButtonReleased(0)) {
-            if (selected.x >= 0 && selected.x < worldSize.x && selected.y >= 0 && selected.y < worldSize.y) {
-                map[selected.y * worldSize.x + selected.x]++;
-
-                if (map[selected.y * worldSize.x + selected.x] > 4) {
-                    map[selected.y * worldSize.x + selected.x] = 0;
-                }
-
-                System.out.println("Texture: " + map[selected.y * worldSize.x + selected.x]);
-            }
-
-            Input.reset();
-        }
 
         for (int y = 0; y < worldSize.y; y++) {
             for (int x = 0; x < worldSize.x; x++) {
