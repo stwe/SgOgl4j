@@ -9,6 +9,8 @@
 package de.sg.ogl.resource;
 
 import de.sg.ogl.buffer.BufferLayout;
+import de.sg.ogl.buffer.Vertex2D;
+import org.joml.Vector2f;
 
 public class Geometry {
 
@@ -21,6 +23,10 @@ public class Geometry {
     public int drawCount;
     public BufferLayout defaultBufferLayout;
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public Geometry(GeometryId id, float[] vertices, int drawCount, BufferLayout bufferLayout) {
         this.id = id;
         this.vertices = vertices;
@@ -28,15 +34,12 @@ public class Geometry {
         this.defaultBufferLayout = bufferLayout;
     }
 
-    /*
-    public VerticesResource loadVerticesResource(VerticesResourceId verticesResourceId) {
-        return verticesResources.get(verticesResourceId);
-    }
+    //-------------------------------------------------
+    // Vertices
+    //-------------------------------------------------
 
-    private void addQuadVertices2DResource() {
-        LOGGER.debug("Add vertices for a 2D quad.");
-
-        var vertices = new Vertex2D[] {
+    static Vertex2D[] getQuad2DVertices() {
+        return new Vertex2D[] {
                 new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
                 new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
                 new Vertex2D(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f)),
@@ -45,16 +48,5 @@ public class Geometry {
                 new Vertex2D(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f)),
                 new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f))
         };
-
-        verticesResources.put(
-                VerticesResourceId.QUAD_2D,
-                new VerticesResource(
-                        VerticesResourceId.QUAD_2D,
-                        Vertex2D.toFloatArray(vertices),
-                        vertices.length,
-                        Vertex2D.BUFFER_LAYOUT_2D
-                )
-        );
     }
-    */
 }

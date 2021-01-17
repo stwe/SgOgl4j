@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -13,7 +13,6 @@ import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import static de.sg.ogl.Log.LOGGER;
-import static de.sg.ogl.resource.ResourceManager.readFileIntoString;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
@@ -25,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Shader implements Resource {
 
@@ -239,6 +239,21 @@ public class Shader implements Resource {
     //-------------------------------------------------
     // Helper
     //-------------------------------------------------
+
+    private static String readFileIntoString(String path) throws FileNotFoundException {
+        String result;
+
+        var in = ResourceManager.class.getResourceAsStream(path);
+        if (in == null) {
+            throw new FileNotFoundException("Resource " + path + " not found.");
+        }
+
+        try (Scanner scanner = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())) {
+            result = scanner.useDelimiter("\\A").next();
+        }
+
+        return result;
+    }
 
     private void addVertexShader(String shaderCode) {
         LOGGER.debug("A Vertex Shader is added to program {}.", id);

@@ -9,19 +9,19 @@
 package de.sg.ogl.resource;
 
 import de.sg.ogl.SgOglRuntimeException;
+import de.sg.ogl.buffer.Vertex2D;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.Scanner;
 
 import static de.sg.ogl.Log.LOGGER;
 
 public class ResourceManager {
 
     private final HashMap<String, Resource> resources = new HashMap<>();
+    private final HashMap<Geometry.GeometryId, Geometry> geometry = new HashMap<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -29,6 +29,7 @@ public class ResourceManager {
 
     public ResourceManager() {
         LOGGER.debug("Creates ResourceManager object.");
+        initGeometry();
     }
 
     //-------------------------------------------------
@@ -56,6 +57,27 @@ public class ResourceManager {
         }
 
         return resourceType.cast(resources.get(path));
+    }
+
+    public Geometry loadGeometry(Geometry.GeometryId id) {
+        if (geometry.containsKey(id)) {
+            return geometry.get(id);
+        }
+
+        throw new SgOglRuntimeException("Unexpected error. Geometry doesn't exist.");
+    }
+
+    private void initGeometry() {
+        LOGGER.debug("Add 2D Quad vertices.");
+        geometry.put(
+                Geometry.GeometryId.QUAD_2D,
+                new Geometry(
+                        Geometry.GeometryId.QUAD_2D,
+                        Vertex2D.toFloatArray(Geometry.getQuad2DVertices()),
+                        Geometry.getQuad2DVertices().length,
+                        Vertex2D.BUFFER_LAYOUT_2D
+                )
+        );
     }
 
     //-------------------------------------------------
@@ -95,25 +117,6 @@ public class ResourceManager {
         shader.load();
 
         resources.put(path, shader);
-    }
-
-    //-------------------------------------------------
-    // Util
-    //-------------------------------------------------
-
-    static String readFileIntoString(String path) throws FileNotFoundException {
-        String result;
-
-        var in = ResourceManager.class.getResourceAsStream(path);
-        if (in == null) {
-            throw new FileNotFoundException("Resource " + path + " not found.");
-        }
-
-        try (Scanner scanner = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())) {
-            result = scanner.useDelimiter("\\A").next();
-        }
-
-        return result;
     }
 
     //-------------------------------------------------
