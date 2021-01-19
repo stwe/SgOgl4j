@@ -19,7 +19,8 @@ public class Geometry {
     }
 
     public GeometryId id;
-    public float[] vertices;
+    public Vertex2D[] vertices;
+    public float[] floats;
     public int drawCount;
     public BufferLayout defaultBufferLayout;
 
@@ -27,9 +28,10 @@ public class Geometry {
     // Ctors.
     //-------------------------------------------------
 
-    public Geometry(GeometryId id, float[] vertices, int drawCount, BufferLayout bufferLayout) {
+    public Geometry(GeometryId id, Vertex2D[] vertices, int drawCount, BufferLayout bufferLayout) {
         this.id = id;
         this.vertices = vertices;
+        this.floats = Vertex2D.toFloatArray(vertices);
         this.drawCount = drawCount;
         this.defaultBufferLayout = bufferLayout;
     }
@@ -40,13 +42,13 @@ public class Geometry {
 
     static Vertex2D[] getQuad2DVertices() {
         return new Vertex2D[] {
-                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
+                new Vertex2D(new Vector2f(0.0f, 100.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(100.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
                 new Vertex2D(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f)),
 
-                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f)),
-                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f))
+                new Vertex2D(new Vector2f(0.0f, 100.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(100.0f, 100.0f), new Vector2f(1.0f, 1.0f)),
+                new Vertex2D(new Vector2f(100.0f, 0.0f), new Vector2f(1.0f, 0.0f))
         };
     }
 }

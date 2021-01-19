@@ -14,6 +14,7 @@ import de.sg.ogl.buffer.Vertex2D;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.sg.ogl.Log.LOGGER;
@@ -37,6 +38,8 @@ public class ResourceManager {
     //-------------------------------------------------
 
     public <T extends Resource> T loadResource(Class<T> resourceType, String path, Object... args) throws Exception {
+        Objects.requireNonNull(path, "path must not be null");
+
         var resource = Optional.ofNullable(resourceType.cast(resources.get(path)));
         if (resource.isPresent()) {
             LOGGER.debug("The resource {} was already loaded.", path);
@@ -73,7 +76,7 @@ public class ResourceManager {
                 Geometry.GeometryId.QUAD_2D,
                 new Geometry(
                         Geometry.GeometryId.QUAD_2D,
-                        Vertex2D.toFloatArray(Geometry.getQuad2DVertices()),
+                        Geometry.getQuad2DVertices(),
                         Geometry.getQuad2DVertices().length,
                         Vertex2D.BUFFER_LAYOUT_2D
                 )

@@ -8,12 +8,14 @@
 
 package de.sg.test;
 
+import de.sg.ogl.Color;
 import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.Log;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.input.MouseInput;
-import de.sg.ogl.resource.Shader;
-import de.sg.ogl.resource.Texture;
+import de.sg.ogl.renderer.BatchRenderer;
+import de.sg.ogl.renderer.Sprite;
+import org.joml.Vector2f;
 
 import java.io.IOException;
 
@@ -22,17 +24,25 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends SgOglApplication {
 
+    BatchRenderer batchRenderer;
+
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        var texture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/gui.png", true);
-        var shader = getEngine().getResourceManager().loadResource(
-                Shader.class,
-                "sprite"
-        );
-        int i = 0;
+        batchRenderer = new BatchRenderer(getEngine(), 10);
+
+        var sprite0 = new Sprite();
+        sprite0.position = new Vector2f(100.0f, 100.0f);
+        sprite0.color = Color.BLUE;
+
+        var sprite1 = new Sprite();
+        sprite1.position = new Vector2f(400.0f, 100.0f);
+        sprite1.color = Color.YELLOW;
+
+        batchRenderer.addQuad(sprite0);
+        batchRenderer.addQuad(sprite1);
     }
 
     @Override
@@ -55,7 +65,7 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void render() {
-
+        batchRenderer.render();
     }
 
     @Override
@@ -65,6 +75,6 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void cleanUp() {
-
+        batchRenderer.cleanUp();
     }
 }

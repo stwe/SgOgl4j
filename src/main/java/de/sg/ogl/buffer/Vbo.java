@@ -85,6 +85,18 @@ public final class Vbo {
     }
 
     //-------------------------------------------------
+    // Buffer layout
+    //-------------------------------------------------
+
+    public static void setBufferLayout(int vboId, BufferLayout bufferLayout) {
+        bindVbo(vboId);
+
+        bufferLayout.createBufferLayout();
+
+        unbindVbo();
+    }
+
+    //-------------------------------------------------
     // Store data
     //-------------------------------------------------
 
