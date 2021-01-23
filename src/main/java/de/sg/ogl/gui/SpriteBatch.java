@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import static de.sg.ogl.Log.LOGGER;
-import static de.sg.ogl.buffer.Vbo.*;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -33,7 +32,7 @@ public class SpriteBatch {
     private final Shader shader;
 
     private final Vao vao = new Vao();
-    private int vboId;
+    private Vbo vbo;
 
     private Glyph.GlyphSortType glyphSortType = Glyph.GlyphSortType.TEXTURE;
     private final ArrayList<Glyph> glyphs = new ArrayList<>();
@@ -97,7 +96,7 @@ public class SpriteBatch {
         OpenGL.disableBlending();
 
         Shader.unbind();
-        Vao.unbind();
+        vao.unbind();
     }
 
     //-------------------------------------------------
@@ -109,20 +108,13 @@ public class SpriteBatch {
         vao.bind();
 
         // create a new Vbo
-        vboId = createVbo();
+        vbo = vao.addVbo();
 
-        // store Vbo Id
-        vao.getVbos().add(vboId);
+        // set Vertex2D buffer layout
+        vbo.setBufferLayout(Vertex2D.BUFFER_LAYOUT_2D);
 
-        // bind the new Vbo
-        bindVbo(vboId);
-
-        // set buffer layout
-        Vertex2D.BUFFER_LAYOUT_2D.createBufferLayout();
-
-        // unbind buffers
-        unbindVbo();
-        Vao.unbind();
+        // unbind Vao
+        vao.unbind();
     }
 
     private void sortGlyphsByType() {
@@ -193,7 +185,7 @@ public class SpriteBatch {
     }
 
     private void storeData(float[] floats) {
-        Vbo.initEmpty(vboId, floats.length, Float.BYTES, GL_DYNAMIC_DRAW);
-        Vbo.storeData(vboId, floats);
+        vbo.initEmpty(floats.length, Float.BYTES, GL_DYNAMIC_DRAW);
+        vbo.storeData(floats);
     }
 }

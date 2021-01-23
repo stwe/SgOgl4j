@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -16,15 +16,16 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static de.sg.ogl.Log.LOGGER;
-import static de.sg.ogl.buffer.Vbo.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
-public final class Vao {
+public class Vao implements Buffer {
 
-    private final int vaoId;
-    private final ArrayList<Integer> vbos;
-    private int eboId;
+    private int id;
+
+    private final ArrayList<Vbo> vbos;
+    private Ebo ebo;
+
     private int drawCount;
 
     //-------------------------------------------------
@@ -34,24 +35,22 @@ public final class Vao {
     public Vao() {
         LOGGER.debug("Creates Vao object.");
 
-        vaoId = createVao();
+        create();
+
         vbos = new ArrayList<>();
+        ebo = null;
     }
 
     //-------------------------------------------------
     // Getter
     //-------------------------------------------------
 
-    public int getVaoId() {
-        return vaoId;
-    }
-
-    public ArrayList<Integer> getVbos() {
+    public ArrayList<Vbo> getVbos() {
         return vbos;
     }
 
-    public int getEboId() {
-        return eboId;
+    public Ebo getEbo() {
+        return ebo;
     }
 
     public int getDrawCount() {
@@ -59,7 +58,7 @@ public final class Vao {
     }
 
     public boolean hasIndexBuffer() {
-        return eboId != 0;
+        return ebo != null;
     }
 
     //-------------------------------------------------
@@ -71,33 +70,80 @@ public final class Vao {
     }
 
     //-------------------------------------------------
-    // Bind / Unbind
+    // Implement Buffer
     //-------------------------------------------------
 
-    public void bind() {
-        glBindVertexArray(vaoId);
+    @Override
+    public int getId() {
+        return id;
     }
 
-    public static void unbind() {
+    @Override
+    public void create() {
+        id = glGenVertexArrays();
+        if (id == 0) {
+            throw new SgOglRuntimeException("Vao creation has failed.");
+        }
+
+        LOGGER.debug("A new Vao was created. The Id is {}.", id);
+    }
+
+    @Override
+    public void delete() {
+        if (id > 0) {
+            glDeleteVertexArrays(id);
+            LOGGER.debug("Vao {} was deleted.", id);
+        }
+    }
+
+    @Override
+    public void bind() {
+        glBindVertexArray(id);
+    }
+
+    @Override
+    public void unbind() {
         glBindVertexArray(0);
     }
 
+    @Override
+    public void cleanUp() {
+        LOGGER.debug("Clean up Vao.");
+
+        glDisableVertexAttribArray(0);
+
+        for (var vbo : vbos) {
+            vbo.cleanUp();
+        }
+
+        if (hasIndexBuffer()) {
+            ebo.cleanUp();
+        }
+
+        unbind();
+        delete();
+    }
+
     //-------------------------------------------------
-    // Add data
+    // Add Vbo
     //-------------------------------------------------
 
-    public void addVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
+    public Vbo addVbo() {
+        var vbo = new Vbo();
+        vbos.add(vbo);
+
+        return vbo;
+    }
+
+    public Vbo addVbo(float[] vertices, int drawCount, BufferLayout bufferLayout) {
         // bind this Vao
         bind();
 
         // create a new Vbo
-        var vboId = createVbo();
-
-        // store Vbo Id
-        vbos.add(vboId);
+        var vbo = addVbo();
 
         // bind the new Vbo
-        bindVbo(vboId);
+        vbo.bind();
 
         // store vertices
         FloatBuffer verticesBuffer = null;
@@ -115,33 +161,41 @@ public final class Vao {
             }
         }
 
-        // unbind buffers
-        unbindVbo();
+        // unbind Vbo
+        vbo.unbind();
+
+        // unbind Vao
         unbind();
 
         // set draw count - where 0 is a valid value
         if (drawCount >= 0) {
             setDrawCount(drawCount);
         }
+
+        return vbo;
     }
 
-    public void addVbo(float[] vertices, BufferLayout bufferLayout) {
-        addVbo(vertices, -1, bufferLayout);
+    public Vbo addVbo(float[] vertices, BufferLayout bufferLayout) {
+        return addVbo(vertices, -1, bufferLayout);
     }
 
-    public void addVbo(Vertex2D[] vertices, int drawCount, BufferLayout bufferLayout) {
-        addVbo(Vertex2D.toFloatArray(vertices), drawCount, bufferLayout);
+    public Vbo addVbo(Vertex2D[] vertices, int drawCount, BufferLayout bufferLayout) {
+        return addVbo(Vertex2D.toFloatArray(vertices), drawCount, bufferLayout);
     }
 
-    public void addIndexBuffer(int[] indices) {
+    //-------------------------------------------------
+    // Add Ebo
+    //-------------------------------------------------
+
+    public Ebo addIndexBuffer(int[] indices) {
         // bind this Vao
         bind();
 
         // create a new Ebo
-        eboId = createEbo();
+        ebo = new Ebo();
 
         // bind the new Ebo
-        bindEbo(eboId);
+        ebo.bind();
 
         // store indices
         IntBuffer indicesBuffer = null;
@@ -156,11 +210,16 @@ public final class Vao {
             }
         }
 
+        // unbind Ebo
+        ebo.unbind();
+
         // unbind Vao
         unbind();
 
         // override draw count
         setDrawCount(indices.length);
+
+        return ebo;
     }
 
     //-------------------------------------------------
@@ -177,52 +236,5 @@ public final class Vao {
 
     public void drawPrimitives(int drawMode) {
         drawPrimitives(drawMode, 0);
-    }
-
-    //-------------------------------------------------
-    // Live and let die
-    //-------------------------------------------------
-
-    private static int createVao() {
-        var id = glGenVertexArrays();
-        if (id == 0) {
-            throw new SgOglRuntimeException("Vao creation has failed.");
-        }
-
-        LOGGER.debug("A new Vao was created. The Id is {}.", id);
-
-        return id;
-    }
-
-    private void deleteVao() {
-        if (vaoId > 0) {
-            glDeleteVertexArrays(vaoId);
-            LOGGER.debug("Vao {} was deleted.", vaoId);
-        }
-    }
-
-    //-------------------------------------------------
-    // Clean up
-    //-------------------------------------------------
-
-    public void cleanUp() {
-        LOGGER.debug("Clean up Vao.");
-
-        glDisableVertexAttribArray(0);
-
-        // delete Vbos
-        unbindVbo();
-        for (var vboId : vbos) {
-            deleteVbo(vboId);
-        }
-
-        // delete Vbo / IndexBuffer
-        if (hasIndexBuffer()) {
-            deleteEbo(eboId);
-        }
-
-        // delete Vao
-        unbind();
-        deleteVao();
     }
 }

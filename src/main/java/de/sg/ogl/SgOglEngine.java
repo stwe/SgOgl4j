@@ -76,7 +76,7 @@ public class SgOglEngine implements Runnable {
 
         try {
             this.init();
-            this.loop();
+            this.renderingLoop();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -139,6 +139,7 @@ public class SgOglEngine implements Runnable {
     }
 
     private void startFrame() {
+        OpenGL.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         OpenGL.clear();
     }
 
@@ -169,14 +170,9 @@ public class SgOglEngine implements Runnable {
     // Loop
     //-------------------------------------------------
 
-    private void loop() {
+    private void renderingLoop() {
         LOGGER.debug("Starting the main loop.");
 
-        OpenGL.setClearColor(Color.CORNFLOWER_BLUE);
-        renderingLoop();
-    }
-
-    private void renderingLoop() {
         var lastTime = System.nanoTime();
         var timer = System.currentTimeMillis();
         final var frameTime = 1000000000.0 / Config.FPS;

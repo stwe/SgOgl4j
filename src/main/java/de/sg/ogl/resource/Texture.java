@@ -52,7 +52,7 @@ public class Texture implements Resource {
         this(path, false);
     }
 
-    Texture() {
+    public Texture() {
         id = generateNewTextureId();
     }
 

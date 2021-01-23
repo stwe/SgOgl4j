@@ -76,7 +76,7 @@ public class Mesh {
     }
 
     public void endDraw() {
-        Vao.unbind();
+        vao.unbind();
     }
 
     //-------------------------------------------------

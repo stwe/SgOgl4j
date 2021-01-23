@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -12,119 +12,114 @@ import de.sg.ogl.SgOglRuntimeException;
 
 import static de.sg.ogl.Log.LOGGER;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
-public final class Vbo {
+public class Vbo implements Buffer {
+
+    private int id;
 
     //-------------------------------------------------
-    // Live and let die
+    // Ctors.
     //-------------------------------------------------
 
-    public static int createVbo() {
-        var id = glGenBuffers();
+    public Vbo() {
+        LOGGER.debug("Creates Vbo object.");
+
+        create();
+    }
+
+    //-------------------------------------------------
+    // Implement Buffer
+    //-------------------------------------------------
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void create() {
+        id = glGenBuffers();
         if (id == 0) {
             throw new SgOglRuntimeException("Vbo creation has failed.");
         }
 
         LOGGER.debug("A new Vbo was created. The Id is {}.", id);
-
-        return id;
     }
 
-    public static int createEbo() {
-        return createVbo();
-    }
-
-    public static void deleteVbo(int vboId) {
-        if (vboId > 0) {
-            glDeleteBuffers(vboId);
-            LOGGER.debug("Vbo {} was deleted.", vboId);
+    @Override
+    public void delete() {
+        if (id > 0) {
+            glDeleteBuffers(id);
+            LOGGER.debug("Vbo {} was deleted.", id);
         }
     }
 
-    public static void deleteEbo(int eboId) {
-        deleteVbo(eboId);
+    @Override
+    public void bind() {
+        glBindBuffer(GL_ARRAY_BUFFER, id);
     }
 
-    //-------------------------------------------------
-    // Bind / Unbind
-    //-------------------------------------------------
-
-    public static void bindVbo(int vboId, int target) {
-        glBindBuffer(target, vboId);
+    @Override
+    public void unbind() {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public static void bindVbo(int vboId) {
-        bindVbo(vboId, GL_ARRAY_BUFFER);
-    }
+    @Override
+    public void cleanUp() {
+        LOGGER.debug("Clean up Vbo.");
 
-    public static void bindEbo(int eboId) {
-        bindVbo(eboId, GL_ELEMENT_ARRAY_BUFFER);
-    }
-
-    public static void unbindVbo(int target) {
-        glBindBuffer(target, 0);
-    }
-
-    public static void unbindVbo() {
-        unbindVbo(GL_ARRAY_BUFFER);
+        unbind();
+        delete();
     }
 
     //-------------------------------------------------
     // Init
     //-------------------------------------------------
 
-    public static void initEmpty(int vboId, int elementCount, int elementSizeInBytes, int usage) {
-        bindVbo(vboId);
-
+    public void initEmpty(int elementCount, int elementSizeInBytes, int usage) {
+        bind();
         glBufferData(GL_ARRAY_BUFFER, (long)elementCount * elementSizeInBytes, usage);
-
-        unbindVbo();
+        unbind();
     }
 
     //-------------------------------------------------
     // Buffer layout
     //-------------------------------------------------
 
-    public static void setBufferLayout(int vboId, BufferLayout bufferLayout) {
-        bindVbo(vboId);
-
+    public void setBufferLayout(BufferLayout bufferLayout) {
+        bind();
         bufferLayout.createBufferLayout();
-
-        unbindVbo();
+        unbind();
     }
 
     //-------------------------------------------------
     // Store data
     //-------------------------------------------------
 
-    public static void storeData(int vboId, int offset, float[] data) {
-        bindVbo(vboId);
-
+    public void storeData(int offset, float[] data) {
+        bind();
         glBufferSubData(GL_ARRAY_BUFFER, offset, data);
-
-        unbindVbo();
+        unbind();
     }
 
-    public static void storeData(int vboId, float[] data) {
-        storeData(vboId, 0, data);
+    public void storeData(float[] data) {
+        storeData(0, data);
     }
 
     //-------------------------------------------------
     // Attributes
     //-------------------------------------------------
 
-    public static void addFloatAttribute(
-            int vboId,
+    public void addFloatAttribute(
             int index,
             int nrOfFloatComponents,
             int nrOfAllFloats,
             int startPoint,
             boolean instancedRendering
     ) {
-        bindVbo(vboId);
+        bind();
 
         glEnableVertexAttribArray(index);
         glVertexAttribPointer(
@@ -140,22 +135,15 @@ public final class Vbo {
             glVertexAttribDivisor(index, 1);
         }
 
-        unbindVbo();
+        unbind();
     }
 
-    public static void addFloatAttribute(
-            int vboId,
+    public void addFloatAttribute(
             int index,
             int nrOfFloatComponents,
             int nrOfAllFloats,
             int startPoint
     ) {
-        addFloatAttribute(vboId, index, nrOfFloatComponents, nrOfAllFloats, startPoint, false);
+        addFloatAttribute(index, nrOfFloatComponents, nrOfAllFloats, startPoint, false);
     }
-
-    //-------------------------------------------------
-    // Ctors.
-    //-------------------------------------------------
-
-    private Vbo() {}
 }

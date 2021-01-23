@@ -149,8 +149,10 @@ public class TextRenderer {
 
             updateUniforms();
 
+            // todo
+
             // upload the new vertex data
-            Vbo.bindVbo(vboId);
+            //Vbo.bindVbo(vboId);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
 
@@ -164,7 +166,7 @@ public class TextRenderer {
             numVertices = 0;
 
             Shader.unbind();
-            Vao.unbind();
+            vao.unbind();
         }
     }
 
@@ -183,6 +185,7 @@ public class TextRenderer {
         vao = new Vao();
         vao.bind();
 
+        /*
         vboId = Vbo.createVbo();
         Vbo.initEmpty(vboId, NR_OF_FLOATS, Float.BYTES, GL_DYNAMIC_DRAW);
 
@@ -198,5 +201,6 @@ public class TextRenderer {
         Vbo.addFloatAttribute(vboId, 2, 2, nrOfAllFloats, 6);
 
         Vao.unbind();
+         */
     }
 }

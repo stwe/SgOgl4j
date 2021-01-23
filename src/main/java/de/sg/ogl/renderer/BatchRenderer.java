@@ -20,7 +20,6 @@ import org.joml.Vector4f;
 import java.util.Objects;
 
 import static de.sg.ogl.Log.LOGGER;
-import static de.sg.ogl.buffer.Vbo.*;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 
@@ -45,7 +44,7 @@ public class BatchRenderer {
     private final Sprite[] quads;
 
     private final Vao vao;
-    private int vboId;
+    private Vbo vbo;
 
     //-------------------------------------------------
     // Ctors.
@@ -102,7 +101,7 @@ public class BatchRenderer {
     }
 
     private void storeData() {
-        Vbo.storeData(vboId, floats);
+        vbo.storeData(floats);
     }
 
     //-------------------------------------------------
@@ -121,7 +120,7 @@ public class BatchRenderer {
         vao.drawPrimitives(GL_TRIANGLES);
 
         Shader.unbind();
-        Vao.unbind();
+        vao.unbind();
     }
 
     //-------------------------------------------------
@@ -133,19 +132,16 @@ public class BatchRenderer {
         vao.bind();
 
         // create a new Vbo
-        vboId = createVbo();
-
-        // store Vbo Id
-        vao.getVbos().add(vboId);
+        vbo = vao.addVbo();
 
         // set Vertex2D buffer layout
-        Vbo.setBufferLayout(vboId, Vertex2D.BUFFER_LAYOUT_2D);
+        vbo.setBufferLayout(Vertex2D.BUFFER_LAYOUT_2D);
 
         // allocate space for all floats
-        Vbo.initEmpty(vboId, maxFloats, Float.BYTES, GL_DYNAMIC_DRAW);
+        vbo.initEmpty(maxFloats, Float.BYTES, GL_DYNAMIC_DRAW);
 
         // unbind Vao
-        Vao.unbind();
+        vao.unbind();
     }
 
     //-------------------------------------------------

@@ -9,10 +9,12 @@
 package de.sg.test;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.Log;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.input.MouseInput;
+import de.sg.ogl.input.MousePickingTexture;
 import de.sg.ogl.renderer.BatchRenderer;
 import de.sg.ogl.renderer.Sprite;
 import org.joml.Vector2f;
@@ -25,6 +27,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class TestApp extends SgOglApplication {
 
     BatchRenderer batchRenderer;
+    MousePickingTexture mousePickingTexture;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
@@ -35,7 +38,7 @@ public class TestApp extends SgOglApplication {
 
         var sprite0 = new Sprite();
         sprite0.position = new Vector2f(100.0f, 100.0f);
-        sprite0.color = Color.BLUE;
+        sprite0.color = Color.RED;
 
         var sprite1 = new Sprite();
         sprite1.position = new Vector2f(400.0f, 100.0f);
@@ -43,15 +46,21 @@ public class TestApp extends SgOglApplication {
 
         batchRenderer.addQuad(sprite0);
         batchRenderer.addQuad(sprite1);
+
+        mousePickingTexture = new MousePickingTexture(getEngine(), 800, 600);
     }
 
     @Override
     public void input() {
+        /*
         if (MouseInput.isMouseInWindow()) {
-            if (MouseInput.isMouseButtonDoubleClicked(0)) {
-                Log.LOGGER.debug("double");
+            if (MouseInput.isMouseButtonDown(0)) {
+                Log.LOGGER.debug("pixel: {}", mousePickingTexture.readPixel(
+                        (int)MouseInput.getX(), (int)MouseInput.getY()
+                ));
             }
         }
+        */
 
         if (KeyInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
@@ -65,6 +74,18 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void render() {
+        mousePickingTexture.startFrame();
+        batchRenderer.render();
+        var res = mousePickingTexture.readPixel(
+                (int)MouseInput.getX(), 600 - (int)MouseInput.getY()
+        );
+        if (res >= 0)
+            Log.LOGGER.debug("pixel: {}", res);
+
+        mousePickingTexture.endFrame();
+
+        OpenGL.setClearColor(Color.CORNFLOWER_BLUE);
+        OpenGL.clear();
         batchRenderer.render();
     }
 
@@ -76,5 +97,6 @@ public class TestApp extends SgOglApplication {
     @Override
     public void cleanUp() {
         batchRenderer.cleanUp();
+        mousePickingTexture.cleanUp();
     }
 }
