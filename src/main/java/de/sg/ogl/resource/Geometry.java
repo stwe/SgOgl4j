@@ -42,13 +42,13 @@ public class Geometry {
 
     static Vertex2D[] getQuad2DVertices() {
         return new Vertex2D[] {
-                new Vertex2D(new Vector2f(0.0f, 100.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(100.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
+                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f)),
                 new Vertex2D(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f)),
 
-                new Vertex2D(new Vector2f(0.0f, 100.0f), new Vector2f(0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(100.0f, 100.0f), new Vector2f(1.0f, 1.0f)),
-                new Vertex2D(new Vector2f(100.0f, 0.0f), new Vector2f(1.0f, 0.0f))
+                new Vertex2D(new Vector2f(0.0f, 1.0f), new Vector2f(0.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f)),
+                new Vertex2D(new Vector2f(1.0f, 0.0f), new Vector2f(1.0f, 0.0f))
         };
     }
 }
