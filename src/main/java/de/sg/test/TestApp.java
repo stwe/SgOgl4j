@@ -8,15 +8,11 @@
 
 package de.sg.test;
 
-import de.sg.ogl.Color;
-import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
-import de.sg.ogl.Log;
+import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.GuiObject;
 import de.sg.ogl.input.KeyInput;
-import de.sg.ogl.input.MouseInput;
-import de.sg.ogl.input.MousePickingTexture;
-import de.sg.ogl.renderer.BatchRenderer;
-import de.sg.ogl.renderer.Sprite;
+import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
 
 import java.io.IOException;
@@ -26,45 +22,52 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestApp extends SgOglApplication {
 
-    BatchRenderer batchRenderer;
-    MousePickingTexture mousePickingTexture;
+    private Gui gui;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
 
     @Override
     public void init() throws Exception {
-        batchRenderer = new BatchRenderer(getEngine(), 10);
+        var panelTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/gui.png");
+        var buttonTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/sgbrick/paddle.png");
 
-        var sprite0 = new Sprite();
-        sprite0.position = new Vector2f(100.0f, 100.0f);
-        sprite0.color = Color.RED;
+        // gui
+        gui = new Gui(getEngine());
 
-        var sprite1 = new Sprite();
-        sprite1.position = new Vector2f(400.0f, 100.0f);
-        sprite1.color = Color.YELLOW;
+        // panels
+        var panel0 = gui.addPanel(GuiObject.Anchor.BOTTOM_LEFT, new Vector2f(10.0f, -10.0f), 100.0f, 200.0f,"panel0", panelTexture.getId());
+        var panel1 = gui.addPanel(GuiObject.Anchor.TOP_RIGHT, new Vector2f(-10.0f, 10.0f), 100.0f, 200.0f, "panel1", panelTexture.getId());
 
-        batchRenderer.addQuad(sprite0);
-        batchRenderer.addQuad(sprite1);
+        // buttons
+        var button0 = panel0.addButton(
+                GuiObject.Anchor.TOP_RIGHT,
+                new Vector2f(0.0f, 0.0f),
+                64.0f, 20.0f,
+                "test0",
+                buttonTexture.getId()
+        );
 
-        mousePickingTexture = new MousePickingTexture(getEngine(), 800, 600);
+        var button1 = panel0.addButton(
+                GuiObject.Anchor.BOTTOM_LEFT,
+                new Vector2f(0.0f, 0.0f),
+                64.0f, 20.0f,
+                "test1",
+                buttonTexture.getId()
+        );
+
+        // init gui renderer
+        gui.initRender();
+
     }
 
     @Override
     public void input() {
-        /*
-        if (MouseInput.isMouseInWindow()) {
-            if (MouseInput.isMouseButtonDown(0)) {
-                Log.LOGGER.debug("pixel: {}", mousePickingTexture.readPixel(
-                        (int)MouseInput.getX(), (int)MouseInput.getY()
-                ));
-            }
-        }
-        */
-
         if (KeyInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(getEngine().getWindow().getWindowHandle(), true);
         }
+
+        gui.input();
     }
 
     @Override
@@ -74,19 +77,7 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void render() {
-        mousePickingTexture.startFrame();
-        batchRenderer.render();
-        var res = mousePickingTexture.readPixel(
-                (int)MouseInput.getX(), 600 - (int)MouseInput.getY()
-        );
-        if (res >= 0)
-            Log.LOGGER.debug("pixel: {}", res);
-
-        mousePickingTexture.endFrame();
-
-        OpenGL.setClearColor(Color.CORNFLOWER_BLUE);
-        OpenGL.clear();
-        batchRenderer.render();
+        gui.render();
     }
 
     @Override
@@ -96,7 +87,5 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void cleanUp() {
-        batchRenderer.cleanUp();
-        mousePickingTexture.cleanUp();
     }
 }

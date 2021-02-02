@@ -20,9 +20,9 @@ import java.util.Vector;
 public class GuiButton extends GuiObject {
 
     /**
-     * The default color of each Button (green).
+     * The default color of each Button (white).
      */
-    private static final Vector3f DEFAULT_COLOR = new Vector3f(0.0f, 1.0f, 0.0f);
+    private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
 
     /**
      * Callback functions.
