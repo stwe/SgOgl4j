@@ -74,6 +74,14 @@ public final class OpenGL {
         glDisable(GL_BLEND);
     }
 
+    public static void enableDepthTesting() {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    public static void disableDepthTesting() {
+        glDisable(GL_DEPTH_TEST);
+    }
+
     public static void enableFaceCulling() {
         // On a freshly created OpenGL Context, the default front face is GL_CCW.
         // All the faces that are not front-faces are discarded.

@@ -51,11 +51,9 @@ public class BatchRenderer {
     //-------------------------------------------------
 
     public BatchRenderer(SgOglEngine engine, int maxQuads) throws Exception {
-        Objects.requireNonNull(engine, "engine must not be null");
-
         LOGGER.debug("Creates BatchRenderer object.");
 
-        this.engine = engine;
+        this.engine = Objects.requireNonNull(engine, "engine must not be null");
         this.maxQuads = maxQuads;
 
         this.quadGeometry = engine.getResourceManager().loadGeometry(Geometry.GeometryId.QUAD_2D);

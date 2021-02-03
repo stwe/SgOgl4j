@@ -1,7 +1,7 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
@@ -15,10 +15,12 @@ import de.sg.ogl.event.GuiPanelAdapter;
 import de.sg.ogl.event.GuiPanelEvent;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.physics.Aabb;
+import de.sg.ogl.renderer.TileRenderer;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -29,13 +31,16 @@ public class Gui {
     private final SpriteBatch spriteBatch;
     private final ArrayList<GuiPanel> guiPanels = new ArrayList<>();
 
+    private final TileRenderer tileRenderer; // todo cleanup
+
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
     public Gui(SgOglEngine engine) throws Exception {
-        this.engine = engine;
+        this.engine = Objects.requireNonNull(engine, "engine must not be null");
         this.spriteBatch = new SpriteBatch(engine);
+        this.tileRenderer = new TileRenderer(engine);
     }
 
     //-------------------------------------------------
@@ -133,8 +138,29 @@ public class Gui {
         }
     }
 
+    public void render(boolean useBatch) {
+        if (useBatch) {
+            spriteBatch.render();
+        } else {
+            for (var guiPanel : guiPanels) {
+                tileRenderer.render(guiPanel.textureId, guiPanel.position, new Vector2f(guiPanel.width, guiPanel.height));
+                for (var guiObjects : guiPanel.getGuiObjects()) {
+                    tileRenderer.render(guiObjects.textureId, guiObjects.position, new Vector2f(guiObjects.width, guiObjects.height));
+                }
+            }
+        }
+    }
+
     public void render() {
-        spriteBatch.render();
+        render(true);
+    }
+
+    //-------------------------------------------------
+    // Clean up
+    //-------------------------------------------------
+
+    public void cleanUp() {
+        tileRenderer.cleanUp();
     }
 
     //-------------------------------------------------
