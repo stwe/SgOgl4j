@@ -14,4 +14,5 @@ public interface GuiButtonListener extends EventListener {
 
     void onClick(GuiButtonEvent event);
     void onHover(GuiButtonEvent event);
+    void onRelease(GuiButtonEvent event);
 }

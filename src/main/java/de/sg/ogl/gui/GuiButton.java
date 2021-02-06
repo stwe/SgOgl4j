@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class GuiButton extends GuiObject {
 
     private final ArrayList<GuiButtonListener> listeners = new ArrayList<>();
+    public boolean mouseOver = false;
 
     //-------------------------------------------------
     // Ctors.
@@ -62,6 +63,7 @@ public class GuiButton extends GuiObject {
             return;
         }
 
+        mouseOver = true;
         var event = new GuiButtonEvent(this);
         for (var listener : listeners) {
             listener.onClick(event);
@@ -73,9 +75,22 @@ public class GuiButton extends GuiObject {
             return;
         }
 
+        mouseOver = true;
         var event = new GuiButtonEvent(this);
         for (var listener : listeners) {
             listener.onHover(event);
+        }
+    }
+
+    public void onRelease() {
+        if (listeners.isEmpty()) {
+            return;
+        }
+
+        mouseOver = false;
+        var event = new GuiButtonEvent(this);
+        for (var listener : listeners) {
+            listener.onRelease(event);
         }
     }
 

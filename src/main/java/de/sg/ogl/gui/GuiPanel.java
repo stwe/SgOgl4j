@@ -88,10 +88,19 @@ public class GuiPanel extends GuiObject {
         for (var guiObject : guiObjects) {
             if (guiObject.isMouseOver()) {
                 if (guiObject instanceof GuiButton) {
+                    // onClick
                     if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
                         ((GuiButton) guiObject).onClick();
-                    } else {
-                        ((GuiButton) guiObject).onHover();
+                    }
+
+                    // onHover
+                    ((GuiButton) guiObject).onHover();
+                }
+            } else {
+                if (guiObject instanceof GuiButton) {
+                    if (((GuiButton) guiObject).mouseOver) {
+                        // onRelease
+                        ((GuiButton) guiObject).onRelease();
                     }
                 }
             }

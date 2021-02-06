@@ -38,10 +38,13 @@ public class TestApp extends SgOglApplication {
         var panelTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/panel.png");
         var buttonSingleTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/single.png");
         var buttonMultiTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/multi.png");
+        var buttonSingleSelTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/single_s.png");
+        var buttonMultiSelTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/multi_s.png");
 
         // gui
         gui = new Gui(getEngine());
 
+        // panel
         var panel0 = gui.addPanel(
                 Anchor.TOP_LEFT,
                 new Vector2f(0.0f, 0.0f),
@@ -50,6 +53,7 @@ public class TestApp extends SgOglApplication {
                 panelTexture
         );
 
+        // singleplayer button
         var spButton = panel0.addButton(
                 Anchor.TOP_LEFT,
                 new Vector2f(113.0f, 362.0f),
@@ -58,18 +62,29 @@ public class TestApp extends SgOglApplication {
                 buttonSingleTexture
         );
 
+        // singleplayer button listener
         spButton.addListener(new GuiButtonAdapter() {
             @Override
             public void onClick(GuiButtonEvent event) {
-                var source = (GuiButton)event.getSource();
                 Log.LOGGER.debug("On Click SinglePlayerButton");
             }
 
             @Override
             public void onHover(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                source.setTexture(buttonSingleSelTexture);
+                Log.LOGGER.debug("Hover SinglePlayerButton");
+            }
+
+            @Override
+            public void onRelease(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                source.setTexture(buttonSingleTexture);
+                Log.LOGGER.debug("Release SinglePlayerButton");
             }
         });
 
+        // multiplayer button
         var mpButton = panel0.addButton(
                 Anchor.TOP_LEFT,
                 new Vector2f(113.0f, 415.0f),
@@ -77,6 +92,28 @@ public class TestApp extends SgOglApplication {
                 Color.WHITE,
                 buttonMultiTexture
         );
+
+        // multiplayer button listener
+        mpButton.addListener(new GuiButtonAdapter() {
+            @Override
+            public void onClick(GuiButtonEvent event) {
+                Log.LOGGER.debug("On Click MultiPlayerButton");
+            }
+
+            @Override
+            public void onHover(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                source.setTexture(buttonMultiSelTexture);
+                Log.LOGGER.debug("Hover MultiPlayerButton");
+            }
+
+            @Override
+            public void onRelease(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                source.setTexture(buttonMultiTexture);
+                Log.LOGGER.debug("Release MultiPlayerButton");
+            }
+        });
     }
 
     @Override

@@ -19,4 +19,9 @@ public class GuiButtonAdapter implements GuiButtonListener {
     public void onHover(GuiButtonEvent event) {
 
     }
+
+    @Override
+    public void onRelease(GuiButtonEvent event) {
+
+    }
 }
