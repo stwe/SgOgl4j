@@ -9,6 +9,8 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.input.MouseInput;
+import de.sg.ogl.physics.Aabb;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
@@ -22,6 +24,8 @@ public abstract class GuiObject {
 
     private Color color;
     private Texture texture;
+
+    private final Aabb aabb;
 
     //-------------------------------------------------
     // Ctors.
@@ -38,6 +42,8 @@ public abstract class GuiObject {
 
         this.color = color;
         this.texture = texture;
+
+        this.aabb = new Aabb(getRenderOrigin(), getSize());
     }
 
     GuiObject(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height, Color color) {
@@ -86,6 +92,14 @@ public abstract class GuiObject {
 
     public Texture getTexture() {
         return texture;
+    }
+
+    public Aabb getAabb() {
+        return aabb;
+    }
+
+    public boolean isMouseOver() {
+        return Aabb.pointVsAabb(MouseInput.getXY(), aabb);
     }
 
     //-------------------------------------------------

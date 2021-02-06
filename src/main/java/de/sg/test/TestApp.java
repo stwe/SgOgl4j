@@ -9,10 +9,14 @@
 package de.sg.test;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.Log;
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
+import de.sg.ogl.event.GuiButtonAdapter;
+import de.sg.ogl.event.GuiButtonEvent;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.GuiButton;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
@@ -53,6 +57,18 @@ public class TestApp extends SgOglApplication {
                 Color.WHITE,
                 buttonSingleTexture
         );
+
+        spButton.addListener(new GuiButtonAdapter() {
+            @Override
+            public void onClick(GuiButtonEvent event) {
+                var source = (GuiButton)event.getSource();
+                Log.LOGGER.debug("On Click SinglePlayerButton");
+            }
+
+            @Override
+            public void onHover(GuiButtonEvent event) {
+            }
+        });
 
         var mpButton = panel0.addButton(
                 Anchor.TOP_LEFT,

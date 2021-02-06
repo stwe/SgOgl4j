@@ -9,15 +9,20 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.event.GuiPanelListener;
+import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 public class GuiPanel extends GuiObject {
 
     private final ArrayList<GuiObject> guiObjects = new ArrayList<>();
+    private final ArrayList<GuiPanelListener> listeners = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -48,6 +53,22 @@ public class GuiPanel extends GuiObject {
     }
 
     //-------------------------------------------------
+    // Listener
+    //-------------------------------------------------
+
+    public void addListener(GuiPanelListener listener) {
+        if (listeners.contains(listener)) {
+            return;
+        }
+
+        listeners.add(listener);
+    }
+
+    public void removeListener(GuiPanelListener listener) {
+        listeners.remove(listener);
+    }
+
+    //-------------------------------------------------
     // Button
     //-------------------------------------------------
 
@@ -64,7 +85,17 @@ public class GuiPanel extends GuiObject {
 
     @Override
     public void input() {
-
+        for (var guiObject : guiObjects) {
+            if (guiObject.isMouseOver()) {
+                if (guiObject instanceof GuiButton) {
+                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                        ((GuiButton) guiObject).onClick();
+                    } else {
+                        ((GuiButton) guiObject).onHover();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -79,5 +110,9 @@ public class GuiPanel extends GuiObject {
                 getRenderOrigin(),
                 getSize()
         );
+
+        for (var guiObject : guiObjects) {
+            guiObject.render(tileRenderer);
+        }
     }
 }

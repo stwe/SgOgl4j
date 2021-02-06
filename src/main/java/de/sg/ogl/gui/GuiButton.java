@@ -9,11 +9,17 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.event.GuiButtonEvent;
+import de.sg.ogl.event.GuiButtonListener;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
 
+import java.util.ArrayList;
+
 public class GuiButton extends GuiObject {
+
+    private final ArrayList<GuiButtonListener> listeners = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -33,6 +39,44 @@ public class GuiButton extends GuiObject {
 
     GuiButton(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height) {
         super(parentQuad, anchor, offset, width, height);
+    }
+
+    //-------------------------------------------------
+    // Listener
+    //-------------------------------------------------
+
+    public void addListener(GuiButtonListener listener) {
+        if (listeners.contains(listener)) {
+            return;
+        }
+
+        listeners.add(listener);
+    }
+
+    public void removeListener(GuiButtonListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void onClick() {
+        if (listeners.isEmpty()) {
+            return;
+        }
+
+        var event = new GuiButtonEvent(this);
+        for (var listener : listeners) {
+            listener.onClick(event);
+        }
+    }
+
+    public void onHover() {
+        if (listeners.isEmpty()) {
+            return;
+        }
+
+        var event = new GuiButtonEvent(this);
+        for (var listener : listeners) {
+            listener.onHover(event);
+        }
     }
 
     //-------------------------------------------------

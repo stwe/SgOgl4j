@@ -52,30 +52,18 @@ public class Gui {
     public void input() {
         for (var guiPanel : guiPanels) {
             guiPanel.input();
-
-            for (var guiButton : guiPanel.getGuiObjects()) {
-                guiButton.input();
-            }
         }
     }
 
     public void update() {
         for (var guiPanel : guiPanels) {
             guiPanel.update();
-
-            for (var guiButton : guiPanel.getGuiObjects()) {
-                guiButton.update();
-            }
         }
     }
 
     public void render() {
         for (var guiPanel : guiPanels) {
             guiPanel.render(tileRenderer);
-
-            for (var guiButton : guiPanel.getGuiObjects()) {
-                guiButton.render(tileRenderer);
-            }
         }
     }
 
