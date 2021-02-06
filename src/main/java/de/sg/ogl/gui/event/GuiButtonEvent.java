@@ -6,15 +6,15 @@
  * License: MIT
  */
 
-package de.sg.ogl.event;
+package de.sg.ogl.gui.event;
 
-import de.sg.ogl.gui.GuiPanel;
+import de.sg.ogl.gui.GuiButton;
 
 import java.util.EventObject;
 
-public class GuiPanelEvent extends EventObject {
+public class GuiButtonEvent extends EventObject {
 
-    public GuiPanelEvent(GuiPanel source) {
+    public GuiButtonEvent(GuiButton source) {
         super(source);
     }
 }

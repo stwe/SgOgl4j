@@ -9,7 +9,7 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
-import de.sg.ogl.event.GuiPanelListener;
+import de.sg.ogl.gui.event.GuiPanelListener;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;

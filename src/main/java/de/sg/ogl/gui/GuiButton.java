@@ -9,8 +9,8 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
-import de.sg.ogl.event.GuiButtonEvent;
-import de.sg.ogl.event.GuiButtonListener;
+import de.sg.ogl.gui.event.GuiButtonEvent;
+import de.sg.ogl.gui.event.GuiButtonListener;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;

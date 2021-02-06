@@ -6,7 +6,7 @@
  * License: MIT
  */
 
-package de.sg.ogl.event;
+package de.sg.ogl.gui.event;
 
 import java.util.EventListener;
 
