@@ -11,8 +11,8 @@ package de.sg.test;
 import de.sg.ogl.Color;
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
+import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.Gui;
-import de.sg.ogl.gui.GuiObject;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
@@ -38,34 +38,29 @@ public class TestApp extends SgOglApplication {
         // gui
         gui = new Gui(getEngine());
 
-        // panels
         var panel0 = gui.addPanel(
-                GuiObject.Anchor.TOP_LEFT,
+                Anchor.TOP_LEFT,
                 new Vector2f(0.0f, 0.0f),
                 getEngine().getWindow().getWidth(), getEngine().getWindow().getHeight(),
-                "panel0",
-                panelTexture.getId()
+                Color.BLUE,
+                panelTexture
         );
 
-        // buttons
-        var button0 = panel0.addButton(
-                GuiObject.Anchor.TOP_LEFT,
+        var spButton = panel0.addButton(
+                Anchor.TOP_LEFT,
                 new Vector2f(113.0f, 362.0f),
-                332.0f, 53.0f,
-                "Singleplayer",
-                buttonSingleTexture.getId()
+                buttonSingleTexture.getWidth(), buttonSingleTexture.getHeight(),
+                Color.WHITE,
+                buttonSingleTexture
         );
 
-        var button1 = panel0.addButton(
-                GuiObject.Anchor.TOP_LEFT,
+        var mpButton = panel0.addButton(
+                Anchor.TOP_LEFT,
                 new Vector2f(113.0f, 415.0f),
-                332.0f, 54.0f,
-                "Multiplayer",
-                buttonMultiTexture.getId()
+                buttonMultiTexture.getWidth(), buttonMultiTexture.getHeight(),
+                Color.WHITE,
+                buttonMultiTexture
         );
-
-        // init gui renderer
-        gui.initRender();
     }
 
     @Override
@@ -79,7 +74,7 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void update(float dt) {
-
+        gui.update();
     }
 
     @Override
@@ -87,7 +82,7 @@ public class TestApp extends SgOglApplication {
         OpenGL.setClearColor(Color.CORNFLOWER_BLUE);
         OpenGL.clear();
 
-        gui.render(false);
+        gui.render();
     }
 
     @Override

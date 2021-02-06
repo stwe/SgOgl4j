@@ -4,6 +4,6 @@ import java.util.EventListener;
 
 public interface GuiButtonListener extends EventListener {
 
-    void onClick(GuiButtonEvent event);
-    void onHover(GuiButtonEvent event);
+    //void onClick(GuiButtonEvent event);
+    //void onHover(GuiButtonEvent event);
 }

@@ -1,100 +1,38 @@
 /*
  * This file is part of the SgOgl4j project.
  *
- * Copyright (c) 2020. stwe <https://github.com/stwe/SgOgl4j>
+ * Copyright (c) 2021. stwe <https://github.com/stwe/SgOgl4j>
  *
  * License: MIT
  */
 
 package de.sg.ogl.gui;
 
-import de.sg.ogl.event.GuiButtonEvent;
-import de.sg.ogl.event.GuiButtonListener;
-import de.sg.ogl.physics.Aabb;
+import de.sg.ogl.Color;
+import de.sg.ogl.renderer.TileRenderer;
+import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import java.util.Vector;
 
 public class GuiButton extends GuiObject {
-
-    /**
-     * The default color of each Button (white).
-     */
-    private static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
-
-    /**
-     * Callback functions.
-     */
-    private final Vector<GuiButtonListener> guiButtonListeners = new Vector<>();
-
-    /**
-     * The label of the Button.
-     */
-    private final String label;
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    public GuiButton(Vector2f anchor, Vector2f offset, float width, float height, String label) {
-        this.position = new Vector2f(anchor).add(offset);
-
-        this.width = width;
-        this.height = height;
-
-        this.color = DEFAULT_COLOR;
-
-        this.aabb = new Aabb(this.position, new Vector2f(this.width, this.height));
-
-        this.label = label;
+    GuiButton(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height, Color color, Texture texture) {
+        super(parentQuad, anchor, offset, width, height, color, texture);
     }
 
-    //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
-
-    public String getLabel() {
-        return label;
+    GuiButton(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height, Color color) {
+        super(parentQuad, anchor, offset, width, height, color);
     }
 
-    //-------------------------------------------------
-    // Listener
-    //-------------------------------------------------
-
-    public void addListener(GuiButtonListener listener) {
-        if (guiButtonListeners.contains(listener)) {
-            return;
-        }
-
-        guiButtonListeners.add(listener);
+    GuiButton(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height, Texture texture) {
+        super(parentQuad, anchor, offset, width, height, texture);
     }
 
-    public void removeListener(GuiButtonListener listener) {
-        guiButtonListeners.remove(listener);
-    }
-
-    public void onClick() {
-        fireOnClick();
-    }
-
-    public void onHover() {
-        fireOnHover();
-    }
-
-    private void fireOnClick() {
-        var event = new GuiButtonEvent(this);
-        for (var listener : guiButtonListeners) {
-            listener.onClick(event);
-        }
-    }
-
-    private void fireOnHover() {
-        var event = new GuiButtonEvent(this);
-        for (var listener : guiButtonListeners) {
-            listener.onHover(event);
-        }
+    GuiButton(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height) {
+        super(parentQuad, anchor, offset, width, height);
     }
 
     //-------------------------------------------------
@@ -102,17 +40,21 @@ public class GuiButton extends GuiObject {
     //-------------------------------------------------
 
     @Override
-    public void input() {}
+    public void input() {
+
+    }
 
     @Override
-    public void update() {}
+    public void update() {
+
+    }
 
     @Override
-    public void addToRenderer(SpriteBatch spriteBatch) {
-        spriteBatch.addToRenderer(
-                new Vector4f(position.x, position.y, width, height),
-                textureId,
-                color
+    public void render(TileRenderer tileRenderer) {
+        tileRenderer.render(
+                getTexture(),
+                getRenderOrigin(),
+                getSize()
         );
     }
 }

@@ -16,7 +16,6 @@ import imgui.*;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
 
@@ -39,12 +38,6 @@ public final class Window {
     private final Matrix4f orthographicProjectionMatrix;
 
     private long windowHandle;
-
-    private Vector2f topLeft = new Vector2f();
-    private Vector2f bottomLeft = new Vector2f();
-    private Vector2f bottomRight = new Vector2f();
-    private Vector2f topRight = new Vector2f();
-    private Vector2f center = new Vector2f();
 
     //-------------------------------------------------
     // Ctors.
@@ -96,26 +89,6 @@ public final class Window {
         return windowHandle;
     }
 
-    public Vector2f getTopLeft() {
-        return topLeft;
-    }
-
-    public Vector2f getBottomLeft() {
-        return bottomLeft;
-    }
-
-    public Vector2f getBottomRight() {
-        return bottomRight;
-    }
-
-    public Vector2f getTopRight() {
-        return topRight;
-    }
-
-    public Vector2f getCenter() {
-        return center;
-    }
-
     //-------------------------------------------------
     // Setter
     //-------------------------------------------------
@@ -132,9 +105,6 @@ public final class Window {
         initGlfw();
         initImGui();
         initProjectionMatrix();
-
-        // At the moment, the size of the window can no be changed during runtime.
-        updateCornerPoints();
     }
 
     private void initGlfw() {
@@ -266,17 +236,6 @@ public final class Window {
         */
 
         orthographicProjectionMatrix.setOrtho(0.0f, width, height, 0.0f, 1.0f, -1.0f);
-    }
-
-    private void updateCornerPoints() {
-        var windowWidth = (float) width;
-        var windowHeight = (float) height;
-
-        topLeft = new Vector2f(0.0f, 0.0f);
-        bottomLeft = new Vector2f(0.0f, windowHeight);
-        topRight = new Vector2f(windowWidth, 0.0f);
-        bottomRight = new Vector2f(windowWidth, windowHeight);
-        center = new Vector2f(windowWidth * 0.5f, windowHeight * 0.5f);
     }
 
     //-------------------------------------------------
