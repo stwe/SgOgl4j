@@ -81,23 +81,31 @@ public class GuiQuad {
     // Screen position
     //-------------------------------------------------
 
-    public Vector2f getRenderPosition(Anchor anchor) {
+    public static Vector2f getRenderPosition(GuiQuad parentQuad, GuiQuad currentQuad, Anchor anchor) {
         Vector2f screenPosition;
         switch(anchor) {
             case TOP_LEFT:
-                screenPosition = new Vector2f(origin);
+                screenPosition = new Vector2f(parentQuad.origin).add(currentQuad.origin);
                 break;
             case BOTTOM_LEFT:
-                screenPosition = new Vector2f(bottomLeft.x, bottomLeft.y - height);
+                screenPosition = new Vector2f(parentQuad.bottomLeft.x, parentQuad.bottomLeft.y - currentQuad.height);
+                screenPosition.x += currentQuad.origin.x;
+                screenPosition.y -= currentQuad.origin.y;
                 break;
             case BOTTOM_RIGHT:
-                screenPosition = new Vector2f(bottomRight.x - width, bottomRight.y - height);
+                screenPosition = new Vector2f(parentQuad.bottomRight.x - currentQuad.width, parentQuad.bottomRight.y - currentQuad.height);
+                screenPosition.x -= currentQuad.origin.x;
+                screenPosition.y -= currentQuad.origin.y;
                 break;
             case TOP_RIGHT:
-                screenPosition = new Vector2f(topRight.x - width, topRight.y);
+                screenPosition = new Vector2f(parentQuad.topRight.x - currentQuad.width, parentQuad.topRight.y);
+                screenPosition.x -= currentQuad.origin.x;
+                screenPosition.y += currentQuad.origin.y;
                 break;
             case CENTER:
-                screenPosition = new Vector2f(center.x - width * 0.5f, center.y - height * 0.5f);
+                screenPosition = new Vector2f(parentQuad.center.x - currentQuad.width * 0.5f, parentQuad.center.y - currentQuad.height * 0.5f);
+                screenPosition.x += currentQuad.origin.x;
+                screenPosition.y += currentQuad.origin.y;
                 break;
             default:
                 throw new SgOglRuntimeException("Invalid anchor position type: " + anchor);

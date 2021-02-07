@@ -17,7 +17,7 @@ import org.joml.Vector2f;
 
 public abstract class GuiObject {
 
-    private GuiQuad guiObjectQuad;
+    private final GuiQuad guiObjectQuad;
 
     private final Anchor anchor;
     private final Vector2f renderOrigin;
@@ -33,12 +33,12 @@ public abstract class GuiObject {
 
     GuiObject(GuiQuad parentQuad, Anchor anchor, Vector2f offset, float width, float height, Color color, Texture texture) {
         this.guiObjectQuad = new GuiQuad(
-                new Vector2f(parentQuad.getOrigin()).add(offset),
+                offset,
                 width, height
         );
 
         this.anchor = anchor;
-        this.renderOrigin = this.guiObjectQuad.getRenderPosition(anchor);
+        this.renderOrigin = GuiQuad.getRenderPosition(parentQuad, guiObjectQuad, anchor);
 
         this.color = color;
         this.texture = texture;
