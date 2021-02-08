@@ -8,7 +8,11 @@
 
 package de.sg.ogl.state;
 
-public class EmptyState implements State {
+public class EmptyState extends ApplicationState {
+
+    public EmptyState(StateMachine stateMachine) {
+        super(stateMachine);
+    }
 
     @Override
     public void init() throws Exception {

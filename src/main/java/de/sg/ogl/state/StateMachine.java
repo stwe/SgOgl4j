@@ -13,13 +13,21 @@ import java.util.Map;
 
 public class StateMachine implements State {
 
+    private final StateContext stateContext;
+
     private final Map<String, State> states;
     private State currentState;
 
-    public StateMachine() {
-        states = new HashMap<>();
-        currentState = new EmptyState();
-        states.put(null, currentState);
+    public StateMachine(StateContext stateContext) {
+        this.stateContext = stateContext;
+
+        this.states = new HashMap<>();
+        this.currentState = new EmptyState(this);
+        this.states.put(null, currentState);
+    }
+
+    public StateContext getStateContext() {
+        return stateContext;
     }
 
     public void add(String name, State state) {
