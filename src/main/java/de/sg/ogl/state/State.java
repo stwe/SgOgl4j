@@ -9,7 +9,6 @@
 package de.sg.ogl.state;
 
 public interface State {
-
     void init() throws Exception;
     void input();
     void update(float dt);

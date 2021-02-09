@@ -8,11 +8,21 @@
 
 package de.sg.ogl.state;
 
+import java.util.Objects;
+
 public class EmptyState extends ApplicationState {
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public EmptyState(StateMachine stateMachine) {
-        super(stateMachine);
+        super(Objects.requireNonNull(stateMachine, "stateMachine must not be null"));
     }
+
+    //-------------------------------------------------
+    // Implement State
+    //-------------------------------------------------
 
     @Override
     public void init() throws Exception {

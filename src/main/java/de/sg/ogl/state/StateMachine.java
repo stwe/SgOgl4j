@@ -10,57 +10,75 @@ package de.sg.ogl.state;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class StateMachine implements State {
+public class StateMachine {
 
     private final StateContext stateContext;
 
     private final Map<String, State> states;
     private State currentState;
 
+    //-------------------------------------------------
+    // Ctors.
+    //-------------------------------------------------
+
     public StateMachine(StateContext stateContext) {
-        this.stateContext = stateContext;
+        this.stateContext = Objects.requireNonNull(stateContext, "stateContext must not be null");
 
         this.states = new HashMap<>();
         this.currentState = new EmptyState(this);
         this.states.put(null, currentState);
     }
 
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
     public StateContext getStateContext() {
         return stateContext;
     }
 
+    //-------------------------------------------------
+    // Add && Change
+    //-------------------------------------------------
+
     public void add(String name, State state) {
+        Objects.requireNonNull(name, "name must not be null");
+        Objects.requireNonNull(state, "state must not be null");
+
         states.put(name, state);
     }
 
     public void change(String name) throws Exception {
+        Objects.requireNonNull(name, "name must not be null");
+
         currentState.cleanUp();
+
         currentState = states.get(name);
         currentState.init();
     }
 
-    @Override
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
+
     public void init() throws Exception {
         currentState.init();
     }
 
-    @Override
     public void input() {
         currentState.input();
     }
 
-    @Override
     public void update(float dt) {
         currentState.update(dt);
     }
 
-    @Override
     public void render() {
         currentState.render();
     }
 
-    @Override
     public void cleanUp() {
         currentState.cleanUp();
     }
