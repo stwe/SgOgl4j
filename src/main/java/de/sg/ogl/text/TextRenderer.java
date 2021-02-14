@@ -38,7 +38,7 @@ public class TextRenderer {
     private boolean drawing;
 
     private Vao vao;
-    private int vboId;
+    private Vbo vbo;
 
     //-------------------------------------------------
     // Ctors.
@@ -152,7 +152,7 @@ public class TextRenderer {
             // todo
 
             // upload the new vertex data
-            //Vbo.bindVbo(vboId);
+            vbo.bind();
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
 
@@ -185,22 +185,20 @@ public class TextRenderer {
         vao = new Vao();
         vao.bind();
 
-        /*
-        vboId = Vbo.createVbo();
-        Vbo.initEmpty(vboId, NR_OF_FLOATS, Float.BYTES, GL_DYNAMIC_DRAW);
+        vbo = new Vbo();
+        vbo.initEmpty(NR_OF_FLOATS, Float.BYTES, GL_DYNAMIC_DRAW);
 
         var nrOfAllFloats = 8;
 
         // position: 2 floats
-        Vbo.addFloatAttribute(vboId, 0, 2, nrOfAllFloats, 0);
+        vbo.addFloatAttribute(0, 2, nrOfAllFloats, 0);
 
         // color: 4 floats
-        Vbo.addFloatAttribute(vboId, 1, 4, nrOfAllFloats, 2);
+        vbo.addFloatAttribute(1, 4, nrOfAllFloats, 2);
 
         // uv: 2 floats
-        Vbo.addFloatAttribute(vboId, 2, 2, nrOfAllFloats, 6);
+        vbo.addFloatAttribute(2, 2, nrOfAllFloats, 6);
 
-        Vao.unbind();
-         */
+        vao.unbind();
     }
 }

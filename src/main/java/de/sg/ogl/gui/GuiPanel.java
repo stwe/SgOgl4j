@@ -13,6 +13,7 @@ import de.sg.ogl.gui.event.GuiPanelListener;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
+import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -80,28 +81,69 @@ public class GuiPanel extends GuiObject {
     }
 
     //-------------------------------------------------
+    // ListBox
+    //-------------------------------------------------
+
+    public GuiListBox addListBox(
+            Anchor anchor,
+            Vector2f offset,
+            float width, float height,
+            Texture texture,
+            Texture up,
+            Texture down,
+            TextRenderer textRenderer,
+            ArrayList<String> lines
+    ) {
+        var listBox = new GuiListBox(getGuiObjectQuad(), anchor, offset, width, height, texture, up, down, textRenderer, lines);
+        guiObjects.add(listBox);
+
+        return listBox;
+    }
+
+    //-------------------------------------------------
     // Implement GuiObject
     //-------------------------------------------------
 
     @Override
     public void input() {
         for (var guiObject : guiObjects) {
-            if (guiObject.isMouseOver()) {
-                if (guiObject instanceof GuiButton) {
-                    // onClick
-                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-                        ((GuiButton) guiObject).onClick();
-                    }
 
-                    // onHover
-                    ((GuiButton) guiObject).onHover();
-                }
-            } else {
-                if (guiObject instanceof GuiButton) {
-                    if (((GuiButton) guiObject).mouseOver) {
-                        // onRelease
-                        ((GuiButton) guiObject).onRelease();
+            // panel events ...
+            // todo
+
+            // listBox events
+            if (guiObject instanceof GuiListBox) {
+                var listBox = (GuiListBox)guiObject;
+                var upBtn = listBox.getButtonUp();
+                var downBtn = listBox.getButtonDown();
+                if (upBtn.isMouseOver()) {
+                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                        upBtn.onClick();
                     }
+                    upBtn.onHover();
+                } else if(upBtn.mouseOver) {
+                    upBtn.onRelease();
+                }
+                if (downBtn.isMouseOver()) {
+                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                        downBtn.onClick();
+                    }
+                    downBtn.onHover();
+                } else if(downBtn.mouseOver) {
+                    downBtn.onRelease();
+                }
+            }
+
+            // button events
+            if (guiObject instanceof GuiButton) {
+                var btn = (GuiButton)guiObject;
+                if (btn.isMouseOver()) {
+                    if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                        btn.onClick();
+                    }
+                    btn.onHover();
+                } else if (btn.mouseOver) {
+                    btn.onRelease();
                 }
             }
         }
