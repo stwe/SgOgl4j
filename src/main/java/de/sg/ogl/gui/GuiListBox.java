@@ -9,8 +9,9 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
-import de.sg.ogl.gui.event.GuiButtonAdapter;
-import de.sg.ogl.gui.event.GuiButtonEvent;
+import de.sg.ogl.Log;
+import de.sg.ogl.gui.event.GuiAdapter;
+import de.sg.ogl.gui.event.GuiEvent;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
@@ -18,136 +19,141 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 
-public class GuiListBox extends GuiObject {
+public class GuiListBox extends GuiQuad {
 
     private final TextRenderer textRenderer;
     private final ArrayList<String> lines;
-    private final GuiButton buttonUp;
-    private final GuiButton buttonDown;
 
-    private int entries = 14;
+    private final GuiQuad buttonUp;
+    private final GuiQuad buttonDown;
+
+    private final int visibleEntries = 14;
     private int start = 0;
+
+    private final ArrayList<GuiQuad> guiLines = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
     //-------------------------------------------------
 
-    GuiListBox(
-            GuiQuad parentQuad,
-            Anchor anchor,
-            Vector2f offset,
-            float width, float height,
+    public GuiListBox(
+            Vector2f origin,
+            float width,
+            float height,
             Texture texture,
             Texture up,
             Texture down,
-            TextRenderer textRenderer,
-            ArrayList<String> lines
-    )
-    {
-        super(parentQuad, anchor, offset, width, height, texture);
+            ArrayList<String> lines,
+            TextRenderer textRenderer
+    ) {
+        super(origin, width, height, texture);
 
-        this.textRenderer = textRenderer;
+        buttonUp = new GuiQuad(new Vector2f(-60.0f, 60.0f), up.getWidth(), up.getHeight(), up);
+        buttonDown = new GuiQuad(new Vector2f(-60.0f, 10.0f), down.getWidth(), down.getHeight(), down);
+
         this.lines = lines;
+        this.textRenderer = textRenderer;
+    }
 
-        this.buttonUp = new GuiButton(
-                getGuiObjectQuad(),
-                Anchor.BOTTOM_RIGHT,
-                new Vector2f(-60.f, 60.0f),
-                up.getWidth(), up.getHeight(),
-                up
-        );
+    //-------------------------------------------------
+    // Init
+    //-------------------------------------------------
 
-        this.buttonUp.addListener(new GuiButtonAdapter() {
+    public void init() {
+        add(buttonUp, Anchor.BOTTOM_RIGHT);
+        add(buttonDown, Anchor.BOTTOM_RIGHT);
+
+        buttonUp.addListener(new GuiAdapter() {
             @Override
-            public void onClick(GuiButtonEvent event) {
+            public void onClick(GuiEvent event) {
+                Log.LOGGER.debug("On Click Button Up");
                 if (start > 0) {
                     start--;
                 }
             }
 
             @Override
-            public void onHover(GuiButtonEvent event) {}
+            public void onHover(GuiEvent event) {
+            }
 
             @Override
-            public void onRelease(GuiButtonEvent event) {}
+            public void onRelease(GuiEvent event) {
+            }
         });
 
-        this.buttonDown = new GuiButton(
-                getGuiObjectQuad(),
-                Anchor.BOTTOM_RIGHT,
-                new Vector2f(-60.f, 10.0f),
-                down.getWidth(), down.getHeight(),
-                down
-        );
-
-        this.buttonDown.addListener(new GuiButtonAdapter() {
+        buttonDown.addListener(new GuiAdapter() {
             @Override
-            public void onClick(GuiButtonEvent event) {
-                if (start < lines.size() - entries) {
+            public void onClick(GuiEvent event) {
+                Log.LOGGER.debug("On Click Button Down");
+                if (start < lines.size() - visibleEntries) {
                     start++;
                 }
             }
 
             @Override
-            public void onHover(GuiButtonEvent event) {}
+            public void onHover(GuiEvent event) {
+            }
 
             @Override
-            public void onRelease(GuiButtonEvent event) {}
+            public void onRelease(GuiEvent event) {
+            }
         });
 
-    }
+        var lineHeight = (int) (getHeight() / visibleEntries);
 
-    //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
+        var t = 0.0f;
+        for (int i = 0; i < visibleEntries; i++) {
+            var line = new GuiQuad(new Vector2f(0.0f, 0.0f + t), getWidth(), lineHeight);
+            line.setRenderMe(false);
+            line.setName(Integer.toString(i));
 
-    public GuiButton getButtonUp() {
-        return buttonUp;
-    }
+            guiLines.add(line);
 
-    public GuiButton getButtonDown() {
-        return buttonDown;
-    }
+            add(line, Anchor.TOP_LEFT);
 
-    //-------------------------------------------------
-    // Implement GuiObject
-    //-------------------------------------------------
+            line.addListener(new GuiAdapter() {
+                @Override
+                public void onClick(GuiEvent event) {
+                    Log.LOGGER.debug("On Click Line {}", line.getName());
+                }
 
-    @Override
-    public void input() {
+                @Override
+                public void onHover(GuiEvent event) {
+                }
 
-    }
+                @Override
+                public void onRelease(GuiEvent event) {
+                }
+            });
 
-    @Override
-    public void update() {
-
-    }
-
-    private void renderTable(int start) {
-        var c = 0;
-        var x = getRenderOrigin().x + 24;
-        var y = getRenderOrigin().y + 10;
-        for (int i = start; i < entries + start; i++) {
-            textRenderer.render(
-                    lines.get(i),
-                    x, y + (c * 26),
-                    Color.YELLOW
-            );
-            c++;
+            t += lineHeight;
         }
     }
 
-    @Override
-    public void render(TileRenderer tileRenderer) {
-        tileRenderer.render(
-                getTexture(),
-                getRenderOrigin(),
-                getSize()
-        );
+    //-------------------------------------------------
+    // Logic
+    //-------------------------------------------------
 
-        buttonUp.render(tileRenderer);
-        buttonDown.render(tileRenderer);
+    @Override
+    public void renderGuiQuad(TileRenderer tileRenderer) {
+        super.renderGuiQuad(tileRenderer);
 
         renderTable(start);
+    }
+
+    //-------------------------------------------------
+    // Helper
+    //-------------------------------------------------
+
+    private void renderTable(int start) {
+        var l = 0;
+        for (int i = start; i < visibleEntries + start; i++) {
+            textRenderer.render(
+                    lines.get(i),
+                    guiLines.get(l).getOrigin().x + 8, guiLines.get(l).getOrigin().y + 4,
+                    Color.YELLOW
+            );
+            l++;
+        }
     }
 }

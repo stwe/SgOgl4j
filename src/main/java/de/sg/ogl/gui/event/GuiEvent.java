@@ -8,13 +8,13 @@
 
 package de.sg.ogl.gui.event;
 
-import de.sg.ogl.gui.GuiPanel;
+import de.sg.ogl.gui.GuiQuad;
 
 import java.util.EventObject;
 
-public class GuiPanelEvent extends EventObject {
+public class GuiEvent extends EventObject {
 
-    public GuiPanelEvent(GuiPanel source) {
+    public GuiEvent(GuiQuad source) {
         super(source);
     }
 }

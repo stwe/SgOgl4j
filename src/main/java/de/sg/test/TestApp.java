@@ -13,6 +13,7 @@ import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.GuiListBox;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
@@ -29,7 +30,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class TestApp extends SgOglApplication {
 
     private Gui gui;
-    private TextRenderer textRenderer;
     private final ArrayList<String> filesList = new ArrayList<>();
 
     public TestApp() throws IOException, IllegalAccessException {
@@ -43,30 +43,23 @@ public class TestApp extends SgOglApplication {
         var downTexture = getEngine().getResourceManager().loadResource(Texture.class, "/texture/benno/down.png");
 
         gui = new Gui(getEngine());
+
         for (int i = 0; i < 35; i++) {
             filesList.add("Test" + i);
         }
 
-        var panel0 = gui.addPanel(
-                Anchor.TOP_LEFT,
-                new Vector2f(0.0f, 0.0f),
-                getEngine().getWindow().getWidth(), getEngine().getWindow().getHeight(),
-                Color.BLUE,
-                panelTexture
-        );
-
-        textRenderer = new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14));
-
-        var listBox = panel0.addListBox(
-                Anchor.TOP_LEFT,
-                new Vector2f(500.0f, 360.0f),
-                listBoxTexture.getWidth(), listBoxTexture.getHeight(),
+        var listbox = new GuiListBox(
+                new Vector2f(10.0f, 10.0f),
+                300.0f, 300.0f,
                 listBoxTexture,
                 upTexture,
                 downTexture,
-                textRenderer,
-                filesList
+                filesList,
+                new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14))
         );
+
+        gui.add(listbox, Anchor.CENTER); // todo: add() sollte init aufrufen
+        listbox.init();
     }
 
     @Override
@@ -80,7 +73,7 @@ public class TestApp extends SgOglApplication {
 
     @Override
     public void update(float dt) {
-        gui.update();
+        gui.update(dt);
     }
 
     @Override

@@ -8,6 +8,7 @@
 
 package de.sg.ogl.renderer;
 
+import de.sg.ogl.Color;
 import de.sg.ogl.Log;
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglEngine;
@@ -66,6 +67,8 @@ public class TileRenderer {
 
         shader.setUniform("model", modelMatrix);
         shader.setUniform("projection", new Matrix4f(engine.getWindow().getOrthographicProjectionMatrix()));
+        shader.setUniform("hasTexture", true);
+        shader.setUniform("color", Color.WHITE.toVector4f()); // dummy color
         shader.setUniform("diffuseMap", 0);
 
         vao.bind();
@@ -79,6 +82,30 @@ public class TileRenderer {
 
     public void render(Texture texture, Vector2f position, Vector2f size) {
         render(texture.getId(), position, size);
+    }
+
+    public void render(Color color, Vector2f position, Vector2f size) {
+        OpenGL.enableAlphaBlending();
+        shader.bind();
+
+        Matrix4f modelMatrix = new Matrix4f();
+        modelMatrix
+                .identity()
+                .translate(new Vector3f(position, 0.0f))
+                .scale(new Vector3f(size, 1.0f));
+
+        shader.setUniform("model", modelMatrix);
+        shader.setUniform("projection", new Matrix4f(engine.getWindow().getOrthographicProjectionMatrix()));
+        shader.setUniform("hasTexture", false);
+        shader.setUniform("color", color.toVector4f());
+        shader.setUniform("diffuseMap", 0); // dummy value
+
+        vao.bind();
+        vao.drawPrimitives(GL_TRIANGLES);
+        vao.unbind();
+
+        OpenGL.disableBlending();
+        Shader.unbind();
     }
 
     //-------------------------------------------------

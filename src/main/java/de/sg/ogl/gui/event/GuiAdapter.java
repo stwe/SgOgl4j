@@ -8,20 +8,20 @@
 
 package de.sg.ogl.gui.event;
 
-public class GuiButtonAdapter implements GuiButtonListener {
+public class GuiAdapter implements GuiListener {
 
     @Override
-    public void onClick(GuiButtonEvent event) {
+    public void onClick(GuiEvent event) {
 
     }
 
     @Override
-    public void onHover(GuiButtonEvent event) {
+    public void onHover(GuiEvent event) {
 
     }
 
     @Override
-    public void onRelease(GuiButtonEvent event) {
+    public void onRelease(GuiEvent event) {
 
     }
 }

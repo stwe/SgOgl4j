@@ -8,20 +8,14 @@
 
 package de.sg.ogl.gui;
 
-import de.sg.ogl.Color;
 import de.sg.ogl.SgOglEngine;
 import de.sg.ogl.renderer.TileRenderer;
-import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
-
-import java.util.ArrayList;
 
 public class Gui {
 
     private final GuiQuad guiQuad;
     private final TileRenderer tileRenderer;
-
-    private final ArrayList<GuiPanel> guiPanels = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -34,15 +28,10 @@ public class Gui {
                 engine.getWindow().getHeight()
         );
 
+        // don't render the root, just the children
+        this.guiQuad.setRenderMe(false);
+
         this.tileRenderer = new TileRenderer(engine);
-    }
-
-    //-------------------------------------------------
-    // Getter
-    //-------------------------------------------------
-
-    public ArrayList<GuiPanel> getGuiPanels() {
-        return guiPanels;
     }
 
     //-------------------------------------------------
@@ -50,32 +39,25 @@ public class Gui {
     //-------------------------------------------------
 
     public void input() {
-        for (var guiPanel : guiPanels) {
-            guiPanel.input();
-        }
+        guiQuad.input();
     }
 
-    public void update() {
-        for (var guiPanel : guiPanels) {
-            guiPanel.update();
-        }
-    }
+    public void update(float dt) {}
 
     public void render() {
-        for (var guiPanel : guiPanels) {
-            guiPanel.render(tileRenderer);
-        }
+        guiQuad.render(tileRenderer);
     }
 
     //-------------------------------------------------
-    // Panel
+    // Add
     //-------------------------------------------------
 
-    public GuiPanel addPanel(Anchor anchor, Vector2f offset, float width, float height, Color color, Texture texture) {
-        var panel = new GuiPanel(guiQuad, anchor, offset, width, height, color, texture);
-        guiPanels.add(panel);
+    public void add(GuiQuad child, Anchor anchor) {
+        guiQuad.add(child, anchor);
+    }
 
-        return panel;
+    public void add(GuiQuad child) {
+        guiQuad.add(child, Anchor.TOP_LEFT);
     }
 
     //-------------------------------------------------
