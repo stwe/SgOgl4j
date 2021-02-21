@@ -98,10 +98,10 @@ public class GuiQuad {
     /**
      * Is true if the mouse was last over the GuiQuad.
      */
-    private boolean mouseOverFlag = false;
+    protected boolean mouseOverFlag = false;
 
     /**
-     * Multiple listeners can be added.
+     * Multiple event listeners can be added.
      */
     private final ArrayList<GuiListener> listeners = new ArrayList<>();
 
@@ -287,7 +287,7 @@ public class GuiQuad {
     //-------------------------------------------------
 
     private void inputTree(GuiQuad guiQuad) {
-        inputGuiQuad(guiQuad);
+        guiQuad.inputGuiQuad();
 
         for (var child : guiQuad.children) {
             inputTree(child);
@@ -302,22 +302,22 @@ public class GuiQuad {
         }
     }
 
-    private static void inputGuiQuad(GuiQuad guiQuad) {
-        if (guiQuad.listeners.isEmpty()) {
+    private void inputGuiQuad() {
+        if (listeners.isEmpty()) {
             return;
         }
 
-        if (guiQuad.isMouseOver()) {
+        if (isMouseOver()) {
             if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) ||
                     MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT) ||
                     MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_MIDDLE)
             ) {
-                guiQuad.runOnClickListeners();
+                runOnClickListeners();
             }
 
-            guiQuad.runOnHoverListeners();
-        } else if (guiQuad.mouseOverFlag) {
-            guiQuad.runOnReleaseListeners();
+            runOnHoverListeners();
+        } else if (mouseOverFlag) {
+            runOnReleaseListeners();
         }
     }
 
@@ -383,7 +383,7 @@ public class GuiQuad {
         listeners.remove(listener);
     }
 
-    private void runOnClickListeners() {
+    protected void runOnClickListeners() {
         if (getListeners().isEmpty()) {
             return;
         }

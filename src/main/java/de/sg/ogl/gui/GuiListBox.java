@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class GuiListBox extends GuiQuad {
 
     private final TextRenderer textRenderer;
-    private final ArrayList<String> lines;
+    private final ArrayList<String> values;
 
     private final GuiQuad buttonUp;
     private final GuiQuad buttonDown;
@@ -30,7 +30,7 @@ public class GuiListBox extends GuiQuad {
     private final int visibleEntries = 14;
     private int start = 0;
 
-    private final ArrayList<GuiQuad> guiLines = new ArrayList<>();
+    private final ArrayList<GuiQuad> guiQuads = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -43,7 +43,7 @@ public class GuiListBox extends GuiQuad {
             Texture texture,
             Texture up,
             Texture down,
-            ArrayList<String> lines,
+            ArrayList<String> values,
             TextRenderer textRenderer
     ) {
         super(origin, width, height, texture);
@@ -51,7 +51,7 @@ public class GuiListBox extends GuiQuad {
         buttonUp = new GuiQuad(new Vector2f(-60.0f, 60.0f), up.getWidth(), up.getHeight(), up);
         buttonDown = new GuiQuad(new Vector2f(-60.0f, 10.0f), down.getWidth(), down.getHeight(), down);
 
-        this.lines = lines;
+        this.values = values;
         this.textRenderer = textRenderer;
     }
 
@@ -73,33 +73,30 @@ public class GuiListBox extends GuiQuad {
             }
 
             @Override
-            public void onHover(GuiEvent event) {
-            }
+            public void onHover(GuiEvent event) {}
 
             @Override
-            public void onRelease(GuiEvent event) {
-            }
+            public void onRelease(GuiEvent event) {}
         });
 
         buttonDown.addListener(new GuiAdapter() {
             @Override
             public void onClick(GuiEvent event) {
                 Log.LOGGER.debug("On Click Button Down");
-                if (start < lines.size() - visibleEntries) {
+                if (start < values.size() - visibleEntries) {
                     start++;
                 }
             }
 
             @Override
-            public void onHover(GuiEvent event) {
-            }
+            public void onHover(GuiEvent event) {}
 
             @Override
-            public void onRelease(GuiEvent event) {
-            }
+            public void onRelease(GuiEvent event) {}
         });
 
         var lineHeight = (int) (getHeight() / visibleEntries);
+        // todo textrenderer: get FontHeight
 
         var t = 0.0f;
         for (int i = 0; i < visibleEntries; i++) {
@@ -107,13 +104,13 @@ public class GuiListBox extends GuiQuad {
             line.setRenderMe(false);
             line.setName(Integer.toString(i));
 
-            guiLines.add(line);
-
+            guiQuads.add(line);
             add(line, Anchor.TOP_LEFT);
 
             line.addListener(new GuiAdapter() {
                 @Override
                 public void onClick(GuiEvent event) {
+                    var source = event.getSource(); // todo
                     Log.LOGGER.debug("On Click Line {}", line.getName());
                 }
 
@@ -146,14 +143,14 @@ public class GuiListBox extends GuiQuad {
     //-------------------------------------------------
 
     private void renderTable(int start) {
-        var l = 0;
+        var line = 0;
         for (int i = start; i < visibleEntries + start; i++) {
             textRenderer.render(
-                    lines.get(i),
-                    guiLines.get(l).getOrigin().x + 8, guiLines.get(l).getOrigin().y + 4,
+                    values.get(i),
+                    guiQuads.get(line).getOrigin().x + 8, guiQuads.get(line).getOrigin().y + 4,
                     Color.YELLOW
             );
-            l++;
+            line++;
         }
     }
 }

@@ -49,7 +49,7 @@ public class TestApp extends SgOglApplication {
         }
 
         var listbox = new GuiListBox(
-                new Vector2f(10.0f, 10.0f),
+                new Vector2f(0.0f, 0.0f),
                 300.0f, 300.0f,
                 listBoxTexture,
                 upTexture,
