@@ -10,9 +10,9 @@ package de.sg.ogl.gui.event;
 
 import java.util.EventListener;
 
-public interface GuiListener extends EventListener {
+public interface GuiPanelListener extends EventListener {
 
-    void onClick(GuiEvent event);
-    void onHover(GuiEvent event);
-    void onRelease(GuiEvent event);
+    void onClick(GuiPanelEvent event);
+    void onHover(GuiPanelEvent event);
+    void onRelease(GuiPanelEvent event);
 }

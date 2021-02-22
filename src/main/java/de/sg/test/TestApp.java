@@ -13,7 +13,7 @@ import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.Gui;
-import de.sg.ogl.gui.GuiListBox;
+import de.sg.ogl.gui.widget.GuiListBox;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
@@ -58,7 +58,7 @@ public class TestApp extends SgOglApplication {
                 new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14))
         );
 
-        gui.add(listbox, Anchor.CENTER); // todo: add() sollte init aufrufen
+        gui.getMainPanel().add(listbox, Anchor.CENTER); // todo: add() sollte init aufrufen
         listbox.init();
     }
 

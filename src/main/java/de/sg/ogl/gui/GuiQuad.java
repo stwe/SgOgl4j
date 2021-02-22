@@ -10,8 +10,6 @@ package de.sg.ogl.gui;
 
 import de.sg.ogl.Color;
 import de.sg.ogl.SgOglRuntimeException;
-import de.sg.ogl.gui.event.GuiEvent;
-import de.sg.ogl.gui.event.GuiListener;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.physics.Aabb;
 import de.sg.ogl.renderer.TileRenderer;
@@ -21,9 +19,7 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-public class GuiQuad {
+public abstract class GuiQuad implements GuiObject {
 
     /**
      * The top left position of the GuiQuad.
@@ -98,12 +94,7 @@ public class GuiQuad {
     /**
      * Is true if the mouse was last over the GuiQuad.
      */
-    protected boolean mouseOverFlag = false;
-
-    /**
-     * Multiple event listeners can be added.
-     */
-    private final ArrayList<GuiListener> listeners = new ArrayList<>();
+    private boolean mouseOverFlag = false;
 
     /**
      * A name for this GuiQuad.
@@ -176,15 +167,15 @@ public class GuiQuad {
     // Getter
     //-------------------------------------------------
 
-    Vector2f getOrigin() {
+    public Vector2f getOrigin() {
         return origin;
     }
 
-    float getWidth() {
+    public float getWidth() {
         return width;
     }
 
-    float getHeight() {
+    public float getHeight() {
         return height;
     }
 
@@ -192,56 +183,56 @@ public class GuiQuad {
         return new Vector2f(getWidth(), getHeight());
     }
 
-    Vector2f getBottomLeft() {
+    public Vector2f getBottomLeft() {
         return bottomLeft;
     }
 
-    Vector2f getBottomRight() {
+    public Vector2f getBottomRight() {
         return bottomRight;
     }
 
-    Vector2f getTopRight() {
+    public Vector2f getTopRight() {
         return topRight;
     }
 
-    Vector2f getCenter() {
+    public Vector2f getCenter() {
         return center;
     }
 
-    GuiQuad getParent() {
+    public GuiQuad getParent() {
         return parent;
     }
 
-    ArrayList<GuiQuad> getChildren() {
+    public ArrayList<GuiQuad> getChildren() {
         return children;
     }
 
-    Anchor getAnchor() {
+    public Anchor getAnchor() {
         return anchor;
     }
 
-    Aabb getAabb() {
+    public Aabb getAabb() {
         return aabb;
     }
 
-    Color getColor() {
+    public Color getColor() {
         return color;
     }
 
-    Texture getTexture() {
+    public Texture getTexture() {
         return texture;
     }
 
-    boolean isMouseOver() {
+    public boolean isMouseOver() {
         return Aabb.pointVsAabb(MouseInput.getXY(), aabb);
     }
 
-    boolean isRenderMe() {
+    public boolean isRenderMe() {
         return renderMe;
     }
 
-    ArrayList<GuiListener> getListeners() {
-        return listeners;
+    public boolean isMouseOverFlag() {
+        return mouseOverFlag;
     }
 
     public String getName() {
@@ -252,16 +243,20 @@ public class GuiQuad {
     // Setter
     //-------------------------------------------------
 
-    void setColor(Color color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 
-    void setTexture(Texture texture) {
+    public void setTexture(Texture texture) {
         this.texture = texture;
     }
 
-    void setRenderMe(boolean renderMe) {
+    public void setRenderMe(boolean renderMe) {
         this.renderMe = renderMe;
+    }
+
+    public void setMouseOverFlag(boolean mouseOverFlag) {
+        this.mouseOverFlag = mouseOverFlag;
     }
 
     public void setName(String name) {
@@ -269,59 +264,30 @@ public class GuiQuad {
     }
 
     //-------------------------------------------------
-    // Logic
+    // Implement GuiObject
     //-------------------------------------------------
 
-    void input() {
+    @Override
+    public void input() {
         inputTree(this);
     }
 
-    void update() {}
+    @Override
+    public void update(float dt) {}
 
-    void render(TileRenderer tileRenderer) {
+    @Override
+    public void render(TileRenderer tileRenderer) {
         renderTree(this, tileRenderer);
     }
 
-    //-------------------------------------------------
-    // Logic Helper
-    //-------------------------------------------------
+    @Override
+    public abstract void inputGuiObject();
 
-    private void inputTree(GuiQuad guiQuad) {
-        guiQuad.inputGuiQuad();
+    @Override
+    public void updateGuiObject(float dt) {}
 
-        for (var child : guiQuad.children) {
-            inputTree(child);
-        }
-    }
-
-    private void renderTree(GuiQuad guiQuad, TileRenderer tileRenderer) {
-        guiQuad.renderGuiQuad(tileRenderer);
-
-        for (var child : guiQuad.children) {
-            renderTree(child, tileRenderer);
-        }
-    }
-
-    private void inputGuiQuad() {
-        if (listeners.isEmpty()) {
-            return;
-        }
-
-        if (isMouseOver()) {
-            if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) ||
-                    MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT) ||
-                    MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_MIDDLE)
-            ) {
-                runOnClickListeners();
-            }
-
-            runOnHoverListeners();
-        } else if (mouseOverFlag) {
-            runOnReleaseListeners();
-        }
-    }
-
-    public void renderGuiQuad(TileRenderer tileRenderer) {
+    @Override
+    public void renderGuiObject(TileRenderer tileRenderer) {
         if (renderMe) {
             if (getTexture() != null) {
                 tileRenderer.render(getTexture(), getOrigin(), getSize());
@@ -332,7 +298,27 @@ public class GuiQuad {
     }
 
     //-------------------------------------------------
-    // Add
+    // Traverse tree
+    //-------------------------------------------------
+
+    private void inputTree(GuiQuad guiQuad) {
+        guiQuad.inputGuiObject();
+
+        for (var child : guiQuad.children) {
+            inputTree(child);
+        }
+    }
+
+    private void renderTree(GuiQuad guiQuad, TileRenderer tileRenderer) {
+        guiQuad.renderGuiObject(tileRenderer);
+
+        for (var child : guiQuad.children) {
+            renderTree(child, tileRenderer);
+        }
+    }
+
+    //-------------------------------------------------
+    // Add children
     //-------------------------------------------------
 
     /**
@@ -362,61 +348,6 @@ public class GuiQuad {
      */
     public void add(GuiQuad child) {
         add(child, Anchor.TOP_LEFT);
-    }
-
-    //-------------------------------------------------
-    // Listener
-    //-------------------------------------------------
-
-    public void addListener(GuiListener listener) {
-        Objects.requireNonNull(listener, "listener must not be null");
-
-        if (listeners.contains(listener)) {
-            return;
-        }
-
-        listeners.add(listener);
-    }
-
-    public void removeListener(GuiListener listener) {
-        Objects.requireNonNull(listener, "listener must not be null");
-        listeners.remove(listener);
-    }
-
-    protected void runOnClickListeners() {
-        if (getListeners().isEmpty()) {
-            return;
-        }
-
-        mouseOverFlag = true;
-        var event = new GuiEvent(this);
-        for (var listener : getListeners()) {
-            listener.onClick(event);
-        }
-    }
-
-    private void runOnHoverListeners() {
-        if (getListeners().isEmpty()) {
-            return;
-        }
-
-        mouseOverFlag = true;
-        var event = new GuiEvent(this);
-        for (var listener : getListeners()) {
-            listener.onHover(event);
-        }
-    }
-
-    private void runOnReleaseListeners() {
-        if (getListeners().isEmpty()) {
-            return;
-        }
-
-        mouseOverFlag = false;
-        var event = new GuiEvent(this);
-        for (var listener : getListeners()) {
-            listener.onRelease(event);
-        }
     }
 
     //-------------------------------------------------
@@ -467,7 +398,7 @@ public class GuiQuad {
     }
 
     //-------------------------------------------------
-    // Init
+    // Init positions
     //-------------------------------------------------
 
     /**

@@ -9,12 +9,15 @@
 package de.sg.ogl.gui;
 
 import de.sg.ogl.SgOglEngine;
+import de.sg.ogl.gui.widget.GuiPanel;
 import de.sg.ogl.renderer.TileRenderer;
 import org.joml.Vector2f;
 
+import java.util.Objects;
+
 public class Gui {
 
-    private final GuiQuad guiQuad;
+    private final GuiPanel mainPanel;
     private final TileRenderer tileRenderer;
 
     //-------------------------------------------------
@@ -22,16 +25,26 @@ public class Gui {
     //-------------------------------------------------
 
     public Gui(SgOglEngine engine) throws Exception {
-        this.guiQuad = new GuiQuad(
+        Objects.requireNonNull(engine, "engine must not be null");
+
+        this.mainPanel = new GuiPanel(
                 new Vector2f(0.0f),
                 engine.getWindow().getWidth(),
                 engine.getWindow().getHeight()
         );
 
         // don't render the root, just the children
-        this.guiQuad.setRenderMe(false);
+        this.mainPanel.setRenderMe(false);
 
         this.tileRenderer = new TileRenderer(engine);
+    }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public GuiPanel getMainPanel() {
+        return mainPanel;
     }
 
     //-------------------------------------------------
@@ -39,25 +52,15 @@ public class Gui {
     //-------------------------------------------------
 
     public void input() {
-        guiQuad.input();
+        mainPanel.input();
     }
 
-    public void update(float dt) {}
+    public void update(float dt) {
+        mainPanel.update(dt);
+    }
 
     public void render() {
-        guiQuad.render(tileRenderer);
-    }
-
-    //-------------------------------------------------
-    // Add
-    //-------------------------------------------------
-
-    public void add(GuiQuad child, Anchor anchor) {
-        guiQuad.add(child, anchor);
-    }
-
-    public void add(GuiQuad child) {
-        guiQuad.add(child, Anchor.TOP_LEFT);
+        mainPanel.render(tileRenderer);
     }
 
     //-------------------------------------------------

@@ -6,12 +6,16 @@
  * License: MIT
  */
 
-package de.sg.ogl.gui;
+package de.sg.ogl.gui.widget;
 
 import de.sg.ogl.Color;
 import de.sg.ogl.Log;
-import de.sg.ogl.gui.event.GuiAdapter;
-import de.sg.ogl.gui.event.GuiEvent;
+import de.sg.ogl.gui.Anchor;
+import de.sg.ogl.gui.GuiQuad;
+import de.sg.ogl.gui.event.GuiButtonEvent;
+import de.sg.ogl.gui.event.GuiButtonListener;
+import de.sg.ogl.gui.event.GuiPanelEvent;
+import de.sg.ogl.gui.event.GuiPanelListener;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
@@ -24,13 +28,13 @@ public class GuiListBox extends GuiQuad {
     private final TextRenderer textRenderer;
     private final ArrayList<String> values;
 
-    private final GuiQuad buttonUp;
-    private final GuiQuad buttonDown;
+    private final GuiButton buttonUp;
+    private final GuiButton buttonDown;
 
     private final int visibleEntries = 14;
     private int start = 0;
 
-    private final ArrayList<GuiQuad> guiQuads = new ArrayList<>();
+    private final ArrayList<GuiPanel> guiPanels = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -48,8 +52,8 @@ public class GuiListBox extends GuiQuad {
     ) {
         super(origin, width, height, texture);
 
-        buttonUp = new GuiQuad(new Vector2f(-60.0f, 60.0f), up.getWidth(), up.getHeight(), up);
-        buttonDown = new GuiQuad(new Vector2f(-60.0f, 10.0f), down.getWidth(), down.getHeight(), down);
+        buttonUp = new GuiButton(new Vector2f(-60.0f, 60.0f), up.getWidth(), up.getHeight(), up);
+        buttonDown = new GuiButton(new Vector2f(-60.0f, 10.0f), down.getWidth(), down.getHeight(), down);
 
         this.values = values;
         this.textRenderer = textRenderer;
@@ -63,9 +67,9 @@ public class GuiListBox extends GuiQuad {
         add(buttonUp, Anchor.BOTTOM_RIGHT);
         add(buttonDown, Anchor.BOTTOM_RIGHT);
 
-        buttonUp.addListener(new GuiAdapter() {
+        buttonUp.addListener(new GuiButtonListener() {
             @Override
-            public void onClick(GuiEvent event) {
+            public void onClick(GuiButtonEvent event) {
                 Log.LOGGER.debug("On Click Button Up");
                 if (start > 0) {
                     start--;
@@ -73,15 +77,15 @@ public class GuiListBox extends GuiQuad {
             }
 
             @Override
-            public void onHover(GuiEvent event) {}
+            public void onHover(GuiButtonEvent event) {}
 
             @Override
-            public void onRelease(GuiEvent event) {}
+            public void onRelease(GuiButtonEvent event) {}
         });
 
-        buttonDown.addListener(new GuiAdapter() {
+        buttonDown.addListener(new GuiButtonListener() {
             @Override
-            public void onClick(GuiEvent event) {
+            public void onClick(GuiButtonEvent event) {
                 Log.LOGGER.debug("On Click Button Down");
                 if (start < values.size() - visibleEntries) {
                     start++;
@@ -89,10 +93,10 @@ public class GuiListBox extends GuiQuad {
             }
 
             @Override
-            public void onHover(GuiEvent event) {}
+            public void onHover(GuiButtonEvent event) {}
 
             @Override
-            public void onRelease(GuiEvent event) {}
+            public void onRelease(GuiButtonEvent event) {}
         });
 
         var lineHeight = (int) (getHeight() / visibleEntries);
@@ -100,26 +104,26 @@ public class GuiListBox extends GuiQuad {
 
         var t = 0.0f;
         for (int i = 0; i < visibleEntries; i++) {
-            var line = new GuiQuad(new Vector2f(0.0f, 0.0f + t), getWidth(), lineHeight);
+            var line = new GuiPanel(new Vector2f(0.0f, 0.0f + t), getWidth(), lineHeight);
             line.setRenderMe(false);
             line.setName(Integer.toString(i));
 
-            guiQuads.add(line);
+            guiPanels.add(line);
             add(line, Anchor.TOP_LEFT);
 
-            line.addListener(new GuiAdapter() {
+            line.addListener(new GuiPanelListener() {
                 @Override
-                public void onClick(GuiEvent event) {
+                public void onClick(GuiPanelEvent event) {
                     var source = event.getSource(); // todo
                     Log.LOGGER.debug("On Click Line {}", line.getName());
                 }
 
                 @Override
-                public void onHover(GuiEvent event) {
+                public void onHover(GuiPanelEvent event) {
                 }
 
                 @Override
-                public void onRelease(GuiEvent event) {
+                public void onRelease(GuiPanelEvent event) {
                 }
             });
 
@@ -132,8 +136,11 @@ public class GuiListBox extends GuiQuad {
     //-------------------------------------------------
 
     @Override
-    public void renderGuiQuad(TileRenderer tileRenderer) {
-        super.renderGuiQuad(tileRenderer);
+    public void inputGuiObject() {}
+
+    @Override
+    public void renderGuiObject(TileRenderer tileRenderer) {
+        super.renderGuiObject(tileRenderer);
 
         renderTable(start);
     }
@@ -147,7 +154,7 @@ public class GuiListBox extends GuiQuad {
         for (int i = start; i < visibleEntries + start; i++) {
             textRenderer.render(
                     values.get(i),
-                    guiQuads.get(line).getOrigin().x + 8, guiQuads.get(line).getOrigin().y + 4,
+                    guiPanels.get(line).getOrigin().x + 8, guiPanels.get(line).getOrigin().y + 4,
                     Color.YELLOW
             );
             line++;
