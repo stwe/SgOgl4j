@@ -12,6 +12,8 @@ import de.sg.ogl.renderer.TileRenderer;
 
 public interface GuiObject {
 
+    void init();
+
     void input();
     void update(float dt);
     void render(TileRenderer tileRenderer);

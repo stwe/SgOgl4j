@@ -58,8 +58,7 @@ public class TestApp extends SgOglApplication {
                 new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14))
         );
 
-        gui.getMainPanel().add(listbox, Anchor.CENTER); // todo: add() sollte init aufrufen
-        listbox.init();
+        gui.getMainPanel().add(listbox, Anchor.CENTER);
     }
 
     @Override

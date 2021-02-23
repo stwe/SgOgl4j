@@ -268,6 +268,9 @@ public abstract class GuiQuad implements GuiObject {
     //-------------------------------------------------
 
     @Override
+    public abstract void init();
+
+    @Override
     public void input() {
         inputTree(this);
     }
@@ -339,6 +342,8 @@ public abstract class GuiQuad implements GuiObject {
         child.aabb = new Aabb(child.origin, new Vector2f(child.width, child.height));
 
         children.add(child);
+
+        child.init();
     }
 
     /**

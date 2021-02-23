@@ -50,6 +50,9 @@ public class GuiButton extends GuiQuad {
     //-------------------------------------------------
 
     @Override
+    public void init() {}
+
+    @Override
     public void inputGuiObject() {
         if (listeners.isEmpty()) {
             return;

@@ -60,9 +60,10 @@ public class GuiListBox extends GuiQuad {
     }
 
     //-------------------------------------------------
-    // Init
+    // Implement GuiObject
     //-------------------------------------------------
 
+    @Override
     public void init() {
         add(buttonUp, Anchor.BOTTOM_RIGHT);
         add(buttonDown, Anchor.BOTTOM_RIGHT);
@@ -130,10 +131,6 @@ public class GuiListBox extends GuiQuad {
             t += lineHeight;
         }
     }
-
-    //-------------------------------------------------
-    // Logic
-    //-------------------------------------------------
 
     @Override
     public void inputGuiObject() {}
