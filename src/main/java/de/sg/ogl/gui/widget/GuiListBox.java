@@ -13,7 +13,6 @@ import de.sg.ogl.Log;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.GuiQuad;
 import de.sg.ogl.gui.event.*;
-import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
@@ -31,7 +30,7 @@ public class GuiListBox extends GuiQuad {
     private final int visibleEntries = 14;
     private int start = 0;
 
-    private final ArrayList<GuiPanel> guiPanels = new ArrayList<>();
+    private final ArrayList<GuiLabel> guiLabels = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -102,26 +101,37 @@ public class GuiListBox extends GuiQuad {
 
         var t = 0.0f;
         for (int i = 0; i < visibleEntries; i++) {
-            var line = new GuiPanel(new Vector2f(0.0f, 0.0f + t), getWidth(), lineHeight);
-            line.setRenderMe(false);
-            line.setName(Integer.toString(i));
 
-            guiPanels.add(line);
-            add(line, Anchor.TOP_LEFT);
+            // for each visible line create a new label
+            var label = new GuiLabel(
+                    new Vector2f(0.0f, 0.0f + t),
+                    getWidth(), lineHeight,
+                    textRenderer,
+                    null,
+                    Color.YELLOW
+            );
 
-            line.addListener(new GuiListener<>() {
+            // set a debug name
+            label.setName(Integer.toString(i));
+
+            // cache the label
+            guiLabels.add(label);
+
+            // add label as child
+            add(label, Anchor.TOP_LEFT);
+
+            label.addListener(new GuiListener<>() {
                 @Override
-                public void onClick(GuiEvent<GuiPanel> event) {
-                    var source = event.getSource(); // todo
-                    Log.LOGGER.debug("On Click Line {}", line.getName());
+                public void onClick(GuiEvent<GuiLabel> event) {
+                    Log.LOGGER.debug("On Click Line {}", label.getLabel());
                 }
 
                 @Override
-                public void onHover(GuiEvent<GuiPanel> event) {
+                public void onHover(GuiEvent<GuiLabel> event) {
                 }
 
                 @Override
-                public void onRelease(GuiEvent<GuiPanel> event) {
+                public void onRelease(GuiEvent<GuiLabel> event) {
                 }
             });
 
@@ -130,27 +140,10 @@ public class GuiListBox extends GuiQuad {
     }
 
     @Override
-    public void inputGuiObject() {}
-
-    @Override
-    public void renderGuiObject(TileRenderer tileRenderer) {
-        super.renderGuiObject(tileRenderer);
-
-        renderTable(start);
-    }
-
-    //-------------------------------------------------
-    // Helper
-    //-------------------------------------------------
-
-    private void renderTable(int start) {
+    public void inputGuiObject() {
         var line = 0;
         for (int i = start; i < visibleEntries + start; i++) {
-            textRenderer.render(
-                    values.get(i),
-                    guiPanels.get(line).getOrigin().x + 8, guiPanels.get(line).getOrigin().y + 4,
-                    Color.YELLOW
-            );
+            guiLabels.get(line).setLabel(values.get(i));
             line++;
         }
     }
