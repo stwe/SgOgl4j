@@ -8,13 +8,11 @@
 
 package de.sg.ogl.gui.event;
 
-import de.sg.ogl.gui.widget.GuiButton;
-
 import java.util.EventObject;
 
-public class GuiButtonEvent extends EventObject {
+public class GuiEvent<T> extends EventObject {
 
-    public GuiButtonEvent(GuiButton guiButton) {
-        super(guiButton);
+    public GuiEvent(T source) {
+        super(source);
     }
 }

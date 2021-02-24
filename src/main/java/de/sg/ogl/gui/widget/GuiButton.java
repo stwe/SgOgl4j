@@ -10,8 +10,8 @@ package de.sg.ogl.gui.widget;
 
 import de.sg.ogl.Color;
 import de.sg.ogl.gui.GuiQuad;
-import de.sg.ogl.gui.event.GuiButtonEvent;
-import de.sg.ogl.gui.event.GuiButtonListener;
+import de.sg.ogl.gui.event.GuiEvent;
+import de.sg.ogl.gui.event.GuiListener;
 import de.sg.ogl.input.MouseInput;
 import de.sg.ogl.resource.Texture;
 import org.joml.Vector2f;
@@ -23,7 +23,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class GuiButton extends GuiQuad {
 
-    private final ArrayList<GuiButtonListener> listeners = new ArrayList<>();
+    private final ArrayList<GuiListener<GuiButton>> listeners = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -76,7 +76,7 @@ public class GuiButton extends GuiQuad {
     // Listener
     //-------------------------------------------------
 
-    public void addListener(GuiButtonListener listener) {
+    public void addListener(GuiListener<GuiButton> listener) {
         Objects.requireNonNull(listener, "listener must not be null");
 
         if (listeners.contains(listener)) {
@@ -86,7 +86,7 @@ public class GuiButton extends GuiQuad {
         listeners.add(listener);
     }
 
-    public void removeListener(GuiButtonListener listener) {
+    public void removeListener(GuiListener<GuiButton> listener) {
         Objects.requireNonNull(listener, "listener must not be null");
         listeners.remove(listener);
     }
@@ -97,7 +97,7 @@ public class GuiButton extends GuiQuad {
         }
 
         setMouseOverFlag(true);
-        var event = new GuiButtonEvent(this);
+        var event = new GuiEvent<>(this);
         for (var listener : listeners) {
             listener.onClick(event);
         }
@@ -109,7 +109,7 @@ public class GuiButton extends GuiQuad {
         }
 
         setMouseOverFlag(true);
-        var event = new GuiButtonEvent(this);
+        var event = new GuiEvent<>(this);
         for (var listener : listeners) {
             listener.onHover(event);
         }
@@ -121,7 +121,7 @@ public class GuiButton extends GuiQuad {
         }
 
         setMouseOverFlag(false);
-        var event = new GuiButtonEvent(this);
+        var event = new GuiEvent<>(this);
         for (var listener : listeners) {
             listener.onRelease(event);
         }

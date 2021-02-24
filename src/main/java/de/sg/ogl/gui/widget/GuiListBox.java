@@ -12,10 +12,7 @@ import de.sg.ogl.Color;
 import de.sg.ogl.Log;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.GuiQuad;
-import de.sg.ogl.gui.event.GuiButtonEvent;
-import de.sg.ogl.gui.event.GuiButtonListener;
-import de.sg.ogl.gui.event.GuiPanelEvent;
-import de.sg.ogl.gui.event.GuiPanelListener;
+import de.sg.ogl.gui.event.*;
 import de.sg.ogl.renderer.TileRenderer;
 import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
@@ -68,9 +65,9 @@ public class GuiListBox extends GuiQuad {
         add(buttonUp, Anchor.BOTTOM_RIGHT);
         add(buttonDown, Anchor.BOTTOM_RIGHT);
 
-        buttonUp.addListener(new GuiButtonListener() {
+        buttonUp.addListener(new GuiListener<>() {
             @Override
-            public void onClick(GuiButtonEvent event) {
+            public void onClick(GuiEvent<GuiButton> event) {
                 Log.LOGGER.debug("On Click Button Up");
                 if (start > 0) {
                     start--;
@@ -78,15 +75,15 @@ public class GuiListBox extends GuiQuad {
             }
 
             @Override
-            public void onHover(GuiButtonEvent event) {}
+            public void onHover(GuiEvent<GuiButton> event) {}
 
             @Override
-            public void onRelease(GuiButtonEvent event) {}
+            public void onRelease(GuiEvent<GuiButton> event) {}
         });
 
-        buttonDown.addListener(new GuiButtonListener() {
+        buttonDown.addListener(new GuiListener<>() {
             @Override
-            public void onClick(GuiButtonEvent event) {
+            public void onClick(GuiEvent<GuiButton> event) {
                 Log.LOGGER.debug("On Click Button Down");
                 if (start < values.size() - visibleEntries) {
                     start++;
@@ -94,10 +91,10 @@ public class GuiListBox extends GuiQuad {
             }
 
             @Override
-            public void onHover(GuiButtonEvent event) {}
+            public void onHover(GuiEvent<GuiButton>event) {}
 
             @Override
-            public void onRelease(GuiButtonEvent event) {}
+            public void onRelease(GuiEvent<GuiButton> event) {}
         });
 
         var lineHeight = (int) (getHeight() / visibleEntries);
@@ -112,19 +109,19 @@ public class GuiListBox extends GuiQuad {
             guiPanels.add(line);
             add(line, Anchor.TOP_LEFT);
 
-            line.addListener(new GuiPanelListener() {
+            line.addListener(new GuiListener<>() {
                 @Override
-                public void onClick(GuiPanelEvent event) {
+                public void onClick(GuiEvent<GuiPanel> event) {
                     var source = event.getSource(); // todo
                     Log.LOGGER.debug("On Click Line {}", line.getName());
                 }
 
                 @Override
-                public void onHover(GuiPanelEvent event) {
+                public void onHover(GuiEvent<GuiPanel> event) {
                 }
 
                 @Override
-                public void onRelease(GuiPanelEvent event) {
+                public void onRelease(GuiEvent<GuiPanel> event) {
                 }
             });
 
