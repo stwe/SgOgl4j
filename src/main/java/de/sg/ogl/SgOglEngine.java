@@ -44,7 +44,7 @@ public class SgOglEngine implements Runnable {
     public SgOglEngine(SgOglApplication application) {
         LOGGER.debug("Creates SgOglEngine object.");
 
-        LOGGER.info("Running from Jar: {}", RUNNING_FROM_JAR ? "yes" : "no");
+        LOGGER.info("The SgOgl4j lib runs from a Jar file: {}", RUNNING_FROM_JAR ? "yes" : "no");
 
         this.window = new Window();
         this.eventQueue = new EventQueue();
@@ -110,8 +110,7 @@ public class SgOglEngine implements Runnable {
                 .getName();
     }
 
-    private static boolean isRunningFromJar()
-    {
+    private static boolean isRunningFromJar() {
         return getJarName().contains(".jar");
     }
 
