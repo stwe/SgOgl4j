@@ -16,22 +16,24 @@ import de.sg.ogl.resource.Texture;
 import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class GuiListBox extends GuiQuad {
+public class GuiListBox<T> extends GuiQuad {
 
     private static final int MAX_VISIBLE_ENTRIES = 14;
 
     private final TextRenderer textRenderer;
-    private final ArrayList<String> values;
+    private final ArrayList<String> labels;
+    private final ArrayList<Path> values;
 
     private final GuiButton buttonUp;
     private final GuiButton buttonDown;
 
     private int start = 0;
 
-    private final ArrayList<GuiLabel> guiLabels = new ArrayList<>();
-    private GuiLabel activeLabel;
+    private final ArrayList<GuiLabel<T>> guiLabels = new ArrayList<>();
+    private GuiLabel<T> activeLabel;
 
     //-------------------------------------------------
     // Ctors.
@@ -44,7 +46,8 @@ public class GuiListBox extends GuiQuad {
             Texture texture,
             Texture up,
             Texture down,
-            ArrayList<String> values,
+            ArrayList<String> labels,
+            ArrayList<Path> values,
             TextRenderer textRenderer
     ) {
         super(origin, width, height, texture);
@@ -52,7 +55,9 @@ public class GuiListBox extends GuiQuad {
         buttonUp = new GuiButton(new Vector2f(-60.0f, 60.0f), up.getWidth(), up.getHeight(), up);
         buttonDown = new GuiButton(new Vector2f(-60.0f, 10.0f), down.getWidth(), down.getHeight(), down);
 
+        this.labels = labels;
         this.values = values;
+
         this.textRenderer = textRenderer;
     }
 
@@ -60,11 +65,11 @@ public class GuiListBox extends GuiQuad {
     // Getter
     //-------------------------------------------------
 
-    public ArrayList<GuiLabel> getGuiLabels() {
+    public ArrayList<GuiLabel<T>> getGuiLabels() {
         return guiLabels;
     }
 
-    public GuiLabel getActiveLabel() {
+    public GuiLabel<T> getActiveLabel() {
         return activeLabel;
     }
 
@@ -81,7 +86,7 @@ public class GuiListBox extends GuiQuad {
             @Override
             public void onClick(GuiEvent<GuiButton> event) {
                 //Log.LOGGER.debug("On Click Button Up");
-                if (values.size() > MAX_VISIBLE_ENTRIES) {
+                if (labels.size() > MAX_VISIBLE_ENTRIES) {
                     if (start > 0) {
                         start--;
                     }
@@ -99,8 +104,8 @@ public class GuiListBox extends GuiQuad {
             @Override
             public void onClick(GuiEvent<GuiButton> event) {
                 //Log.LOGGER.debug("On Click Button Down");
-                if (values.size() > MAX_VISIBLE_ENTRIES) {
-                    if (start < values.size() - MAX_VISIBLE_ENTRIES) {
+                if (labels.size() > MAX_VISIBLE_ENTRIES) {
+                    if (start < labels.size() - MAX_VISIBLE_ENTRIES) {
                         start++;
                     }
                 }
@@ -121,17 +126,18 @@ public class GuiListBox extends GuiQuad {
         var yOffset = (lineHeight - fontHeight) / 2;
 
         var t = 0.0f;
-        var entries = values.size();
-        if (values.size() > MAX_VISIBLE_ENTRIES) {
+        var entries = labels.size();
+        if (labels.size() > MAX_VISIBLE_ENTRIES) {
             entries = MAX_VISIBLE_ENTRIES;
         }
 
         for (int i = 0; i < entries; i++) {
             // for each visible line create a new label
-            var label = new GuiLabel(
+            var label = new GuiLabel<T>(
                     new Vector2f(0.0f + xOffset, 0.0f + t + yOffset),
                     getWidth(), lineHeight,
                     textRenderer,
+                    null,
                     null,
                     Color.YELLOW
             );
@@ -148,15 +154,15 @@ public class GuiListBox extends GuiQuad {
             // to set the active Label
             label.addListener(new GuiListener<>() {
                 @Override
-                public void onClick(GuiEvent<GuiLabel> event) {
-                    activeLabel = (GuiLabel)event.getSource();
+                public void onClick(GuiEvent<GuiLabel<T>> event) {
+                    activeLabel = (GuiLabel<T>)event.getSource();
                 }
 
                 @Override
-                public void onHover(GuiEvent<GuiLabel> event) {}
+                public void onHover(GuiEvent<GuiLabel<T>> event) {}
 
                 @Override
-                public void onRelease(GuiEvent<GuiLabel> event) {}
+                public void onRelease(GuiEvent<GuiLabel<T>> event) {}
             });
 
             t += lineHeight;
@@ -167,13 +173,14 @@ public class GuiListBox extends GuiQuad {
     public void inputGuiObject() {
         var line = 0;
 
-        var entries = values.size();
-        if (values.size() > MAX_VISIBLE_ENTRIES) {
+        var entries = labels.size();
+        if (labels.size() > MAX_VISIBLE_ENTRIES) {
             entries = MAX_VISIBLE_ENTRIES;
         }
 
         for (int i = start; i < entries + start; i++) {
-            guiLabels.get(line).setLabel(values.get(i));
+            guiLabels.get(line).setLabel(labels.get(i));
+            guiLabels.get(line).setValue((T)values.get(i));
             line++;
         }
     }

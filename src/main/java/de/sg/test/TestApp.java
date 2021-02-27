@@ -24,6 +24,7 @@ import de.sg.ogl.text.TextRenderer;
 import org.joml.Vector2f;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static java.awt.Font.MONOSPACED;
@@ -34,8 +35,9 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class TestApp extends SgOglApplication {
 
     private Gui gui;
-    private final ArrayList<String> filesList = new ArrayList<>();
-    private GuiListBox listBox;
+    private final ArrayList<String> filesListLables = new ArrayList<>();
+    private final ArrayList<Path> filesListValues = new ArrayList<>();
+    private GuiListBox<Path> listBox;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
@@ -50,16 +52,18 @@ public class TestApp extends SgOglApplication {
         gui = new Gui(getEngine());
 
         for (int i = 0; i < 20; i++) {
-            filesList.add("Test" + i);
+            filesListLables.add("Test Label " + i);
+            filesListValues.add(null);
         }
 
-        listBox = new GuiListBox(
+        listBox = new GuiListBox<>(
                 new Vector2f(0.0f, 0.0f),
                 300.0f, 300.0f,
                 listBoxTexture,
                 upTexture,
                 downTexture,
-                filesList,
+                filesListLables,
+                filesListValues,
                 new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14))
         );
 
@@ -68,24 +72,24 @@ public class TestApp extends SgOglApplication {
         for (var label : listBox.getGuiLabels()) {
             label.addListener(new GuiListener<>() {
                 @Override
-                public void onClick(GuiEvent<GuiLabel> event) {
-                    var guiLabel = (GuiLabel) event.getSource();
-                    loadFile(guiLabel.getLabel());
+                public void onClick(GuiEvent<GuiLabel<Path>> event) {
+                    var guiLabel = (GuiLabel<Path>) event.getSource();
+                    loadFile((Path)guiLabel.getValue());
                 }
 
                 @Override
-                public void onHover(GuiEvent<GuiLabel> event) {
+                public void onHover(GuiEvent<GuiLabel<Path>> event) {
                 }
 
                 @Override
-                public void onRelease(GuiEvent<GuiLabel> event) {
+                public void onRelease(GuiEvent<GuiLabel<Path>> event) {
                 }
             });
         }
     }
 
-    private void loadFile(String name) {
-        Log.LOGGER.debug("Load file {}", name);
+    private void loadFile(Path path) {
+        Log.LOGGER.debug("Load file {}", path);
     }
 
     @Override

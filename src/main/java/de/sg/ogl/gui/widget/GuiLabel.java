@@ -23,13 +23,14 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class GuiLabel extends GuiQuad {
+public class GuiLabel<T> extends GuiQuad {
 
     private final TextRenderer textRenderer;
     private String label;
+    private T value;
     private Color textColor;
 
-    private final ArrayList<GuiListener<GuiLabel>> listeners = new ArrayList<>();
+    private final ArrayList<GuiListener<GuiLabel<T>>> listeners = new ArrayList<>();
 
     //-------------------------------------------------
     // Ctors.
@@ -41,12 +42,14 @@ public class GuiLabel extends GuiQuad {
             Color color, Texture texture,
             TextRenderer textRenderer,
             String label,
+            T value,
             Color textColor
     ) {
         super(origin, width, height, color, texture);
 
         this.textRenderer = textRenderer;
         this.label = label;
+        this.value = value;
         this.textColor = textColor;
     }
 
@@ -56,12 +59,14 @@ public class GuiLabel extends GuiQuad {
             Color color,
             TextRenderer textRenderer,
             String label,
+            T value,
             Color textColor
     ) {
         super(origin, width, height, color);
 
         this.textRenderer = textRenderer;
         this.label = label;
+        this.value = value;
         this.textColor = textColor;
     }
 
@@ -71,12 +76,14 @@ public class GuiLabel extends GuiQuad {
             Texture texture,
             TextRenderer textRenderer,
             String label,
+            T value,
             Color textColor
     ) {
         super(origin, width, height, texture);
 
         this.textRenderer = textRenderer;
         this.label = label;
+        this.value = value;
         this.textColor = textColor;
     }
 
@@ -85,12 +92,14 @@ public class GuiLabel extends GuiQuad {
             float width, float height,
             TextRenderer textRenderer,
             String label,
+            T value,
             Color textColor
     ) {
         super(origin, width, height);
 
         this.textRenderer = textRenderer;
         this.label = label;
+        this.value = value;
         this.textColor = textColor;
     }
 
@@ -100,6 +109,10 @@ public class GuiLabel extends GuiQuad {
 
     public String getLabel() {
         return label;
+    }
+
+    public T getValue() {
+        return value;
     }
 
     public Color getTextColor() {
@@ -112,6 +125,10 @@ public class GuiLabel extends GuiQuad {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
     }
 
     public void setTextColor(Color textColor) {
@@ -161,7 +178,7 @@ public class GuiLabel extends GuiQuad {
     // Listener
     //-------------------------------------------------
 
-    public void addListener(GuiListener<GuiLabel> listener) {
+    public void addListener(GuiListener<GuiLabel<T>> listener) {
         Objects.requireNonNull(listener, "listener must not be null");
 
         if (listeners.contains(listener)) {
@@ -171,7 +188,7 @@ public class GuiLabel extends GuiQuad {
         listeners.add(listener);
     }
 
-    public void removeListener(GuiListener<GuiLabel> listener) {
+    public void removeListener(GuiListener<GuiLabel<T>> listener) {
         Objects.requireNonNull(listener, "listener must not be null");
         listeners.remove(listener);
     }
