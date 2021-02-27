@@ -9,7 +9,6 @@
 package de.sg.ogl.gui.widget;
 
 import de.sg.ogl.Color;
-import de.sg.ogl.Log;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.GuiQuad;
 import de.sg.ogl.gui.event.*;
@@ -21,13 +20,14 @@ import java.util.ArrayList;
 
 public class GuiListBox extends GuiQuad {
 
+    private static final int MAX_VISIBLE_ENTRIES = 14;
+
     private final TextRenderer textRenderer;
     private final ArrayList<String> values;
 
     private final GuiButton buttonUp;
     private final GuiButton buttonDown;
 
-    private final int visibleEntries = 14;
     private int start = 0;
 
     private final ArrayList<GuiLabel> guiLabels = new ArrayList<>();
@@ -80,9 +80,11 @@ public class GuiListBox extends GuiQuad {
         buttonUp.addListener(new GuiListener<>() {
             @Override
             public void onClick(GuiEvent<GuiButton> event) {
-                Log.LOGGER.debug("On Click Button Up");
-                if (start > 0) {
-                    start--;
+                //Log.LOGGER.debug("On Click Button Up");
+                if (values.size() > MAX_VISIBLE_ENTRIES) {
+                    if (start > 0) {
+                        start--;
+                    }
                 }
             }
 
@@ -96,9 +98,11 @@ public class GuiListBox extends GuiQuad {
         buttonDown.addListener(new GuiListener<>() {
             @Override
             public void onClick(GuiEvent<GuiButton> event) {
-                Log.LOGGER.debug("On Click Button Down");
-                if (start < values.size() - visibleEntries) {
-                    start++;
+                //Log.LOGGER.debug("On Click Button Down");
+                if (values.size() > MAX_VISIBLE_ENTRIES) {
+                    if (start < values.size() - MAX_VISIBLE_ENTRIES) {
+                        start++;
+                    }
                 }
             }
 
@@ -109,7 +113,7 @@ public class GuiListBox extends GuiQuad {
             public void onRelease(GuiEvent<GuiButton> event) {}
         });
 
-        var lineHeight = (int) (getHeight() / visibleEntries);
+        var lineHeight = (int) (getHeight() / MAX_VISIBLE_ENTRIES);
         var fontHeight = textRenderer.getAwtFont().getSize();
 
         // todo
@@ -117,7 +121,12 @@ public class GuiListBox extends GuiQuad {
         var yOffset = (lineHeight - fontHeight) / 2;
 
         var t = 0.0f;
-        for (int i = 0; i < visibleEntries; i++) {
+        var entries = values.size();
+        if (values.size() > MAX_VISIBLE_ENTRIES) {
+            entries = MAX_VISIBLE_ENTRIES;
+        }
+
+        for (int i = 0; i < entries; i++) {
             // for each visible line create a new label
             var label = new GuiLabel(
                     new Vector2f(0.0f + xOffset, 0.0f + t + yOffset),
@@ -157,7 +166,13 @@ public class GuiListBox extends GuiQuad {
     @Override
     public void inputGuiObject() {
         var line = 0;
-        for (int i = start; i < visibleEntries + start; i++) {
+
+        var entries = values.size();
+        if (values.size() > MAX_VISIBLE_ENTRIES) {
+            entries = MAX_VISIBLE_ENTRIES;
+        }
+
+        for (int i = start; i < entries + start; i++) {
             guiLabels.get(line).setLabel(values.get(i));
             line++;
         }
