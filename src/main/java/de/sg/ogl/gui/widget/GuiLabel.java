@@ -133,8 +133,8 @@ public class GuiLabel extends GuiQuad {
 
         if (isMouseOver()) {
             if (MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) ||
-                    MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT) ||
-                    MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_MIDDLE)
+                MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT) ||
+                MouseInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_MIDDLE)
             ) {
                 runOnClickListeners();
             }

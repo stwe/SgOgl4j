@@ -9,10 +9,14 @@
 package de.sg.test;
 
 import de.sg.ogl.Color;
+import de.sg.ogl.Log;
 import de.sg.ogl.OpenGL;
 import de.sg.ogl.SgOglApplication;
 import de.sg.ogl.gui.Anchor;
 import de.sg.ogl.gui.Gui;
+import de.sg.ogl.gui.event.GuiEvent;
+import de.sg.ogl.gui.event.GuiListener;
+import de.sg.ogl.gui.widget.GuiLabel;
 import de.sg.ogl.gui.widget.GuiListBox;
 import de.sg.ogl.input.KeyInput;
 import de.sg.ogl.resource.Texture;
@@ -31,6 +35,7 @@ public class TestApp extends SgOglApplication {
 
     private Gui gui;
     private final ArrayList<String> filesList = new ArrayList<>();
+    private GuiListBox listBox;
 
     public TestApp() throws IOException, IllegalAccessException {
     }
@@ -48,7 +53,7 @@ public class TestApp extends SgOglApplication {
             filesList.add("Test" + i);
         }
 
-        var listbox = new GuiListBox(
+        listBox = new GuiListBox(
                 new Vector2f(0.0f, 0.0f),
                 300.0f, 300.0f,
                 listBoxTexture,
@@ -58,7 +63,29 @@ public class TestApp extends SgOglApplication {
                 new TextRenderer(getEngine(), new java.awt.Font(MONOSPACED, PLAIN, 14))
         );
 
-        gui.getMainPanel().add(listbox, Anchor.CENTER);
+        gui.getMainPanel().add(listBox, Anchor.CENTER);
+
+        for (var label : listBox.getGuiLabels()) {
+            label.addListener(new GuiListener<>() {
+                @Override
+                public void onClick(GuiEvent<GuiLabel> event) {
+                    var guiLabel = (GuiLabel) event.getSource();
+                    loadFile(guiLabel.getLabel());
+                }
+
+                @Override
+                public void onHover(GuiEvent<GuiLabel> event) {
+                }
+
+                @Override
+                public void onRelease(GuiEvent<GuiLabel> event) {
+                }
+            });
+        }
+    }
+
+    private void loadFile(String name) {
+        Log.LOGGER.debug("Load file {}", name);
     }
 
     @Override

@@ -31,6 +31,7 @@ public class TextRenderer {
 
     private final SgOglEngine engine;
     private final Shader shader;
+    private final java.awt.Font awtFont;
     private final Font font;
 
     private final FloatBuffer vertices;
@@ -49,6 +50,7 @@ public class TextRenderer {
 
         this.engine = Objects.requireNonNull(engine, "engine must not be null");
         this.shader = this.engine.getResourceManager().loadResource(Shader.class, SHADER_NAME);
+        this.awtFont = awtFont;
         this.font = new Font(Objects.requireNonNull(awtFont, "awtFont must not be null"), true);
 
         vertices = MemoryUtil.memAllocFloat(NR_OF_FLOATS);
@@ -56,6 +58,14 @@ public class TextRenderer {
         drawing = false;
 
         initVao();
+    }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public java.awt.Font getAwtFont() {
+        return awtFont;
     }
 
     //-------------------------------------------------

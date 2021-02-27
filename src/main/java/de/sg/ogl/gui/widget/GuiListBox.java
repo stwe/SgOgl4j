@@ -31,6 +31,7 @@ public class GuiListBox extends GuiQuad {
     private int start = 0;
 
     private final ArrayList<GuiLabel> guiLabels = new ArrayList<>();
+    private GuiLabel activeLabel;
 
     //-------------------------------------------------
     // Ctors.
@@ -53,6 +54,18 @@ public class GuiListBox extends GuiQuad {
 
         this.values = values;
         this.textRenderer = textRenderer;
+    }
+
+    //-------------------------------------------------
+    // Getter
+    //-------------------------------------------------
+
+    public ArrayList<GuiLabel> getGuiLabels() {
+        return guiLabels;
+    }
+
+    public GuiLabel getActiveLabel() {
+        return activeLabel;
     }
 
     //-------------------------------------------------
@@ -97,14 +110,17 @@ public class GuiListBox extends GuiQuad {
         });
 
         var lineHeight = (int) (getHeight() / visibleEntries);
-        // todo textrenderer: get FontHeight
+        var fontHeight = textRenderer.getAwtFont().getSize();
+
+        // todo
+        var xOffset = fontHeight / 2;
+        var yOffset = (lineHeight - fontHeight) / 2;
 
         var t = 0.0f;
         for (int i = 0; i < visibleEntries; i++) {
-
             // for each visible line create a new label
             var label = new GuiLabel(
-                    new Vector2f(0.0f, 0.0f + t),
+                    new Vector2f(0.0f + xOffset, 0.0f + t + yOffset),
                     getWidth(), lineHeight,
                     textRenderer,
                     null,
@@ -120,19 +136,18 @@ public class GuiListBox extends GuiQuad {
             // add label as child
             add(label, Anchor.TOP_LEFT);
 
+            // to set the active Label
             label.addListener(new GuiListener<>() {
                 @Override
                 public void onClick(GuiEvent<GuiLabel> event) {
-                    Log.LOGGER.debug("On Click Line {}", label.getLabel());
+                    activeLabel = (GuiLabel)event.getSource();
                 }
 
                 @Override
-                public void onHover(GuiEvent<GuiLabel> event) {
-                }
+                public void onHover(GuiEvent<GuiLabel> event) {}
 
                 @Override
-                public void onRelease(GuiEvent<GuiLabel> event) {
-                }
+                public void onRelease(GuiEvent<GuiLabel> event) {}
             });
 
             t += lineHeight;
