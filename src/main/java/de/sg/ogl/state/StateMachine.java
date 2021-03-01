@@ -50,13 +50,13 @@ public class StateMachine {
         states.put(name, state);
     }
 
-    public void change(String name) throws Exception {
+    public void change(String name, Object... params) throws Exception {
         Objects.requireNonNull(name, "name must not be null");
 
         currentState.cleanUp();
 
         currentState = states.get(name);
-        currentState.init();
+        currentState.init(params);
     }
 
     //-------------------------------------------------

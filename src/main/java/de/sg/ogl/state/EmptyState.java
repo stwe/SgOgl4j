@@ -25,7 +25,7 @@ public class EmptyState extends ApplicationState {
     //-------------------------------------------------
 
     @Override
-    public void init() throws Exception {
+    public void init(Object... params) throws Exception {
 
     }
 
