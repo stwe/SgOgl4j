@@ -22,7 +22,7 @@ public class ConfigLoader {
     // Load
     //-------------------------------------------------
 
-    static void load(Class<?> configClass, String path) throws IOException, IllegalAccessException {
+    public static void load(Class<?> configClass, String path) throws IOException, IllegalAccessException {
         Objects.requireNonNull(configClass, "configClass must not be null");
         Objects.requireNonNull(path, "path must not be null");
 
